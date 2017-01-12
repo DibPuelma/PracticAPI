@@ -1,0 +1,25 @@
+{
+  "name": "practicapi",
+  "version": "1.0.0",
+  "description": "API de la aplicación que estamos creando para la práctica",
+  "main": "index.js",
+  "scripts": {
+    "test": "run-tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://DibPuelma@bitbucket.org/DibPuelma/practicapi.git"
+  },
+  "keywords": [
+    "evaluar",
+    "evaluame",
+    "restaurantes",
+    "tiendas"
+  ],
+  "author": "dibpuelma & famunoz13",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/DibPuelma/practicapi#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
