@@ -1,6 +1,6 @@
 var sequelize = require('./sequelize')
 exports.create = function (name, lastName) {
-  sequelize.User.sync({force: true}).then(function () {
+  sequelize.User.sync().then(function () {
     // Table created
     return sequelize.User.create({
       firstName: name,
