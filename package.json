@@ -2,7 +2,7 @@
   "name": "practicapi",
   "version": "1.0.0",
   "description": "API de la aplicación que estamos creando para la práctica",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "run-tests"
   },
