@@ -4,7 +4,8 @@
   "description": "API de la aplicación que estamos creando para la práctica",
   "main": "app.js",
   "scripts": {
-    "test": "run-tests"
+    "test": "run-tests",
+    "start": "supervisor app.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/DibPuelma/practicapi#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "supervisor": "^0.12.0"
   }
 }
