@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
     classMethods: {
       associate: function(models) {
-        Prize.belongsTo(models.contest);
+        Prize.belongsTo(models.Contest);
       }
     }
   });

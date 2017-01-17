@@ -8,8 +8,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Answer.hasOne(models.PosibleOption);
-        Answer.belongsTo(models.Question);
-        Answer.belongsTo(models.User);
       }
     }
   });
