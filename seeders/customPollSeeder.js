@@ -1,9 +1,3 @@
-var Answer = require('../models/answer.js');
-var OptionsContainer = require('../models/optionscontainer.js');
-var Poll = require('../models/poll.js');
-var PosibleOption = require('../models/posibleoption.js');
-var Question = require('../models/question.js');
-var User = require('../models/user.js');
 var Inde = require('../models/index.js');
 
 var optionsArray1 = ["Pescado", "Lasagna", "Cangrejo", "Fideos", "Filete", "Lomo", "Pollo"];
@@ -15,166 +9,383 @@ var optionsObjectColor = [];
 var optionsObjectMusic = [];
 var users = [];
 
+var dropTables = function() {
+  Inde.OptionsContainerPossibleOptions.drop().then(function() {
+    Inde.Answer.drop().then(function() {
+      Inde.PossibleOption.drop().then(function() {
+        Inde.OptionsContainer.drop().then(function() {
+          Inde.Question.drop().then(function() {
+            Inde.AnsweredPoll.drop().then(function() {
+              Inde.User.drop().then(function() {
+                Inde.Poll.drop().then(function() {
+                  createTables();
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+}
+dropTables();
+
+
+var createTables = function() {
+  Inde.Poll.sync().then(function() {
+    Inde.User.sync().then(function() {
+      Inde.AnsweredPoll.sync().then(function() {
+        Inde.Question.sync().then(function() {
+          Inde.OptionsContainer.sync().then(function() {
+            Inde.PossibleOption.sync().then(function() {
+              Inde.Answer.sync().then(function() {
+                Inde.OptionsContainerPossibleOptions.sync().then(function() {
+                  createUsers();
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+}
+
+
 //Creamos usuarios
-for (var i = 0; i < 4; i++) {
-  var user = Inde.User.build({
-    email: i + "@gmail.com",
-    firstName: "Roberto " + i,
-    lastName: "Perez " + i,
+var createUsers = function() {
+  Inde.User.create({
+    email: "rperez@gmail.com",
+    first_name: "Roberto",
+    last_name: "Perez",
     birthdate: Date.now(),
     gender: 'm',
-    password: "123123123" + i
+    password: "123123123"
+  }).then(function(user){
+    users.push(user);
+    Inde.User.create({
+      email: "jrojas@gmail.com",
+      first_name: "Javier",
+      last_name: "Rojas",
+      birthdate: Date.now(),
+      gender: 'm',
+      password: "321321321"
+    }).then(function(user){
+      users.push(user);
+      Inde.User.create({
+        email: "jvenegas@gmail.com",
+        first_name: "Julieta",
+        last_name: "Venegas",
+        birthdate: Date.now(),
+        gender: 'f',
+        password: "234234234"
+      }).then(function(user){
+        users.push(user);
+        createOptions();
+      })
+    })
   })
-  users.push(user);
-  console.log("pusheado");
 }
-
-var OC1, OC2, OC3, Q1, Q2, Q3, Q4, Q5;
-
-//Creamos contenedores de opciones
-var OC1 = Inde.OptionsContainer.build({
-  name: "Comidas",
-  allow_other: true
-})
-
-var OC2 = Inde.OptionsContainer.build({
-  name: "Colores",
-  allow_other: false
-})
-
-var OC3 = Inde.OptionsContainer.build({
-  name: "Géneros Musicales",
-  allow_other: true
-})
-
-//Creamos las preguntas
-var Q1 = Inde.Question.build({
-  text: "¿Cúal es tu comida favorita?",
-  type: "options"
-})
-Q1.setOptionsContainer(OC1);
-
-var Q2 = Inde.Question.build({
-  text: "¿Cúal es tu color favorito?",
-  type: "options"
-})
-Q2.setOptionsContainer(OC2);
-
-
-var Q3 = Inde.Question.build({
-  text: "¿Cúal es tu género musical favorito?",
-  type: "options"
-})
-Q3.setOptionsContainer(OC3);
-
-var Q4 = Inde.Question.build({
-  text: "Si quieres nos puedes dejar un comentario",
-  type: "text"
-})
-
-var Q5 = Inde.Question.build({
-  text: "¿Qué nota le pondrías al local?",
-  type: "number"
-})
-
 
 //Creamos opciones
-for (var option in optionsArray1) {
-  var posibleoption = Inde.PosibleOption.build({
-    value: option
+var createOptions = function() {
+  Inde.OptionsContainer.create({
+    name: "Comidas",
+    allow_other: true
+  }).then(function(oc){
+    optionsArray1.map((data) => {
+      Inde.PossibleOption.create({
+        value: data
+      }).then(function(possibleoption){
+        oc.addPossibleOption(possibleoption);
+        optionsObjectFood.push(possibleoption);
+      });
+    });
+    Inde.OptionsContainer.create({
+      name: "Colores",
+      allow_other: false
+    }).then(function(oc){
+      optionsArray2.map((data) => {
+        Inde.PossibleOption.create({
+          value: data
+        }).then(function(possibleoption){
+          oc.addPossibleOption(possibleoption);
+          optionsObjectFood.push(possibleoption);
+        });
+      });
+      Inde.OptionsContainer.create({
+        name: "Géneros Musicales",
+        allow_other: true
+      }).then(function(oc){
+        optionsArray3.map((data) => {
+          Inde.PossibleOption.create({
+            value: data
+          }).then(function(possibleoption){
+            oc.addPossibleOption(possibleoption);
+            optionsObjectFood.push(possibleoption);
+          });
+        });
+        createQuestions();
+      });
+    });
   });
-  OC1.addPosibleOption(posibleoption);
-  optionsObjectFood.push(posibleoption);
 }
 
-for (var option in optionsArray2) {
-  var posibleoption = Inde.PosibleOption.build({
-    value: option
-  });
-  OC2.addPosibleOption(posibleoption);
-  optionsObjectColor.push(posibleoption);
+//Creamos las preguntas
+var createQuestions = function() {
+  Inde.Question.create({
+    text: "¿Cúal es tu comida favorita?",
+    type: "options"
+  }).then(function (question) {
+    Inde.OptionsContainer.findById(1).then(function(oc){
+      question.setOptionsContainer(oc);
+    })
+    Inde.Question.create({
+      text: "¿Cúal es tu color favorito?",
+      type: "options"
+    }).then(function (question) {
+      Inde.OptionsContainer.findById(2).then(function(oc){
+        question.setOptionsContainer(oc);
+      })
+      Inde.Question.create({
+        text: "¿Cúal es tu género musical favorito?",
+        type: "options"
+      }).then(function (question) {
+        Inde.OptionsContainer.findById(3).then(function(oc){
+          question.setOptionsContainer(oc);
+        })
+        Inde.Question.create({
+          text: "Si quieres nos puedes dejar un comentario",
+          type: "text"
+        }).then(function(question) {
+          Inde.Question.create({
+            text: "¿Qué nota le pondrías al local?",
+            type: "number"
+          }).then(function(question) {
+            createPolls();
+          })
+        })
+      })
+    })
+  })
 }
 
-for (var option in optionsArray3) {
-  var posibleoption = Inde.PosibleOption.build({
-    value: option
-  });
-  OC3.addPosibleOption(posibleoption);
-  optionsObjectMusic.push(posibleoption);
-}
 
 //Creamos las encuestas
-Inde.Poll.create({
-  name: "Encuesta de comida",
-  description: "Queremos saber la comida favorita de la gente"
-}).then(function(poll){
-  poll.addQuestion(Q1);
-  poll.addQuestion(Q4);
-});
-
-Inde.Poll.create({
-  name: "Encuesta de colores",
-  description: "Queremos saber los colores favoritos de la gente"
-}).then(function(poll){
-  poll.addQuestion(Q2);
-  poll.addQuestion(Q5);
-});
-
-Inde.Poll.create({
-  name: "Encuesta de música",
-  description: "Queremos saber la música favorita de la gente"
-}).then(function(poll){
-  poll.addQuestion(Q3);
-  poll.addQuestion(Q4);
-  poll.addQuestion(Q5);
-});
-
-
-//Creamos respuestas
-//Númericas
-for (var i = 0; i < 10; i++) {
-  var value = i%5;
-  Inde.Answer.create({
-    number_value: value
-  }).then(function(answer){
-    Q5.addAnswer(answer);
+var createPolls = function() {
+  Inde.Poll.create({
+    name: "Encuesta de comida",
+    description: "Queremos saber la comida favorita de la gente"
+  }).then(function(poll){
+    Inde.Question.findById(1).then(function(question) {
+      poll.addQuestion(question);
+    })
+    Inde.Question.findById(4).then(function(question) {
+      poll.addQuestion(question);
+    })
+    Inde.Poll.create({
+      name: "Encuesta de colores",
+      description: "Queremos saber los colores favoritos de la gente"
+    }).then(function(poll){
+      Inde.Question.findById(2).then(function(question) {
+        poll.addQuestion(question);
+      })
+      Inde.Question.findById(5).then(function(question) {
+        poll.addQuestion(question);
+      })
+      Inde.Poll.create({
+        name: "Encuesta de música",
+        description: "Queremos saber la música favorita de la gente"
+      }).then(function(poll){
+        Inde.Question.findById(3).then(function(question) {
+          poll.addQuestion(question);
+        })
+        Inde.Question.findById(4).then(function(question) {
+          poll.addQuestion(question);
+        })
+        Inde.Question.findById(5).then(function(question) {
+          poll.addQuestion(question);
+        })
+        createAnsweredPolls();
+      });
+    });
   });
 }
-//Texto
-for (var i = 0; i < 5; i++) {
-  var value = "Pienso que " + i;
-  Inde.Answer.create({
-    string_value: value
-  }).then(function(answer){
-    Q4.addAnswer(answer);
-  });
-}
-//Selección Comidas
-for (var i = 0; i < 5; i++) {
-  Inde.Answer.create({
-  }).then(function(answer){
-    users[getRandomInt(0, users.length - 1)].addAnswer(answer);
-    answer.setPosibleOption(optionsObjectFood[getRandomInt(0, optionsObjectFood.length - 1)])
-    Q1.addAnswer(answer);
-  });
-}
-//Selección Colores
-for (var i = 0; i < 5; i++) {
-  Inde.Answer.create({
-  }).then(function(answer){
-    users[getRandomInt(0, users.length - 1)].addAnswer(answer);
-    answer.setPosibleOption(optionsObjectColor[getRandomInt(0, optionsObjectColor.length - 1)])
-    Q2.addAnswer(answer);
-  });
-}
-//Selección Música
-for (var i = 0; i < 5; i++) {
-  Inde.Answer.create({
-  }).then(function(answer){
-    users[getRandomInt(0, users.length - 1)].addAnswer(answer);
-    answer.setPosibleOption(optionsObjectMusic[getRandomInt(0, optionsObjectMusic.length - 1)])
-    Q3.addAnswer(answer);
-  });
+
+//Creamos encuestas contestadas
+var createAnsweredPolls = function () {
+  Inde.AnsweredPoll.create({}).then(function(anspoll) {
+    Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+      user.addAnsweredPoll(anspoll);
+    })
+    Inde.Poll.findById(1).then(function(poll) {
+      poll.addAnsweredPoll(anspoll);
+    })
+    Inde.Answer.create({
+    }).then(function(answer){
+      Inde.PossibleOption.findById(getRandomInt(1,7)).then(function(possopt) {
+        answer.setPossibleOption(possopt);
+      })
+      Inde.Question.findById(1).then(function(question) {
+        question.addAnswer(answer);
+      })
+      anspoll.addAnswer(answer);
+    });
+    Inde.Answer.create({
+      string_value: 'Excelente que me pregunten por mi comida favorita'
+    }).then(function(answer){
+      Inde.Question.findById(4).then(function(question) {
+        question.addAnswer(answer);
+      })
+      anspoll.addAnswer(answer);
+    });
+    Inde.AnsweredPoll.create({}).then(function(anspoll) {
+      Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+        user.addAnsweredPoll(anspoll);
+      })
+      Inde.Poll.findById(1).then(function(poll) {
+        poll.addAnsweredPoll(anspoll);
+      })
+      Inde.Answer.create({
+      }).then(function(answer){
+        Inde.PossibleOption.findById(getRandomInt(1,7)).then(function(possopt) {
+          answer.setPossibleOption(possopt);
+        })
+        Inde.Question.findById(1).then(function(question) {
+          question.addAnswer(answer);
+        })
+        anspoll.addAnswer(answer);
+      });
+      Inde.Answer.create({
+        string_value: 'Qué comida favorita elegiré?'
+      }).then(function(answer){
+        Inde.Question.findById(4).then(function(question) {
+          question.addAnswer(answer);
+        })
+        anspoll.addAnswer(answer);
+      });
+      Inde.AnsweredPoll.create({}).then(function(anspoll) {
+        Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+          user.addAnsweredPoll(anspoll);
+        })
+        Inde.Poll.findById(2).then(function(poll) {
+          poll.addAnsweredPoll(anspoll);
+        })
+        Inde.Answer.create({
+        }).then(function(answer){
+          Inde.PossibleOption.findById(getRandomInt(8,12)).then(function(possopt) {
+            answer.setPossibleOption(possopt);
+          })
+          Inde.Question.findById(1).then(function(question) {
+            question.addAnswer(answer);
+          })
+          anspoll.addAnswer(answer);
+        });
+        Inde.Answer.create({
+          number_value: 4
+        }).then(function(answer){
+          Inde.Question.findById(4).then(function(question) {
+            question.addAnswer(answer);
+          })
+          anspoll.addAnswer(answer);
+        });
+        Inde.AnsweredPoll.create({}).then(function(anspoll) {
+          Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+            user.addAnsweredPoll(anspoll);
+          })
+          Inde.Poll.findById(2).then(function(poll) {
+            poll.addAnsweredPoll(anspoll);
+          })
+          Inde.Answer.create({
+          }).then(function(answer){
+            Inde.PossibleOption.findById(getRandomInt(8,12)).then(function(possopt) {
+              answer.setPossibleOption(possopt);
+            })
+            Inde.Question.findById(1).then(function(question) {
+              question.addAnswer(answer);
+            })
+            anspoll.addAnswer(answer);
+          });
+          Inde.Answer.create({
+            number_value: 5
+          }).then(function(answer){
+            Inde.Question.findById(4).then(function(question) {
+              question.addAnswer(answer);
+            })
+            anspoll.addAnswer(answer);
+          });
+          Inde.AnsweredPoll.create({}).then(function(anspoll) {
+            Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+              user.addAnsweredPoll(anspoll);
+            })
+            Inde.Poll.findById(3).then(function(poll) {
+              poll.addAnsweredPoll(anspoll);
+            })
+            Inde.Answer.create({
+            }).then(function(answer){
+              Inde.PossibleOption.findById(getRandomInt(13,17)).then(function(possopt) {
+                answer.setPossibleOption(possopt);
+              })
+              Inde.Question.findById(1).then(function(question) {
+                question.addAnswer(answer);
+              })
+              anspoll.addAnswer(answer);
+            });
+            Inde.Answer.create({
+              number_value: 5
+            }).then(function(answer){
+              Inde.Question.findById(4).then(function(question) {
+                question.addAnswer(answer);
+              })
+              anspoll.addAnswer(answer);
+            });
+            Inde.Answer.create({
+              string_value: 'Buenísima la música'
+            }).then(function(answer){
+              Inde.Question.findById(4).then(function(question) {
+                question.addAnswer(answer);
+              })
+              anspoll.addAnswer(answer);
+            });
+            Inde.AnsweredPoll.create({}).then(function(anspoll) {
+              Inde.User.findById(getRandomInt(1,3)).then(function(user) {
+                user.addAnsweredPoll(anspoll);
+              })
+              Inde.Poll.findById(3).then(function(poll) {
+                poll.addAnsweredPoll(anspoll);
+              })
+              Inde.Answer.create({
+              }).then(function(answer){
+                Inde.PossibleOption.findById(getRandomInt(13,17)).then(function(possopt) {
+                  answer.setPossibleOption(possopt);
+                })
+                Inde.Question.findById(1).then(function(question) {
+                  question.addAnswer(answer);
+                })
+                anspoll.addAnswer(answer);
+              });
+              Inde.Answer.create({
+                number_value: 2
+              }).then(function(answer){
+                Inde.Question.findById(4).then(function(question) {
+                  question.addAnswer(answer);
+                })
+                anspoll.addAnswer(answer);
+              });
+              Inde.Answer.create({
+                string_value: 'Odié la decoración del lugar'
+              }).then(function(answer){
+                Inde.Question.findById(4).then(function(question) {
+                  question.addAnswer(answer);
+                })
+                anspoll.addAnswer(answer);
+              });
+            })
+          })
+        })
+      })
+    })
+  })
 }
 
 function getRandomInt(min, max) {

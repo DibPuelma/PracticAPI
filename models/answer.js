@@ -7,7 +7,9 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
     classMethods: {
       associate: function(models) {
-        Answer.hasOne(models.PosibleOption);
+        Answer.belongsTo(models.PossibleOption);
+        Answer.belongsTo(models.Question);
+        Answer.belongsTo(models.AnsweredPoll);
       }
     }
   });

@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Question.hasOne(models.OptionsContainer);
         Question.hasMany(models.Answer);
+        Question.belongsToMany(models.Poll, {through: 'PollQuestion'});
       }
     }
   });
