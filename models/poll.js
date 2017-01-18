@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         Poll.belongsToMany(models.Question, {through: 'PollQuestions'});
-        // Poll.belongsTo(models.Company);
-        // Poll.belongsTo(models.SellPoint);
+        Poll.belongsTo(models.Company);
+        Poll.hasMany(models.SellPoint);
         Poll.hasMany(models.AnsweredPoll);
       }
     }

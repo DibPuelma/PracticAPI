@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
         Company.hasMany(models.Employee);
         Company.hasMany(models.Contest);
         Company.hasMany(models.SellPoint);
-        //Company.hasMany(models.Poll);
+        Company.hasMany(models.Poll);
       }
     }
   });

@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         AnsweredPoll.belongsTo(models.User);
-        AnsweredPoll.hasOne(models.Employee);
-        AnsweredPoll.hasOne(models.SellPoint);
+        AnsweredPoll.belongsTo(models.Employee);
+        AnsweredPoll.belongsTo(models.SellPoint);
         AnsweredPoll.hasMany(models.Answer);
         AnsweredPoll.belongsTo(models.Poll);
       }

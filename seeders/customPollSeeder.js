@@ -9,16 +9,223 @@ var optionsObjectColor = [];
 var optionsObjectMusic = [];
 var users = [];
 
+var users_data = [
+  {
+    email         : 'user1@abc.net',
+    first_name    : 'User1',
+    last_name     : 'LastName1',
+    birthdate     : '1990-01-01',
+    gender        : 'm',
+    facebook_id   : '',
+    facebook_token: '',
+    password      : '123',
+    reset_hash    : '',
+    status        : 'active'
+  }, {
+    email         : 'user2@abc.net',
+    first_name    : 'User2',
+    last_name     : 'LastName2',
+    birthdate     : '1990-01-01',
+    gender        : 'm',
+    facebook_id   : '',
+    facebook_token: '',
+    password      : '123',
+    reset_hash    : '',
+    status        : 'active'
+  }, {
+    email         : 'user3@abc.net',
+    first_name    : 'User3',
+    last_name     : 'LastName3',
+    birthdate     : '1990-01-01',
+    gender        : 'm',
+    facebook_id   : '',
+    facebook_token: '',
+    password      : '123',
+    reset_hash    : '',
+    status        : 'active'
+  }
+];
+
+var companies_data = [
+  {
+    name: 'Company1',
+    email: 'company1@abc.com'
+  }, {
+    name: 'Company2',
+    email: 'company2@abc.com'
+  }
+];
+
+var employees_data = [
+  {
+    company: 'Company1',
+    sellpoint: 'Local1',
+    info: {
+      name      : 'Employee1',
+      last_name : 'E',
+      picture   : ''
+    }
+  }, {
+    company: 'Company1',
+    sellpoint: 'Local2',
+    info: {
+      name      : 'Employee2',
+      last_name : 'E',
+      picture   : ''
+    }
+  }, {
+    company: 'Company2',
+    sellpoint: 'Local Norte',
+    info: {
+      name      : 'Empleado1',
+      last_name : 'E',
+      picture   : ''
+    }
+  }, {
+    company: 'Company2',
+    sellpoint: 'Local Norte',
+    info: {
+      name      : 'Empleado2',
+      last_name : 'E',
+      picture   : ''
+    }
+  }, {
+    company: 'Company2',
+    sellpoint: 'Local Sur',
+    info: {
+      name      : 'Empleado3',
+      last_name : 'E',
+      picture   : ''
+    }
+  }
+];
+
+
+var sellpoints_data = [
+  {
+    company: 'Company1',
+    info: {
+      location : 'Local1'
+    }
+  }, {
+    company: 'Company1',
+    info: {
+      location : 'Local2'
+    }
+  }, {
+    company: 'Company2',
+    info: {
+      location : 'Local Norte'
+    }
+  }, {
+    company: 'Company2',
+    info: {
+      location : 'Local Sur'
+    }
+  }
+];
+
+var qr_data = [
+  {
+    info: { code: 'code1' },
+    sellpoint: 'Local1'
+  }, {
+    info: { code: 'code2' },
+    sellpoint: 'Local2'
+  }, {
+    info: { code: 'code3' },
+    sellpoint: 'Local Norte'
+  }, {
+    info: { code: 'code4' },
+    sellpoint: 'Local Sur'
+  }
+]
+
+var cur = new Date()
+var after30days = cur.setDate(cur.getDate() + 30);
+var contest_data = [
+  {
+    company: 'Company1',
+    info: {
+      name      : 'Contest 1',
+      draw_date : after30days,
+      start_date: cur
+    }
+  }, {
+    company: 'Company2',
+    info: {
+      name      : 'Concurso 1',
+      draw_date : after30days,
+      start_date: cur
+    }
+  }, {
+    company: 'Company2',
+    info: {
+      name      : 'Concurso 2',
+      draw_date : after30days,
+      start_date: cur
+    }
+  }
+]
+
+var prize_data = [
+  {
+    contest: 'Contest 1',
+    info: {
+      name       : '100 Oro',
+      description: 'Oro de parte del rey'
+    }
+  }, {
+    contest: 'Contest 1',
+    info: {
+      name       : '200 Oro',
+      description: 'Oro de parte del rey'
+    }
+  }, {
+    contest: 'Contest 1',
+    info: {
+      name       : '300 Oro',
+      description: 'Oro de parte del rey'
+    }
+  }, {
+    contest: 'Concurso 1',
+    info: {
+      name       : 'Espada de Fuego',
+      description: 'Legendaria espada encontrada en el bosque'
+    }
+  }, {
+    contest: 'Concurso 2',
+    info: {
+      name       : 'Mouse Gamer',
+      description: 'Legendario mouse encontrado en el bosque'
+    }
+  }
+]
+
 var dropTables = function() {
-  Inde.OptionsContainerPossibleOptions.drop().then(function() {
-    Inde.Answer.drop().then(function() {
-      Inde.PossibleOption.drop().then(function() {
-        Inde.OptionsContainer.drop().then(function() {
-          Inde.Question.drop().then(function() {
-            Inde.AnsweredPoll.drop().then(function() {
-              Inde.User.drop().then(function() {
-                Inde.Poll.drop().then(function() {
-                  createTables();
+  Inde.PollQuestion.drop().then(function() {
+    Inde.OptionsContainerPossibleOptions.drop().then(function() {
+      Inde.Answer.drop().then(function() {
+        Inde.PossibleOption.drop().then(function() {
+          Inde.OptionsContainer.drop().then(function() {
+            Inde.Question.drop().then(function() {
+              Inde.AnsweredPoll.drop().then(function() {
+                Inde.User.drop().then(function() {
+                  Inde.Employee.drop().then(function() {
+                    Inde.QR.drop().then(function() {
+                      Inde.SellPoint.drop().then(function() {
+                        Inde.Poll.drop().then(function() {
+                          Inde.Prize.drop().then(function() {
+                            Inde.Contest.drop().then(function() {
+                              Inde.Company.drop().then(function() {
+                                createTables();
+                              })
+                            })
+                          })
+                        })
+                      })
+                    })
+                  })
                 })
               })
             })
@@ -32,15 +239,29 @@ dropTables();
 
 
 var createTables = function() {
-  Inde.Poll.sync().then(function() {
-    Inde.User.sync().then(function() {
-      Inde.AnsweredPoll.sync().then(function() {
-        Inde.Question.sync().then(function() {
-          Inde.OptionsContainer.sync().then(function() {
-            Inde.PossibleOption.sync().then(function() {
-              Inde.Answer.sync().then(function() {
-                Inde.OptionsContainerPossibleOptions.sync().then(function() {
-                  createUsers();
+  Inde.Company.sync().then(function() {
+    Inde.Contest.sync().then(function() {
+      Inde.Prize.sync().then(function() {
+        Inde.Poll.sync().then(function() {
+          Inde.SellPoint.sync().then(function() {
+            Inde.QR.sync().then(function() {
+              Inde.Employee.sync().then(function() {
+                Inde.User.sync().then(function() {
+                  Inde.AnsweredPoll.sync().then(function() {
+                    Inde.Question.sync().then(function() {
+                      Inde.OptionsContainer.sync().then(function() {
+                        Inde.PossibleOption.sync().then(function() {
+                          Inde.Answer.sync().then(function() {
+                            Inde.OptionsContainerPossibleOptions.sync().then(function() {
+                              Inde.PollQuestion.sync().then(function() {
+                                createFranco();
+                              })
+                            })
+                          })
+                        })
+                      })
+                    })
+                  })
                 })
               })
             })
@@ -49,6 +270,163 @@ var createTables = function() {
       })
     })
   })
+}
+
+var createFranco = function() {
+  console.log("PART 1 - COMPANY & USER #############################");
+
+  // Users
+  user_and_companies_promises = [];
+  users_data.forEach(function(data) {
+    var user = Inde.User.build(data)
+
+    var p = user.save().then(function() {
+      console.log("User saved: " + data.email);
+    }).catch(function(error) {
+      console.log("Error: " + error);
+    });
+
+    user_and_companies_promises.push(p);
+  });
+
+  // Companies
+  companies_data.forEach(function(data) {
+    var company = Inde.Company.build(data)
+
+    var p = company.save().then(function() {
+      console.log("Company saved: " + company.name);
+    }).catch(function(error) {
+      console.log("Error: " + error);
+    });
+
+    user_and_companies_promises.push(p);
+  });
+
+
+  Promise.all(user_and_companies_promises).then(function() {
+    console.log("PART 2 - OTHER MODELS #############################");
+    other_models_promises = [];
+
+    // Employees
+    employees_data.forEach(function(data) {
+      var employee = Inde.Employee.build(data.info)
+
+      Inde.Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = employee.save().then(function() {
+          employee.setCompany(company);
+          console.log("Employee saved: " + data.info.name);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // SellPoints
+    sellpoints_data.forEach(function(data) {
+      var sellpoint = Inde.SellPoint.build(data.info);
+
+      Inde.Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = sellpoint.save().then(function() {
+          sellpoint.setCompany(company);
+          console.log("SellPoint saved: " + data.info.location);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // QRs
+    qr_data.forEach(function(data) {
+      var qr = Inde.QR.build(data.info);
+
+      var p = qr.save().then(function() {
+        console.log("QR saved: " + data.info.code);
+      }).catch(function(error) {
+        console.log("Error: " + error);
+      });
+      other_models_promises.push(p);
+    });
+
+    // Contests
+    contest_data.forEach(function(data) {
+      var contest = Inde.Contest.build(data.info);
+      Inde.Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = contest.save().then(function() {
+          contest.setCompany(company);
+          console.log("Contest saved: " + data.info.name);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // Prizes
+    prize_data.forEach(function(data) {
+      var prize = Inde.Prize.build(data.info);
+
+      var p = prize.save().then(function() {
+        console.log("Prize saved: " + data.info.name);
+      }).catch(function(error) {
+        console.log("Error: " + error);
+      });
+      other_models_promises.push(p);
+    });
+
+    Promise.all(other_models_promises).then(function() {
+      console.log("PART 3 - ASSIGN #############################");
+      // Assign employees to sellpoints
+      employees_data.forEach(function(data) {
+        Inde.Employee.findOne({
+          where: { name: data.info.name}
+        }).then(function (employee) {
+          Inde.SellPoint.findOne({
+            where: { location: data.sellpoint }
+          }).then(function(sellpoint) {
+            employee.setSellPoint(sellpoint);
+            console.log("Employee updated");
+          });
+        });
+      });
+
+      // Assign qr to sellpoints
+      qr_data.forEach(function(data) {
+        QR.findOne({
+          where: { code: data.info.code}
+        }).then(function (qr) {
+          Inde.SellPoint.findOne({
+            where: { location: data.sellpoint }
+          }).then(function(sellpoint) {
+            qr.setSellPoint(sellpoint);
+            console.log("QR updated");
+          });
+        });
+      });
+
+      // Assign prizes to contest
+      prize_data.forEach(function(data) {
+        Inde.Prize.findOne({
+          where: { name: data.info.name}
+        }).then(function (prize) {
+          Inde.Contest.findOne({
+            where: { name: data.contest }
+          }).then(function(contest) {
+            prize.setContest(contest);
+            console.log("Prize updated");
+          });
+        });
+      });
+    });
+    createOptions();
+  });
 }
 
 
@@ -183,6 +561,15 @@ var createPolls = function() {
     Inde.Question.findById(4).then(function(question) {
       poll.addQuestion(question);
     })
+    Inde.Company.findById(1).then(function(company) {
+      poll.setCompany(company);
+    })
+    Inde.SellPoint.findById(1).then(function(sellPoint) {
+      sellPoint.setPoll(poll);
+    })
+    Inde.SellPoint.findById(2).then(function(sellPoint) {
+      sellPoint.setPoll(poll);
+    })
     Inde.Poll.create({
       name: "Encuesta de colores",
       description: "Queremos saber los colores favoritos de la gente"
@@ -192,6 +579,15 @@ var createPolls = function() {
       })
       Inde.Question.findById(5).then(function(question) {
         poll.addQuestion(question);
+      })
+      Inde.Company.findById(2).then(function(company) {
+        poll.setCompany(company);
+      })
+      Inde.SellPoint.findById(3).then(function(sellPoint) {
+        sellPoint.setPoll(poll);
+      })
+      Inde.SellPoint.findById(4).then(function(sellPoint) {
+        sellPoint.setPoll(poll);
       })
       Inde.Poll.create({
         name: "Encuesta de música",
@@ -205,6 +601,15 @@ var createPolls = function() {
         })
         Inde.Question.findById(5).then(function(question) {
           poll.addQuestion(question);
+        })
+        Inde.Company.findById(2).then(function(company) {
+          poll.setCompany(company);
+        })
+        Inde.SellPoint.findById(3).then(function(sellPoint) {
+          sellPoint.setPoll(poll);
+        })
+        Inde.SellPoint.findById(4).then(function(sellPoint) {
+          sellPoint.setPoll(poll);
         })
         createAnsweredPolls();
       });
@@ -220,6 +625,10 @@ var createAnsweredPolls = function () {
     })
     Inde.Poll.findById(1).then(function(poll) {
       poll.addAnsweredPoll(anspoll);
+      anspoll.setSellPoint(poll.getSellPoints()[0]);
+    })
+    Inde.Employee.findById(getRandomInt(1,2)).then(function(employee) {
+      anspoll.setEmployee(employee);
     })
     Inde.Answer.create({
     }).then(function(answer){
@@ -245,6 +654,10 @@ var createAnsweredPolls = function () {
       })
       Inde.Poll.findById(1).then(function(poll) {
         poll.addAnsweredPoll(anspoll);
+        anspoll.setSellPoint(poll.getSellPoints()[0]);
+      })
+      Inde.Employee.findById(getRandomInt(1,2)).then(function(employee) {
+        anspoll.setEmployee(employee);
       })
       Inde.Answer.create({
       }).then(function(answer){
@@ -270,6 +683,10 @@ var createAnsweredPolls = function () {
         })
         Inde.Poll.findById(2).then(function(poll) {
           poll.addAnsweredPoll(anspoll);
+          anspoll.setSellPoint(poll.getSellPoints()[0]);
+        })
+        Inde.Employee.findById(getRandomInt(3,5)).then(function(employee) {
+          anspoll.setEmployee(employee);
         })
         Inde.Answer.create({
         }).then(function(answer){
@@ -295,6 +712,10 @@ var createAnsweredPolls = function () {
           })
           Inde.Poll.findById(2).then(function(poll) {
             poll.addAnsweredPoll(anspoll);
+            anspoll.setSellPoint(poll.getSellPoints()[0]);
+          })
+          Inde.Employee.findById(getRandomInt(3,5)).then(function(employee) {
+            anspoll.setEmployee(employee);
           })
           Inde.Answer.create({
           }).then(function(answer){
@@ -320,6 +741,10 @@ var createAnsweredPolls = function () {
             })
             Inde.Poll.findById(3).then(function(poll) {
               poll.addAnsweredPoll(anspoll);
+              anspoll.setSellPoint(poll.getSellPoints()[0]);
+            })
+            Inde.Employee.findById(getRandomInt(3,5)).then(function(employee) {
+              anspoll.setEmployee(employee);
             })
             Inde.Answer.create({
             }).then(function(answer){
@@ -353,6 +778,10 @@ var createAnsweredPolls = function () {
               })
               Inde.Poll.findById(3).then(function(poll) {
                 poll.addAnsweredPoll(anspoll);
+                anspoll.setSellPoint(poll.getSellPoints()[0]);
+              })
+              Inde.Employee.findById(getRandomInt(3,5)).then(function(employee) {
+                anspoll.setEmployee(employee);
               })
               Inde.Answer.create({
               }).then(function(answer){

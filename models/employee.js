@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Employee.belongsTo(models.Company);
         Employee.belongsTo(models.SellPoint);
-        // Employee.hasMany(models.Answer);
+        Employee.hasMany(models.AnsweredPoll);
       }
     }
   });
