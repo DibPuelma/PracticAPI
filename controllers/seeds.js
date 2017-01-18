@@ -18,16 +18,21 @@ router.get('/sync', function(req, res) {
   res.send('Done!');
 });
 
-router.get('/create1', function(req, res) {
+router.get('/create', function(req, res) {
+  console.log("PART 1 - COMPANY & USER #############################");
+
   // Users
+  user_and_companies_promises = [];
   users_data.forEach(function(data) {
     var user = User.build(data)
 
-    user.save().then(function() {
+    var p = user.save().then(function() {
       console.log("User saved: " + data.email);
     }).catch(function(error) {
       console.log("Error: " + error);
     });
+
+    user_and_companies_promises.push(p);
   });
 
   // Companies
@@ -35,155 +40,153 @@ router.get('/create1', function(req, res) {
   companies_data.forEach(function(data) {
     var company = Company.build(data)
 
-    company.save().then(function() {
+    var p = company.save().then(function() {
       console.log("Company saved: " + company.name);
     }).catch(function(error) {
       console.log("Error: " + error);
     });
+
+    user_and_companies_promises.push(p);
+  });
+
+
+  Promise.all(user_and_companies_promises).then(function() {
+    console.log("PART 2 - OTHER MODELS #############################");
+    other_models_promises = [];
+
+    // Employees
+    Employee.destroy({where: {}}).then(function () {console.log("Clean employees table")});
+    employees_data.forEach(function(data) {
+      var employee = Employee.build(data.info)
+      
+      Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = employee.save().then(function() {
+          employee.setCompany(company);
+          console.log("Employee saved: " + data.info.name);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // SellPoints
+    SellPoint.destroy({where: {}}).then(function () {console.log("Clean sellpoint table")});
+    sellpoints_data.forEach(function(data) {
+      var sellpoint = SellPoint.build(data.info);
+      
+      Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = sellpoint.save().then(function() {
+          sellpoint.setCompany(company);
+          console.log("SellPoint saved: " + data.info.name);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // QRs
+    QR.destroy({where: {}}).then(function () {console.log("Clean QRs table")});
+    qr_data.forEach(function(data) {
+      var qr = QR.build(data.info);
+
+      var p = qr.save().then(function() {
+        console.log("QR saved: " + data.info.code);
+      }).catch(function(error) {
+        console.log("Error: " + error);
+      });
+      other_models_promises.push(p);
+    });
+
+    // Contests
+    Contest.destroy({where: {}}).then(function () {console.log("Clean Contest table")});
+    contest_data.forEach(function(data) {
+      var contest = Contest.build(data.info);
+
+      Company.findOne({
+        where: { name: data.company }
+      }).then(function(company) {
+        var p = contest.save().then(function() {
+          contest.setCompany(company);
+          console.log("Contest saved: " + data.info.name);
+        }).catch(function(error) {
+          console.log("Error: " + error);
+        });
+        other_models_promises.push(p);
+      });
+    });
+
+    // Prizes
+    Prize.destroy({where: {}}).then(function () {console.log("Clean Prize table")});
+    prize_data.forEach(function(data) {
+      var prize = Prize.build(data.info);
+
+      var p = prize.save().then(function() {
+        console.log("Prize saved: " + data.info.name);
+      }).catch(function(error) {
+        console.log("Error: " + error);
+      });
+      other_models_promises.push(p);
+    });
+
+    Promise.all(other_models_promises).then(function() {
+      console.log("PART 3 - ASSIGN #############################");
+      // Assign employees to sellpoints
+      employees_data.forEach(function(data) {
+        Employee.findOne({
+          where: { name: data.info.name}
+        }).then(function (employee) {
+          SellPoint.findOne({
+            where: { location: data.sellpoint }
+          }).then(function(sellpoint) {
+            employee.setSellPoint(sellpoint);
+            console.log("Employee updated");
+          });
+        });
+      });
+
+      // Assign qr to sellpoints
+      qr_data.forEach(function(data) {
+        QR.findOne({
+          where: { code: data.info.code}
+        }).then(function (qr) {
+          SellPoint.findOne({
+            where: { location: data.sellpoint }
+          }).then(function(sellpoint) {
+            qr.setSellPoint(sellpoint);
+            console.log("QR updated");
+          });
+        });
+      });
+
+      // Assign prizes to contest
+      prize_data.forEach(function(data) {
+        Prize.findOne({
+          where: { name: data.info.name}
+        }).then(function (prize) {
+          Contest.findOne({
+            where: { name: data.contest }
+          }).then(function(contest) {
+            prize.setContest(contest);
+            console.log("Prize updated");
+          });
+        });
+      });
+
+    });
   });
 
   res.send('Done!');
-});
-
-router.get('/create2', function(req, res) {
-  // Employees
-  Employee.destroy({where: {}}).then(function () {console.log("Clean employees table")});
-  employees_data.forEach(function(data) {
-    var employee = Employee.build(data.info)
-    
-    Company.findOne({
-      where: { name: data.company }
-    }).then(function(company) {
-      employee.save().then(function() {
-        employee.setCompany(company);
-        console.log("Employee saved: " + data.info.name);
-      }).catch(function(error) {
-        console.log("Error: " + error);
-      });
-    });
-  });
-
-  // SellPoints
-  SellPoint.destroy({where: {}}).then(function () {console.log("Clean sellpoint table")});
-  sellpoints_data.forEach(function(data) {
-    var sellpoint = SellPoint.build(data.info);
-    
-    Company.findOne({
-      where: { name: data.company }
-    }).then(function(company) {
-      sellpoint.save().then(function() {
-        sellpoint.setCompany(company);
-        console.log("SellPoint saved: " + data.info.name);
-      }).catch(function(error) {
-        console.log("Error: " + error);
-      });
-    });
-  });
-
-  // QRs
-  QR.destroy({where: {}}).then(function () {console.log("Clean QRs table")});
-  qr_data.forEach(function(data) {
-    var qr = QR.build(data.info);
-
-    qr.save().then(function() {
-      console.log("QR saved: " + data.info.code);
-    }).catch(function(error) {
-      console.log("Error: " + error);
-    });
-  });
-
-  // Contests
-  Contest.destroy({where: {}}).then(function () {console.log("Clean Contest table")});
-  contest_data.forEach(function(data) {
-    var contest = Contest.build(data.info);
-
-    Company.findOne({
-      where: { name: data.company }
-    }).then(function(company) {
-      contest.save().then(function() {
-        contest.setCompany(company);
-        console.log("Contest saved: " + data.info.name);
-      }).catch(function(error) {
-        console.log("Error: " + error);
-      });
-    });
-  });
-
-  // Prizes
-  Prize.destroy({where: {}}).then(function () {console.log("Clean Prize table")});
-  prize_data.forEach(function(data) {
-    var prize = Prize.build(data.info);
-
-    prize.save().then(function() {
-      console.log("Prize saved: " + data.info.name);
-    }).catch(function(error) {
-      console.log("Error: " + error);
-    });
-  });
-
-  res.send('Done!');
-});
-
-router.get('/connect', function(req, res) {
-  // Assign employees to sellpoints
-  employees_data.forEach(function(data) {
-    Employee.findOne({
-      where: { name: data.info.name}
-    }).then(function (employee) {
-      SellPoint.findOne({
-        where: { location: data.sellpoint }
-      }).then(function(sellpoint) {
-        employee.setSellPoint(sellpoint);
-        console.log("Employee updated");
-      });
-    });
-  });
-
-  // Assign qr to sellpoints
-  qr_data.forEach(function(data) {
-    QR.findOne({
-      where: { name: data.info.code}
-    }).then(function (qr) {
-      SellPoint.findOne({
-        where: { location: data.sellpoint }
-      }).then(function(sellpoint) {
-        qr.setSellpoint(sellpoint);
-        console.log("QR updated");
-      });
-    });
-  });
-
-  // Assign prizes to contest
-  prize_data.forEach(function(data) {
-    Prize.findOne({
-      where: { name: data.info.name}
-    }).then(function (prize) {
-      Contest.findOne({
-        where: { name: data.contest }
-      }).then(function(contest) {
-        prize.setContest(contest);
-        console.log("Prize updated");
-      });
-    });
-  });
-
-  res.send('Connect!');
 });
 
 router.get('/hello', function(req, res) {
   res.send('Hello world!');
 });
-
-router.get('/test', function(req, res) {
-  Employee.findOne({
-    where: {name: employees_data[0].info.name}
-  }).then(function(employee) {
-    console.log(employee.company);
-  });
-  res.send('Done!');
-});
-
-
 
 module.exports = router;
 
