@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 
-router.use('/users', require('./users'));
-router.use('/seeds', require('./seeds'));
+// router.use('/users', require('./users'));
+// router.use('/seeds', require('./seeds'));
 
 module.exports = router;
