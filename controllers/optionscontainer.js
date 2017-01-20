@@ -15,7 +15,6 @@ module.exports = {
             optcont.addPossibleOption(option);
           })
           .catch((error) => {
-            console.log("error no");
             res.status(500).json(error);
           })
           promises.push(setCreateOption);
@@ -28,7 +27,6 @@ module.exports = {
             optcont.addPossibleOption(option);
           })
           .catch((error) => {
-            console.log("error eo");
             res.status(500).json(error);
           })
           promises.push(getOption);
@@ -58,9 +56,12 @@ module.exports = {
     })
   },
   update(req, res) {
-    OptCont.findById(req.params.id)
+    var promises = []
+    var newOptCont;
+    var findOptCont = OptCont.findById(req.params.id, {include: PossibleOption})
     .then((optcont) => {
       var updateOptCont = optcont.update({name: req.body.name, allow_other: req.body.allow_other})
+      promises.push(updateOptCont);
       if(req.body.newOptions.length > 0){
         req.body.newOptions.map((option) => {
           var setCreateOption = PossibleOption.create(option)
@@ -68,7 +69,6 @@ module.exports = {
             optcont.addPossibleOption(option);
           })
           .catch((error) => {
-            console.log("error no");
             res.status(500).json(error);
           })
           promises.push(setCreateOption);
@@ -81,21 +81,20 @@ module.exports = {
             optcont.addPossibleOption(option);
           })
           .catch((error) => {
-            console.log("error eo");
             res.status(500).json(error);
           })
           promises.push(getOption);
         })
       }
-      res.status(200).json(optcont);
+      newOptCont = optcont;
     })
     .catch(function(error) {
-      console.log("error upd");
       res.status(500).json(error);
     })
-    promises.push(updateOptCont);
+    promises.push(findOptCont);
     Promise.all(promises)
     .then(() => {
+      console.log(newOptCont);
       res.status(200).json(newOptCont);
     })
     .catch((error) => {
@@ -112,12 +111,12 @@ module.exports = {
     })
   },
   removeCurrentOption(req, res) {
-    OptCont.findById(req.params.optcont_id, {include: PossibleOption})
+    OptCont.findById(req.params.optcont_id)
     .then((optcont) => {
       PossibleOption.findById(req.params.possopt_id)
       .then((possopt) => {
         optcont.removePossibleOption(possopt)
-          res.status(200).json(optcont);
+        res.status(200).json(possopt);
       })
       .catch(function(error) {
         console.log(error);

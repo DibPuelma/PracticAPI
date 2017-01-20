@@ -399,7 +399,7 @@ var createFranco = function() {
 
       // Assign qr to sellpoints
       qr_data.forEach(function(data) {
-        QR.findOne({
+        Inde.QR.findOne({
           where: { code: data.info.code}
         }).then(function (qr) {
           Inde.SellPoint.findOne({

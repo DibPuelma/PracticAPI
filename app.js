@@ -4,6 +4,10 @@ var bodyParser = require('body-parser');
 var poll = require('./controllers/poll.js');
 var question = require('./controllers/question.js');
 var optcont = require('./controllers/optionscontainer.js');
+var possopt = require('./controllers/possibleoption.js');
+var answeredpoll = require('./controllers/answeredpoll.js');
+var answer = require('./controllers/answer.js');
+
 
 // app.use(require('./controllers'));
 app.use(bodyParser.json());
@@ -28,6 +32,21 @@ app.get('/optcont/:id', optcont.show);
 app.delete('/optcont/:id', optcont.delete);
 app.put('/optcont/:id', optcont.update);
 app.delete('/optcont/:optcont_id/possopt/:possopt_id', optcont.removeCurrentOption);
+
+//Opciones
+app.post('/possopt', possopt.create);
+app.get('/possopt/:id', possopt.show);
+app.delete('/possopt/:id', possopt.delete);
+app.put('/possopt/:id', possopt.update);
+
+//Encuestas Contestadas
+app.post('/answeredpoll', answeredpoll.create);
+app.get('/answeredpoll/:id', answeredpoll.show);
+app.delete('/answeredpoll/:id', answeredpoll.delete);
+
+//Preguntas
+app.get('/answer/:id', answer.show);
+
 
 
 // var models = require('./models/');
