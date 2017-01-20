@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         OptionsContainer.belongsToMany(models.PossibleOption, {through: 'OptionsContainerPossibleOptions'});
-        OptionsContainer.belongsTo(models.Question);
+        OptionsContainer.hasMany(models.Question);
       }
     }
   });

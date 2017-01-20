@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         Poll.belongsTo(models.Company);
         Poll.hasMany(models.SellPoint);
         Poll.hasMany(models.AnsweredPoll);
+        Poll.hasOne(models.SellPoint, {as: 'activeSellPoint'});
       }
     }
   });

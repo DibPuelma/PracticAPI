@@ -207,8 +207,8 @@ var dropTables = function() {
     Inde.OptionsContainerPossibleOptions.drop().then(function() {
       Inde.Answer.drop().then(function() {
         Inde.PossibleOption.drop().then(function() {
-          Inde.OptionsContainer.drop().then(function() {
-            Inde.Question.drop().then(function() {
+          Inde.Question.drop().then(function() {
+            Inde.OptionsContainer.drop().then(function() {
               Inde.AnsweredPoll.drop().then(function() {
                 Inde.User.drop().then(function() {
                   Inde.Employee.drop().then(function() {
@@ -248,8 +248,8 @@ var createTables = function() {
               Inde.Employee.sync().then(function() {
                 Inde.User.sync().then(function() {
                   Inde.AnsweredPoll.sync().then(function() {
-                    Inde.Question.sync().then(function() {
-                      Inde.OptionsContainer.sync().then(function() {
+                    Inde.OptionsContainer.sync().then(function() {
+                      Inde.Question.sync().then(function() {
                         Inde.PossibleOption.sync().then(function() {
                           Inde.Answer.sync().then(function() {
                             Inde.OptionsContainerPossibleOptions.sync().then(function() {
