@@ -8,11 +8,11 @@ var schema = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
-  'drawDate': {
+  'draw_date': {
     notEmpty: true,
     isDate: {}
   },
-  'startDate': {
+  'start_date': {
     notEmpty: true,
     isDate: {}
   }
@@ -24,11 +24,11 @@ var schemaUpdate = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
-  'drawDate': {
+  'draw_date': {
     optional: true,
     toDate: true
   },
-  'startDate': {
+  'start_date': {
     optional: true,
     toDate: true
   }
