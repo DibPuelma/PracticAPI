@@ -55,6 +55,18 @@ app.post('/company/:companyId/contest/:contestId/prize',       Prize.create);
 app.put('/company/:companyId/contest/:contestId/prize/:id',    Prize.update);
 app.delete('/company/:companyId/contest/:contestId/prize/:id', Prize.delete);
 
+/*
+var models = require('./models/');
+models.sequelize
+  .authenticate()
+  .then(function () {
+    console.log('Connection successful');
+  })
+  .catch(function(error) {
+    console.log("Error creating connection:", error);
+  });
+*/
+
 app.listen(3000, function() {
   console.log('Listening on port 3000...')
 });
