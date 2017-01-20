@@ -1,4 +1,5 @@
-var User = require('../models/user.js');
+var util = require('util');
+var User = require('../models/').User;
 
 var schema = {
   'email': {
@@ -6,12 +7,12 @@ var schema = {
     isEmail: true,
     errorMessage: 'Invalid email'
   },
-  'firstName': {
+  'first_name': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid first name'
   },
-  'lastName': {
+  'last_name': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
@@ -22,21 +23,21 @@ var schema = {
   },
   'gender': {
     notEmpty: true,
-    isIn: { values: ['m', 'f', 'o'] },
+    isIn: { options: [['m', 'f', 'o']] },
     errorMessage: 'Invalid gender'
   },
-  'facebookId': {
+  'facebook_id': {
     optional: true,
     errorMessage: 'Invalid facebook id'
   },
-  'facebookToken': {
+  'facebook_token': {
     optional: true,
     errorMessage: 'Invalid facebook token'
   },
   'password': {
     notEmpty: true,
     isLength: { options: [{ min: 4, max: 30 }] },
-    errorMessage: 'Invalid facebook password'
+    errorMessage: 'Invalid password'
   }
 };
 
@@ -46,12 +47,12 @@ var schemaUpdate = {
     isEmail: true,
     errorMessage: 'Invalid email'
   },
-  'firstName': {
+  'first_name': {
     optional: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid first name'
   },
-  'lastName': {
+  'last_name': {
     optional: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
@@ -65,11 +66,11 @@ var schemaUpdate = {
     isIn: { values: ['m', 'f', 'o'] },
     errorMessage: 'Invalid gender'
   },
-  'facebookId': {
+  'facebook_id': {
     optional: true,
     errorMessage: 'Invalid facebook id'
   },
-  'facebookToken': {
+  'facebook_token': {
     optional: true,
     errorMessage: 'Invalid facebook token'
   },
@@ -81,12 +82,12 @@ var schemaUpdate = {
 };
 
 var filterParams = function(req) {
-  var keys = schema.keys();
+  var keys = Object.keys(schema);
 
   var data = {};
   for (var param in req.body)
     if (keys.indexOf(param) > -1) 
-      data[type] = req.body[param];
+      data[param] = req.body[param];
 
   return data;
 }
@@ -109,7 +110,8 @@ module.exports = {
   },
 
   create(req, res) {
-    req.checkParams(schema);
+    console.log(req.body);
+    req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -128,7 +130,7 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schemaUpdate);
+    req.checkBody(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -138,15 +140,12 @@ module.exports = {
 
       var data = filterParams(req);
 
-      User.update(data, {
-        where: {
-          id: req.params.id
-        }
-      }).then(function (updatedUser) {
-        res.status(200).json(updatedUser);
-      }).catch(function (error){
+      User.update(data, { where: {id: req.params.id}}).then(function(result) {
+        res.status(200).json(result);
+      }).catch(function(error) {
         res.status(500).json(error);
       });
+
     });
   },
 

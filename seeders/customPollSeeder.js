@@ -207,9 +207,9 @@ var dropTables = function() {
     Inde.OptionsContainerPossibleOptions.drop().then(function() {
       Inde.Answer.drop().then(function() {
         Inde.PossibleOption.drop().then(function() {
-          Inde.OptionsContainer.drop().then(function() {
-            Inde.Question.drop().then(function() {
+            Inde.OptionsContainer.drop().then(function() {
               Inde.AnsweredPoll.drop().then(function() {
+                Inde.Question.drop().then(function() {
                 Inde.User.drop().then(function() {
                   Inde.Employee.drop().then(function() {
                     Inde.QR.drop().then(function() {
@@ -399,7 +399,7 @@ var createFranco = function() {
 
       // Assign qr to sellpoints
       qr_data.forEach(function(data) {
-        QR.findOne({
+        Inde.QR.findOne({
           where: { code: data.info.code}
         }).then(function (qr) {
           Inde.SellPoint.findOne({

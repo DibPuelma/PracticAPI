@@ -1,5 +1,6 @@
-var Company  = require('../models/company.js');
-var Employee = require('../models/contest.js');
+var util = require('util');
+var Company  = require('../models/').Company;
+var Employee = require('../models/').Employee;
 
 var schema = {
   'name': {
@@ -36,27 +37,23 @@ var schemaUpdate = {
 };
 
 var filterParams = function(req) {
-  var keys = schema.keys();
+  var keys = Object.keys(schema);
 
   var data = {};
   for (var param in req.body)
     if (keys.indexOf(param) > -1) 
-      data[type] = req.body[param];
+      data[param] = req.body[param];
 
   return data;
 }
 
 module.exports = {
   index(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
-      Employee.findAll().then(function (employees) {
-        res.status(200).json(employees);
-      }).catch(function (error) {
-        res.status(500).json(error);
-      });
+    Employee.findAll({ where: { company_id: req.params.companyId } }).then(function (employees) {
+      res.status(200).json(employees);
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    });
   },
 
   show(req, res) {
@@ -72,7 +69,7 @@ module.exports = {
   },
 
   create(req, res) {
-    req.checkParams(schema);
+    req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -96,7 +93,7 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schemaUpdate);
+    req.checkBody(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -106,11 +103,7 @@ module.exports = {
       var data = filterParams(req);
 
       Company.findById(req.params.companyId).then(function (company) {
-        Employee.update(data, {
-          where: {
-            id: req.params.id
-          }
-        }).then(function (updatedEmployee) {
+        Employee.update(data, { where: { id: req.params.id } }).then(function (updatedEmployee) {
           res.status(200).json(updatedEmployee);
         }).catch(function (error) {
           res.status(500).json(error);

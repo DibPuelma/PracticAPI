@@ -1,6 +1,6 @@
-var Company = require('../models/company.js');
-var Contest = require('../models/contest.js');
-var Prize   = require('../models/prize.js');
+var util = require('util');
+var Contest = require('../models/').Contest;
+var Prize   = require('../models/').Prize;
 
 var schema = {
   'name': {
@@ -23,51 +23,39 @@ var schemaUpdate = {
 };
 
 var filterParams = function(req) {
-  var keys = schema.keys();
+  var keys = Object.keys(schema);
 
   var data = {};
   for (var param in req.body)
     if (keys.indexOf(param) > -1) 
-      data[type] = req.body[param];
+      data[param] = req.body[param];
 
   return data;
 }
 
 module.exports = {
   index(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
-      Contest.findById(req.params.companyId).then(function (contest) {
-        Prize.findAll().then(function (prizes) {
-            res.status(200).json(prizes);
-          }).catch(function (error) {
-            res.status(500).json(error);
-          });
-      }).catch(function (error) {
-        res.status(500).json(error);
-      }); 
+    Prize.findAll({ where: { contest_id: req.params.contestId } }).then(function (prizes) {
+      res.status(200).json(prizes);
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    });
   },
 
   show(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
-      Contest.findById(req.params.companyId).then(function (contest) {
-        Prize.findById(req.params.id).then(function (prize) {
-          res.status(200).json(prize);
-        }).catch(function (error){
-          res.status(500).json(error);
-        });
-      }).catch(function (error) {
+    Contest.findById(req.params.companyId).then(function (contest) {
+      Prize.findById(req.params.id).then(function (prize) {
+        res.status(200).json(prize);
+      }).catch(function (error){
         res.status(500).json(error);
-      }); 
+      });
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    }); 
   },
 
   create(req, res) {
-    req.checkParams(schema);
+    req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -76,20 +64,14 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
-        Contest.findById(req.params.companyId).then(function (contest) {
-          Prize.create(data).then(function (newPrize) {
-              newPrize.setCompany(company).then(function() {
-                newPrize.setContest(contest).then(function() {
-                  res.status(200).json(newPrize);
-                });
-              });
-            }).catch(function (error){
-              res.status(500).json(error);
+      Contest.findById(req.params.contestId).then(function (contest) {
+        Prize.create(data).then(function (newPrize) {
+            newPrize.setContest(contest).then(function() {
+              res.status(200).json(newPrize);
             });
-        }).catch(function (error) {
-          res.status(500).json(error);
-        }); 
+          }).catch(function (error){
+            res.status(500).json(error);
+          });
       }).catch(function (error) {
         res.status(500).json(error);
       });
@@ -97,7 +79,7 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schemaUpdate);
+    req.checkBody(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -106,44 +88,32 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
-        Contest.findById(req.params.companyId).then(function (contest) {
-          Prize.update(data, {
-            where: {
-              id: req.params.id
-            }
-          }).then(function (updatedPrize) {
-            res.status(200).json(updatedPrize);
-          }).catch(function (error){
-            res.status(500).json(error);
-          });
-        }).catch(function (error) {
-          res.status(500).json(error);
-        }); 
-      }).catch(function (error) {
-        res.status(500).json(error);
-      });
-    });
-  },
-
-  delete(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
-      Contest.findById(req.params.companyId).then(function (contest) {
-        Prize.destroy({
+      Contest.findById(req.params.contestId).then(function (contest) {
+        Prize.update(data, {
           where: {
             id: req.params.id
           }
-        }).then(function (deletedPrize) {
-          res.status(200).json(deletedPrize);
+        }).then(function (updatedPrize) {
+          res.status(200).json(updatedPrize);
         }).catch(function (error){
           res.status(500).json(error);
         });
       }).catch(function (error) {
         res.status(500).json(error);
       }); 
+    });
+  },
+
+  delete(req, res) {
+    Contest.findById(req.params.companyId).then(function (contest) {
+      Prize.destroy({ where: { id: req.params.id } }).then(function (deletedPrize) {
+        res.status(200).json(deletedPrize);
+      }).catch(function (error){
+        res.status(500).json(error);
+      });
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    }); 
   }
 };
 

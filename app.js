@@ -1,6 +1,11 @@
-var express    = require('express');
-var app        = express();
-var bodyParser = require('body-parser');
+var express          = require('express');
+var app              = express();
+var bodyParser       = require('body-parser');
+var expressValidator = require('express-validator');
+
+app.use(require('./controllers'));
+app.use(bodyParser.json());
+app.use(expressValidator([]));
 
 var User      = require('./controllers/user.js');
 var Company   = require('./controllers/company.js');
@@ -10,20 +15,17 @@ var Contest   = require('./controllers/contest.js');
 var QR        = require('./controllers/qr.js');
 var Prize     = require('./controllers/prize.js');
 
-app.use(require('./controllers'));
-app.use(bodyParser.json());
+app.get('/user',        User.index);
+app.get('/user/:id',    User.show);
+app.post('/user',       User.create);
+app.put('/user/:id',    User.update);
+app.delete('/user/:id', User.delete);
 
-app.get('/user',               User.index);
-app.get('/user/:id',           User.show);
-app.post('/user',              User.create);
-app.put('/user/:id/update',    User.update);
-app.delete('/user/:id/delete', User.delete);
-
-app.get('/company',               Company.index);
-app.get('/company/:id',           Company.show);
-app.post('/company',              Company.create);
-app.put('/company/:id/update',    Company.update);
-app.delete('/company/:id/delete', Company.delete);
+app.get('/company',        Company.index);
+app.get('/company/:id',    Company.show);
+app.post('/company',       Company.create);
+app.put('/company/:id',    Company.update);
+app.delete('/company/:id', Company.delete);
 
 app.get('/company/:companyId/employee',        Employee.index);
 app.get('/company/:companyId/employee/:id',    Employee.show);
@@ -43,11 +45,11 @@ app.post('/company/:companyId/contest',       Contest.create);
 app.put('/company/:companyId/contest/:id',    Contest.update);
 app.delete('/company/:companyId/contest/:id', Contest.delete);
 
-app.get('/company/:companyId/QR',        QR.index);
-app.get('/company/:companyId/QR/:id',    QR.show);
-app.post('/company/:companyId/QR',       QR.create);
-app.put('/company/:companyId/QR/:id',    QR.update);
-app.delete('/company/:companyId/QR/:id', QR.delete);
+app.get('/company/:companyId/sellpoint/:sellpointId/QR',        QR.index);
+app.get('/company/:companyId/sellpoint/:sellpointId/QR/:id',    QR.show);
+app.post('/company/:companyId/sellpoint/:sellpointId/QR',       QR.create);
+app.put('/company/:companyId/sellpoint/:sellpointId/QR/:id',    QR.update);
+app.delete('/company/:companyId/sellpoint/:sellpointId/QR/:id', QR.delete);
 
 app.get('/company/:companyId/contest/:contestId/prize',        Prize.index);
 app.get('/company/:companyId/contest/:contestId/prize/:id',    Prize.show);
