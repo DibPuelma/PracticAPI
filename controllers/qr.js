@@ -8,6 +8,24 @@ var schema = {
   }
 };
 
+var schemaUpdate = {
+  'code': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 1000 }] }
+  }
+};
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
+
 module.exports = {
   index(req, res) {
     Company.findById(req.params.companyId).then(function (company) {
@@ -37,9 +55,17 @@ module.exports = {
     req.checkParams(schema);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
-        QR.create(req.body).then(function (newQR) {
-          res.status(200).json(newQR);
+        QR.create(data).then(function (newQR) {
+          newQR.setCompany(company).then(function() {
+            res.status(200).json(newQR);
+          });
         }).catch(function (error){
           res.status(500).json(error);
         });
@@ -50,11 +76,17 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
-        QR.update(req.body, {
+        QR.update(data, {
           where: {
             id: req.params.id
           }

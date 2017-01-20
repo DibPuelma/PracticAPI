@@ -13,6 +13,30 @@ var schema = {
   },
 };
 
+var schemaUpdate = {
+  'email': {
+    optional: true,
+    isEmail: true,
+    errorMessage: 'Invalid email'
+  },
+  'name': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid name'
+  },
+};
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
+
 module.exports = {
   index(req, res) {
     Company.findAll().then(function (companies) {
@@ -34,7 +58,13 @@ module.exports = {
     req.checkParams(schema);
 
     req.getValidationResult().then(function(result) {
-      Company.create(req.body).then(function (newCompany) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
+      Company.create(data).then(function (newCompany) {
         res.status(200).json(newCompany);
       }).catch(function (error){
         res.status(500).json(error);
@@ -43,10 +73,16 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
-      Company.update(req.body, {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
+      Company.update(data, {
         where: {
           id: req.params.id
         }

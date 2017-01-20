@@ -6,12 +6,12 @@ var schema = {
     isEmail: true,
     errorMessage: 'Invalid email'
   },
-  'first_name': {
+  'firstName': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid first name'
   },
-  'last_name': {
+  'lastName': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
@@ -25,11 +25,51 @@ var schema = {
     isIn: { values: ['m', 'f', 'o'] },
     errorMessage: 'Invalid gender'
   },
-  'facebook_id': {
+  'facebookId': {
     optional: true,
     errorMessage: 'Invalid facebook id'
   },
-  'facebook_token': {
+  'facebookToken': {
+    optional: true,
+    errorMessage: 'Invalid facebook token'
+  },
+  'password': {
+    notEmpty: true,
+    isLength: { options: [{ min: 4, max: 30 }] },
+    errorMessage: 'Invalid facebook password'
+  }
+};
+
+var schemaUpdate = {
+  'email': {
+    optional: true,
+    isEmail: true,
+    errorMessage: 'Invalid email'
+  },
+  'firstName': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid first name'
+  },
+  'lastName': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid last name'
+  },
+  'birthdate': {
+    optional: true,
+    errorMessage: 'Invalid birthdate'
+  },
+  'gender': {
+    optional: true,
+    isIn: { values: ['m', 'f', 'o'] },
+    errorMessage: 'Invalid gender'
+  },
+  'facebookId': {
+    optional: true,
+    errorMessage: 'Invalid facebook id'
+  },
+  'facebookToken': {
     optional: true,
     errorMessage: 'Invalid facebook token'
   },
@@ -39,6 +79,17 @@ var schema = {
     errorMessage: 'Invalid facebook password'
   }
 };
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
 
 module.exports = {
   index(req, res) {
@@ -66,7 +117,9 @@ module.exports = {
         return;
       }
 
-      User.create(req.body).then(function (newUser) {
+      var data = filterParams(req);
+
+      User.create(data).then(function (newUser) {
         res.status(200).json(newUser);
       }).catch(function (error){
         res.status(500).json(error);
@@ -75,7 +128,7 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -83,7 +136,9 @@ module.exports = {
         return;
       }
 
-      User.update(req.body, {
+      var data = filterParams(req);
+
+      User.update(data, {
         where: {
           id: req.params.id
         }

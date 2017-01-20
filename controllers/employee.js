@@ -7,16 +7,44 @@ var schema = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
-  'last_name': {
+  'lastName': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
   },
-  'picture': {
+  'picture': { // add: is a url
     optional: true,
     errorMessage: 'Invalid picture'
   }
 };
+
+var schemaUpdate = {
+  'name': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid name'
+  },
+  'lastName': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid last name'
+  },
+  'picture': { // add: is a url
+    optional: true,
+    errorMessage: 'Invalid picture'
+  }
+};
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
 
 module.exports = {
   index(req, res) {
@@ -47,9 +75,17 @@ module.exports = {
     req.checkParams(schema);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+      
       Company.findById(req.params.companyId).then(function (company) {
-        Employee.create(req.body).then(function (newEmployee) {
-          res.status(200).json(newEmployee);
+        Employee.create(data).then(function (newEmployee) {
+          newEmployee.setCompany(company).then(function() {
+            res.status(200).json(newEmployee);
+          });
         }).catch(function (error){
           res.status(500).json(error);
         });
@@ -60,11 +96,17 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
-        Employee.update(req.body, {
+        Employee.update(data, {
           where: {
             id: req.params.id
           }

@@ -12,6 +12,27 @@ var schema = {
   }
 };
 
+var schemaUpdate = {
+  'name': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] }
+  },
+  'description': {
+    optional: true
+  }
+};
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
+
 module.exports = {
   index(req, res) {
     Company.findById(req.params.companyId).then(function (company) {
@@ -49,10 +70,20 @@ module.exports = {
     req.checkParams(schema);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
         Contest.findById(req.params.companyId).then(function (contest) {
-          Prize.create(req.body).then(function (newPrize) {
-              res.status(200).json(newPrize);
+          Prize.create(data).then(function (newPrize) {
+              newPrize.setCompany(company).then(function() {
+                newPrize.setContest(contest).then(function() {
+                  res.status(200).json(newPrize);
+                });
+              });
             }).catch(function (error){
               res.status(500).json(error);
             });
@@ -66,12 +97,18 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
         Contest.findById(req.params.companyId).then(function (contest) {
-          Prize.update(req.body, {
+          Prize.update(data, {
             where: {
               id: req.params.id
             }

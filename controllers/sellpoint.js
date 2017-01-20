@@ -9,6 +9,25 @@ var schema = {
   }
 };
 
+var schemaUpdate = {
+  'location': {
+    optional: true,
+    isLength: { options: [{ min: 1, max: 30 }] },
+    errorMessage: 'Invalid location'
+  }
+};
+
+var filterParams = function(req) {
+  var keys = schema.keys();
+
+  var data = {};
+  for (var param in req.body)
+    if (keys.indexOf(param) > -1) 
+      data[type] = req.body[param];
+
+  return data;
+}
+
 module.exports = {
   index(req, res) {
     Company.findById(req.params.companyId).then(function (company) {
@@ -38,9 +57,17 @@ module.exports = {
     req.checkParams(schema);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+
       Company.findById(req.params.companyId).then(function (company) {
-        SellPoint.create(req.body).then(function (newSellPoint) {
-          res.status(200).json(newSellPoint);
+        SellPoint.create(data).then(function (newSellPoint) {
+          newSellPoint.setCompany(company).then(function() {
+            res.status(200).json(newSellPoint);
+          });
         }).catch(function (error){
           res.status(500).json(error);
         });
@@ -51,11 +78,17 @@ module.exports = {
   },
 
   update(req, res) {
-    req.checkParams(schema);
+    req.checkParams(schemaUpdate);
 
     req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+      var data = filterParams(req);
+      
       Company.findById(req.params.companyId).then(function (company) {
-        SellPoint.update(req.body, {
+        SellPoint.update(data, {
           where: {
             id: req.params.id
           }
