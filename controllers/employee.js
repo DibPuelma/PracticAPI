@@ -8,7 +8,7 @@ var schema = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
-  'lastName': {
+  'last_name': {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
@@ -25,7 +25,7 @@ var schemaUpdate = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
-  'lastName': {
+  'last_name': {
     optional: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid last name'
