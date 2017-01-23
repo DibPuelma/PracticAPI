@@ -47,7 +47,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    Contest.findAll({ where: { company_id: req.params.companyId } }).then(function (contests) {
+    Contest.findAll({ where: { company_id: req.params.company_id } }).then(function (contests) {
       res.status(200).json(contests);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -55,7 +55,7 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       Contest.findById(req.params.id).then(function (contest) {
         res.status(200).json(contest);
       }).catch(function (error){
@@ -76,7 +76,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         Contest.create(data).then(function (newContest) {
           newContest.setCompany(company).then(function() {
             res.status(200).json(newContest);
@@ -100,7 +100,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         Contest.update(data, { where: { id: req.params.id } }).then(function (updatedContest) {
           res.status(200).json(updatedContest);
         }).catch(function (error){
@@ -113,7 +113,7 @@ module.exports = {
   },
 
   delete(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       Contest.destroy({
         where: {
           id: req.params.id

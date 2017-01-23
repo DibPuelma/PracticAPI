@@ -35,7 +35,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    Prize.findAll({ where: { contest_id: req.params.contestId } }).then(function (prizes) {
+    Prize.findAll({ where: { contest_id: req.params.contest_id } }).then(function (prizes) {
       res.status(200).json(prizes);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -64,7 +64,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Contest.findById(req.params.contestId).then(function (contest) {
+      Contest.findById(req.params.contest_id).then(function (contest) {
         Prize.create(data).then(function (newPrize) {
             newPrize.setContest(contest).then(function() {
               res.status(200).json(newPrize);
@@ -88,7 +88,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Contest.findById(req.params.contestId).then(function (contest) {
+      Contest.findById(req.params.contest_id).then(function (contest) {
         Prize.update(data, {
           where: {
             id: req.params.id

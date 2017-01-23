@@ -32,7 +32,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    QR.findAll({ where: { sell_point_id: req.params.sellpointId } }).then(function (QRs) {
+    QR.findAll({ where: { sell_point_id: req.params.sellpoint_id } }).then(function (QRs) {
       res.status(200).json(QRs);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -61,7 +61,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      SellPoint.findById(req.params.sellpointId).then(function (sellpoint) {
+      SellPoint.findById(req.params.sellpoint_id).then(function (sellpoint) {
         QR.create(data).then(function (newQR) {
           newQR.setSellPoint(sellpoint).then(function() {
             res.status(200).json(newQR);
@@ -85,7 +85,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      SellPoint.findById(req.params.sellpointId).then(function (sellpoint) {
+      SellPoint.findById(req.params.sellpoint_id).then(function (sellpoint) {
         QR.update(data, { where: { id: req.params.id } }).then(function (updatedQR) {
           res.status(200).json(updatedQR);
         }).catch(function (error){

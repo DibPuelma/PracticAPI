@@ -49,7 +49,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    Employee.findAll({ where: { company_id: req.params.companyId } }).then(function (employees) {
+    Employee.findAll({ where: { company_id: req.params.company_id } }).then(function (employees) {
       res.status(200).json(employees);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -57,7 +57,7 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       Employee.findById(req.params.id).then(function (employee) {
         res.status(200).json(employee);
       }).catch(function (error){
@@ -78,7 +78,7 @@ module.exports = {
       }
       var data = filterParams(req);
       
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         Employee.create(data).then(function (newEmployee) {
           newEmployee.setCompany(company).then(function() {
             res.status(200).json(newEmployee);
@@ -102,7 +102,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         Employee.update(data, { where: { id: req.params.id } }).then(function (updatedEmployee) {
           res.status(200).json(updatedEmployee);
         }).catch(function (error) {
@@ -115,7 +115,7 @@ module.exports = {
   },
 
   delete(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       Employee.destroy({
         where: {
           id: req.params.id

@@ -31,7 +31,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    SellPoint.findAll({ where: { company_id: req.params.companyId } }).then(function (sellpoints) {
+    SellPoint.findAll({ where: { company_id: req.params.company_id } }).then(function (sellpoints) {
       res.status(200).json(sellpoints);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -39,7 +39,7 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       SellPoint.findById(req.params.id).then(function (sellpoint) {
         res.status(200).json(sellpoint);
       }).catch(function (error){
@@ -60,7 +60,7 @@ module.exports = {
       }
       var data = filterParams(req);
 
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         SellPoint.create(data).then(function (newSellPoint) {
           newSellPoint.setCompany(company).then(function() {
             res.status(200).json(newSellPoint);
@@ -84,7 +84,7 @@ module.exports = {
       }
       var data = filterParams(req);
       
-      Company.findById(req.params.companyId).then(function (company) {
+      Company.findById(req.params.company_id).then(function (company) {
         SellPoint.update(data, { where: { id: req.params.id } }).then(function (updatedSellPoint) {
           res.status(200).json(updatedSellPoint);
         }).catch(function (error){
@@ -97,7 +97,7 @@ module.exports = {
   },
 
   delete(req, res) {
-    Company.findById(req.params.companyId).then(function (company) {
+    Company.findById(req.params.company_id).then(function (company) {
       SellPoint.destroy({
         where: {
           id: req.params.id
