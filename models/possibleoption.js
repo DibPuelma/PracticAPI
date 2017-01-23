@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         PossibleOption.belongsToMany(models.OptionsContainer, {through: 'OptionsContainerPossibleOptions'});
         PossibleOption.hasMany(models.Answer);
+        PossibleOption.belongsTo(models.Company);
       }
     }
   });

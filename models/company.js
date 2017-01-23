@@ -11,6 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         Company.hasMany(models.Contest);
         Company.hasMany(models.SellPoint);
         Company.hasMany(models.Poll);
+        Company.hasMany(models.OptionsContainer);
+        Company.hasMany(models.Question);
       }
     }
   });

@@ -8,8 +8,10 @@ var Question = require('../models/').Question;
 
 
 module.exports = {
-  //post
-  create(req, res){
+  index(req, res) {
+    AnsweredPoll.findAll({where: {user_id: req.params.user_id}}, {include: Answer, include: Question})
+  },
+  create(req, res) {
     promises = [];
     var newAnsweredPoll;
     var createAnsweredPoll = AnsweredPoll.create({})
@@ -48,7 +50,7 @@ module.exports = {
       })
       promises.push(setUser);
 
-      var setPoll = Poll.findById(req.body.pollId)
+      var setPoll = Poll.findById(req.params.poll_id)
       .then((poll) => {
         answeredpoll.setPoll(poll);
       })
@@ -91,7 +93,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    AnsweredPoll.findById(req.params.id, {include: Answer})
+    AnsweredPoll.findById(req.params.id, {include: Answer, include: Question})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })

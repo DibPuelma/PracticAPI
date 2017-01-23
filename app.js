@@ -1,51 +1,61 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var poll = require('./controllers/poll.js');
-var question = require('./controllers/question.js');
-var optcont = require('./controllers/optionscontainer.js');
-var possopt = require('./controllers/possibleoption.js');
-var answeredpoll = require('./controllers/answeredpoll.js');
-var answer = require('./controllers/answer.js');
-
+var expressValidator = require('express-validator');
 
 // app.use(require('./controllers'));
 app.use(bodyParser.json());
+app.use(expressValidator([]));
+
+var Poll = require('./controllers/poll.js');
+var Question = require('./controllers/question.js');
+var OptionsContainer = require('./controllers/optionscontainer.js');
+var PossibleOption = require('./controllers/possibleoption.js');
+var AnsweredPoll = require('./controllers/answeredpoll.js');
+var Answer = require('./controllers/answer.js');
+
+
 
 //Encuestas
-app.post('/poll', poll.create);
-app.get('/poll/:id', poll.show);
-app.delete('/poll/:id', poll.delete);
-app.put('/poll/:id', poll.update);
-app.delete('/poll/:poll_id/question/:question_id', poll.removeQuestionFromPoll);
-app.put('/poll/:poll_id/sellpoint/:sell_point_id', poll.changeActiveSellPoint);
+app.get('company/:company_id/poll', Poll.index)
+app.post('company/:company_id/poll', Poll.create);
+app.get('company/:company_id/poll/:id', Poll.show);
+app.delete('company/:company_id/poll/:id', Poll.delete);
+app.put('company/:company_id/poll/:id', Poll.update);
+app.put('company/:company_id/poll/:poll_id/sellpoint/:sell_point_id', Poll.changeActiveSellPoint);
 
 //Preguntas
-app.post('/question', question.create);
-app.get('/question/:id', question.show);
-app.delete('/question/:id', question.delete);
-app.put('/question/:id', question.update);
+app.post('company/:company_id/question', Question.create);
+app.get('company/:company_id/question/:id', Question.show);
+app.delete('company/:company_id/question/:id', Question.delete);
+app.put('company/:company_id/question/:id', Question.update);
+app.delete('company/:company_id/poll/:poll_id/question/:id', Question.removeQuestionFromPoll);
+app.put('company/:company_id/poll/:poll_id/question/:id', Question.addQuestionToPoll);
 
 //Contenedores de opciones
-app.post('/optcont', optcont.create);
-app.get('/optcont/:id', optcont.show);
-app.delete('/optcont/:id', optcont.delete);
-app.put('/optcont/:id', optcont.update);
-app.delete('/optcont/:optcont_id/possopt/:possopt_id', optcont.removeCurrentOption);
+app.get('company/:company_id/optcont', OptionsContainer.index);
+app.post('company/:company_id/optcont', OptionsContainer.create);
+app.get('company/:company_id/optcont/:id', OptionsContainer.show);
+app.delete('company/:company_id/optcont/:id', OptionsContainer.delete);
+app.put('company/:company_id/optcont/:id', OptionsContainer.update);
 
 //Opciones
-app.post('/possopt', possopt.create);
-app.get('/possopt/:id', possopt.show);
-app.delete('/possopt/:id', possopt.delete);
-app.put('/possopt/:id', possopt.update);
+app.get('company/:company_id/possopt', PossibleOption.index);
+app.post('company/:company_id/possopt', PossibleOption.create);
+app.get('company/:company_id/possopt/:id', PossibleOption.show);
+app.delete('company/:company_id/possopt/:id', PossibleOption.delete);
+app.put('company/:company_id/possopt/:id', PossibleOption.update);
+app.delete('company/:company_id/optcont/:opt_cont_id/possopt/:id', PossibleOption.removeOptionFromContainer);
+app.put('company/:company_id/optcont/:opt_cont_id/possopt/:id', PossibleOption.addOptionToContainer);
 
 //Encuestas Contestadas
-app.post('/answeredpoll', answeredpoll.create);
-app.get('/answeredpoll/:id', answeredpoll.show);
-app.delete('/answeredpoll/:id', answeredpoll.delete);
+app.post('company/:company_id/poll/:poll_id/answered_poll', AnsweredPoll.create);
+app.get('user/:user_id/answered_poll/:id', AnsweredPoll.indexByUser);
+app.get('company/:company_id/poll/:poll_id/answered_poll/:id', AnsweredPoll.show);
+app.delete('company/:company_id/poll/:poll_id/answered_poll/:id', AnsweredPoll.delete);
 
 //Preguntas
-app.get('/answer/:id', answer.show);
+app.get('company/:company_id/poll/:poll_id/answered_poll/:answered_poll_id/answer/:id', Answer.show);
 
 
 

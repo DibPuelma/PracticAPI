@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         OptionsContainer.belongsToMany(models.PossibleOption, {through: 'OptionsContainerPossibleOptions'});
         OptionsContainer.hasMany(models.Question);
+        OptionsContainer.belongsTo(models.Company);
       }
     }
   });
