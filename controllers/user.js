@@ -159,5 +159,17 @@ module.exports = {
     }).catch(function (error){
       res.status(500).json(error);
     });
-  }
+  },
+
+  contests(req, res) {
+    User.findById(req.params.id).then(function (user) {
+      user.getContests().then(function(contests) {
+        res.status(200).json(contests);
+      }).catch(function (error){
+      res.status(500).json(error);
+      });
+    }).catch(function (error){
+      res.status(500).json(error);
+    });
+  },
 };

@@ -21,6 +21,9 @@ app.post('/user',       User.create);
 app.put('/user/:id',    User.update);
 app.delete('/user/:id', User.delete);
 
+app.get('/user/:id/contests', User.contests);
+
+
 app.get('/company',        Company.index);
 app.get('/company/:id',    Company.show);
 app.post('/company',       Company.create);
@@ -50,6 +53,9 @@ app.get('/company/:companyId/sellpoint/:sellpointId/QR/:id',    QR.show);
 app.post('/company/:companyId/sellpoint/:sellpointId/QR',       QR.create);
 app.put('/company/:companyId/sellpoint/:sellpointId/QR/:id',    QR.update);
 app.delete('/company/:companyId/sellpoint/:sellpointId/QR/:id', QR.delete);
+
+app.get('/QR/:code/sellpoint', QR.sellpoint);
+
 
 app.get('/company/:companyId/contest/:contestId/prize',        Prize.index);
 app.get('/company/:companyId/contest/:contestId/prize/:id',    Prize.show);

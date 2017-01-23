@@ -2,6 +2,8 @@ var util      = require('util');
 var Company   = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
 var QR        = require('../models/').QR;
+var Store     = require('../models/').Store;
+var Employee  = require('../models/').Employee;
 
 var schema = {
   'code': {
@@ -109,5 +111,16 @@ module.exports = {
     }).catch(function (error) {
       res.status(500).json(error);
     });  
+  },
+
+  sellpoint(req, res) {
+    QR.findOne({ where: { code: req.params.code } }).then(function (qr) {
+      SellPoint.findById(qr.sell_point_id).then(function (sellpoint) {
+        Employee.findAll({ where: { sell_point_id: sellpoint.id } }).then(function (employees) {
+          result = { sellpoint: sellpoint, employees: employees };
+          res.status(200).json(result);
+        }).catch(function (error) {res.status(500).json(error);});
+      }).catch(function (error) {res.status(500).json(error);});
+    }).catch(function (error) {res.status(500).json(error);});
   }
 };

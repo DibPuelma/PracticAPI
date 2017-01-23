@@ -205,20 +205,22 @@ var prize_data = [
 var dropTables = function() {
   Inde.PollQuestion.drop().then(function() {
     Inde.OptionsContainerPossibleOptions.drop().then(function() {
-      Inde.Answer.drop().then(function() {
-        Inde.PossibleOption.drop().then(function() {
+      Inde.UserContest.drop().then(function() {
+        Inde.Answer.drop().then(function() {
+          Inde.PossibleOption.drop().then(function() {
             Inde.OptionsContainer.drop().then(function() {
               Inde.AnsweredPoll.drop().then(function() {
                 Inde.Question.drop().then(function() {
-                Inde.User.drop().then(function() {
-                  Inde.Employee.drop().then(function() {
-                    Inde.QR.drop().then(function() {
-                      Inde.SellPoint.drop().then(function() {
-                        Inde.Poll.drop().then(function() {
-                          Inde.Prize.drop().then(function() {
-                            Inde.Contest.drop().then(function() {
-                              Inde.Company.drop().then(function() {
-                                createTables();
+                  Inde.User.drop().then(function() {
+                    Inde.Employee.drop().then(function() {
+                      Inde.QR.drop().then(function() {
+                        Inde.SellPoint.drop().then(function() {
+                          Inde.Poll.drop().then(function() {
+                            Inde.Prize.drop().then(function() {
+                              Inde.Contest.drop().then(function() {
+                                Inde.Company.drop().then(function() {
+                                  createTables();
+                                })
                               })
                             })
                           })
@@ -254,7 +256,9 @@ var createTables = function() {
                           Inde.Answer.sync().then(function() {
                             Inde.OptionsContainerPossibleOptions.sync().then(function() {
                               Inde.PollQuestion.sync().then(function() {
-                                createFranco();
+                                Inde.UserContest.sync().then(function() {
+                                  createFranco();
+                                })
                               })
                             })
                           })
@@ -424,11 +428,26 @@ var createFranco = function() {
           });
         });
       });
+
+      // Assign some contest to users
+      user_contest_data.forEach(function(data) {
+        Inde.User.findOne( { where: { email: data.user } }).then(function(user) {
+          Inde.Contest.findOne( { where: { name: data.contest } } ).then(function(contest) {
+            user.addContest(contest);
+          });
+        });
+      });
+
     });
     createOptions();
   });
 }
 
+var user_contest_data = [
+  { user: 'user1@abc.net', contest: 'Contest 1' },
+  { user: 'user2@abc.net', contest: 'Contest 1' },
+  { user: 'user2@abc.net', contest: 'Concurso 1' }
+];
 
 //Creamos usuarios
 var createUsers = function() {
