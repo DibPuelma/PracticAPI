@@ -178,17 +178,18 @@ module.exports = {
       res.status(200).json({ message: "already logged in" });
       return;
     } 
-      User.findById(req.params.id).then(function (user) {
-        if (user.password == req.body.password) {
-         req.session.logged = true;
-         res.status(200).json({ message: "logged in" });
-        } else {
-          res.status(500).json({ message: "wrong password" });
-        }
-      }).catch(function (error){
-        res.status(500).json(error);
-      });
     
+    User.findOne( { where: {email: req.body.email} } ).then(function (user) {
+      if (user.password == req.body.password) {
+       req.session.logged = true;
+       res.status(200).json({ message: "logged in" });
+      } else {
+        res.status(500).json({ message: "wrong password" });
+      }
+    }).catch(function (error){
+      res.status(500).json(error);
+    });
+  
   },
 
   logout(req, res) {

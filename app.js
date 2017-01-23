@@ -29,8 +29,8 @@ app.put('/user/:id',    User.update);
 app.delete('/user/:id', User.delete);
 
 app.get('/user/:id/contests', User.contests);
-app.post('/user/:id/login', User.login);
-app.post('/user/:id/logout', User.logout);
+app.post('/user/login', User.login);
+app.post('/user/logout', User.logout);
 
 app.get('/company',        Company.index);
 app.get('/company/:id',    Company.show);
