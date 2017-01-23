@@ -12,7 +12,7 @@ var schema = {
   },
   'type': {
     notEmpty: true,
-    isEqual: 'text' || 'number' || 'options',
+    isValidType: true,
     errorMessage: 'Invalid type'
   },
   'optionsContainer': {
@@ -29,8 +29,8 @@ var schemaUpdate = {
     errorMessage: 'Invalid name'
   },
   'type': {
-    notEmpty: true,
-    isEqual: 'text' || 'number' || 'options',
+    optional: true,
+    isValidType: true,
     errorMessage: 'Invalid type'
   },
   'optionsContainer': {
@@ -102,7 +102,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    Question.findById(req.params.id, {include: OptionsContainer})
+    Question.findOne({where: {id: req.params.id, company_id: req.params.company_id, include: OptionsContainer}})
     .then((question) => {
       res.status(200).json(question);
     })

@@ -71,7 +71,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res){
-    Poll.findAll({where: {company_id: req.params.company_id}})
+    Poll.findAll({where: {company_id: req.params.company_id}, include: [Question, { model: SellPoint, as: 'activeSellPoint' }]})
     .then((polls) => {
       res.status(200).json(polls);
     })
@@ -151,7 +151,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    Poll.findById(req.params.id, {include: Question})
+    Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: [Question, { model: SellPoint, as: 'activeSellPoint' }]})
     .then((poll) => {
       res.status(200).json(poll);
     })
@@ -182,7 +182,7 @@ module.exports = {
     })
   },
   delete(req, res) {
-    Poll.destroy({where: {id: req.params.id}})
+    Poll.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
     .then((deletedPoll) => {
       res.status(200).json(deletedPoll);
     })
@@ -191,9 +191,9 @@ module.exports = {
     })
   },
   changeActiveSellPoint(req, res) {
-    Poll.findById(req.params.poll_id)
+    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
     .then((poll) => {
-      SellPoint.findById(req.params.sell_point_id)
+      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
       .then((sellPoint) => {
         sellPoint.setPoll(poll);
         res.status(200).json(poll);

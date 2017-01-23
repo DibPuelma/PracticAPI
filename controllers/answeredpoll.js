@@ -15,18 +15,28 @@ var schema = {
   },
   'employeeId': {
     notEmpty: true,
-    isNumber: true,
+    isNumeric: true,
     errorMessage: 'Invalid employee ID, must be a number'
   },
   'sellPointId': {
     notEmpty: true,
-    isNumber: true,
+    isNumeric: true,
     errorMessage: 'Invalid sellPoint ID, must be a number'
   },
   'userId': {
     notEmpty: true,
-    isNumber: true,
+    isNumeric: true,
     errorMessage: 'Invalid user ID, must be a number'
+  },
+  'pollId': {
+    notEmpty: true,
+    isNumeric: true,
+    errorMessage: 'Invalid poll ID, must be a number'
+  },
+  'questions': {
+    notEmpty: true,
+    isArray: true,
+    errorMessage: 'Invalid questions array'
   }
 };
 
@@ -43,7 +53,16 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    AnsweredPoll.findAll({where: {user_id: req.params.user_id}}, {include: Answer, include: Question})
+    AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: { model: Answer, include: Question}})
+    .then((answeredpolls) => {
+      res.status(200).json(answeredpolls);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    })
+  },
+  indexByPoll(req, res) {
+    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: { model: Answer, include: Question}})
     .then((answeredpolls) => {
       res.status(200).json(answeredpolls);
     })
@@ -143,7 +162,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    AnsweredPoll.findById(req.params.id, {include: Answer, include: Question})
+    AnsweredPoll.findById(req.params.id, {include: { model: Answer, include: Question}})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })

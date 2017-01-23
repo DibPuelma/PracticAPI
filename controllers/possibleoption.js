@@ -1,6 +1,8 @@
 var PossibleOption = require('../models/').PossibleOption;
 var OptionsContainer = require('../models/').OptionsContainer;
 var Company = require('../models/').Company;
+var util = require('util');
+
 var schema = {
   'value': {
     notEmpty: true,
@@ -8,6 +10,18 @@ var schema = {
     errorMessage: 'Invalid value, must have between 1 and 80 characters'
   },
 };
+
+
+var filterParams = function(req) {
+  var keys = Object.keys(schema);
+
+  var data = {};
+  for (var param in req.body)
+  if (keys.indexOf(param) > -1)
+  data[param] = req.body[param];
+
+  return data;
+}
 
 module.exports = {
   index(req, res){
@@ -31,12 +45,13 @@ module.exports = {
       var data = filterParams(req);
       PossibleOption.create(data)
       .then((possopt) => {
-        Company.findById(req.paramas.company_id)
+        Company.findById(req.params.company_id)
         .then((company) => {
           company.addPossibleOption(possopt);
           res.status(200).json(possopt);
         })
         .catch((error) => {
+          console.log(error);
           res.status(500).json(error);
         })
       })
@@ -46,7 +61,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    PossibleOption.findById(req.params.id)
+    PossibleOption.findOne({where: {id: req.params.id, company_id: req.params.company_id}})
     .then((optcont) => {
       res.status(200).json(optcont);
     })
@@ -74,7 +89,7 @@ module.exports = {
     })
   },
   delete(req, res) {
-    PossibleOption.destroy({where: {id: req.params.id}})
+    PossibleOption.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
     .then((deletedPossibleOption) => {
       res.status(200).json(deletedPossibleOption);
     })

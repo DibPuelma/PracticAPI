@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
         Company.hasMany(models.Poll);
         Company.hasMany(models.OptionsContainer);
         Company.hasMany(models.Question);
+        Company.hasMany(models.PossibleOption)
       }
     }
   });

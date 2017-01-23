@@ -16,12 +16,10 @@ var schema = {
   },
   'newOptions': {
     isArray: true,
-    notEmpty: true,
     errorMessage: 'Invalid new options array'
   },
   'existingOptions': {
     isArray: true,
-    notEmpty: true,
     errorMessage: 'Invalid existing options array'
   }
 };
@@ -62,7 +60,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res){
-    OptCont.findAll({where: {company_id: req.params.company_id}}, {include: PossibleOption})
+    OptCont.findAll({where: {company_id: req.params.company_id}, include: PossibleOption})
     .then((optconts) => {
       res.status(200).json(optconts);
     })
@@ -136,7 +134,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    OptCont.findById(req.params.id, {include: PossibleOption})
+    OptCont.findOne({where: {id: req.params.id, company_id: req.params.company_id, include: PossibleOption}})
     .then((optcont) => {
       res.status(200).json(optcont);
     })
@@ -202,7 +200,7 @@ module.exports = {
     })
   },
   delete(req, res) {
-    OptCont.destroy({where: {id: req.params.id}})
+    OptCont.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
     .then((deletedOptCont) => {
       res.status(200).json(deletedOptCont);
     })
