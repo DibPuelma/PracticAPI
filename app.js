@@ -5,7 +5,13 @@ var expressValidator = require('express-validator');
 
 // app.use(require('./controllers'));
 app.use(bodyParser.json());
-app.use(expressValidator([]));
+app.use(app.use(expressValidator({
+ customValidators: {
+    isArray: function(value) {
+        return Array.isArray(value);
+    }
+ }
+}));
 
 var Poll             = require('./controllers/poll.js');
 var Question         = require('./controllers/question.js');

@@ -1,6 +1,13 @@
 var PossibleOption = require('../models/').PossibleOption;
 var OptionsContainer = require('../models/').OptionsContainer;
 var Company = require('../models/').Company;
+var schema = {
+  'value': {
+    notEmpty: true,
+    isLength: { options: [{ min: 1, max: 80 }] },
+    errorMessage: 'Invalid value, must have between 1 and 80 characters'
+  },
+};
 
 module.exports = {
   index(req, res){
@@ -13,38 +20,58 @@ module.exports = {
     })
   },
   create(req, res){
-    PossibleOption.create(req.body)
-    .then((possopt) => {
-      Company.findById(req.paramas.company_id)
-      .then((company) => {
-        company.addPossibleOption(possopt);
+    req.checkBody(schema);
+
+    req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+
+      var data = filterParams(req);
+      PossibleOption.create(data)
+      .then((possopt) => {
+        Company.findById(req.paramas.company_id)
+        .then((company) => {
+          company.addPossibleOption(possopt);
+          res.status(200).json(possopt);
+        })
+        .catch((error) => {
+          res.status(500).json(error);
+        })
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      })
+    },
+    show(req, res) {
+      PossibleOption.findById(req.params.id)
+      .then((optcont) => {
+        res.status(200).json(optcont);
+      })
+      .catch(function(error) {
+        res.status(500).json(error);
+      })
+    }
+  },
+  update(req, res) {
+    req.checkBody(schema);
+
+    req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
+
+      var data = filterParams(req);
+      PossibleOption.update(data, {where: {id: req.params.id}})
+      .then((possopt) => {
         res.status(200).json(possopt);
       })
       .catch((error) => {
         res.status(500).json(error);
       })
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    })
-  },
-  show(req, res) {
-    PossibleOption.findById(req.params.id)
-    .then((optcont) => {
-      res.status(200).json(optcont);
-    })
-    .catch(function(error) {
-      res.status(500).json(error);
-    })
-  },
-  update(req, res) {
-    PossibleOption.update(req.body, {where: {id: req.params.id}})
-    .then((possopt) => {
-      res.status(200).json(possopt);
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    })
+    }
   },
   delete(req, res) {
     PossibleOption.destroy({where: {id: req.params.id}})
