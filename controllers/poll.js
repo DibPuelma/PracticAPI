@@ -71,7 +71,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res){
-    Poll.findAll(where: {company_id: req.params.company_id})
+    Poll.findAll({where: {company_id: req.params.company_id}})
     .then((polls) => {
       res.status(200).json(polls);
     })
@@ -148,7 +148,7 @@ module.exports = {
       .catch(function(error) {
         res.status(500).json(error);
       })
-    }
+    })
   },
   show(req, res) {
     Poll.findById(req.params.id, {include: Question})
@@ -179,7 +179,7 @@ module.exports = {
       .catch(function(error) {
         res.status(500).json(error);
       })
-    }
+    })
   },
   delete(req, res) {
     Poll.destroy({where: {id: req.params.id}})

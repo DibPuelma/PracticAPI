@@ -62,7 +62,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res){
-    OptCont.findAll(where: {company_id: req.params.company_id}, {include: PossibleOption})
+    OptCont.findAll({where: {company_id: req.params.company_id}}, {include: PossibleOption})
     .then((optconts) => {
       res.status(200).json(optconts);
     })
@@ -133,7 +133,7 @@ module.exports = {
       .catch((error) => {
         res.status(500).json(error);
       })
-    }
+    })
   },
   show(req, res) {
     OptCont.findById(req.params.id, {include: PossibleOption})
@@ -199,7 +199,7 @@ module.exports = {
       .catch((error) => {
         res.status(500).json(error);
       })
-    }
+    })
   },
   delete(req, res) {
     OptCont.destroy({where: {id: req.params.id}})

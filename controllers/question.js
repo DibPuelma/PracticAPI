@@ -99,7 +99,7 @@ module.exports = {
       .catch((error) => {
         res.status(500).json(error);
       })
-    }
+    })
   },
   show(req, res) {
     Question.findById(req.params.id, {include: OptionsContainer})
@@ -144,7 +144,7 @@ module.exports = {
         console.log("error upd");
         res.status(500).json(error);
       })
-    }
+    })
   },
   delete(req, res) {
     Question.destroy({where: {id: req.params.id}})

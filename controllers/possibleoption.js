@@ -11,7 +11,7 @@ var schema = {
 
 module.exports = {
   index(req, res){
-    PossibleOption.findAll(where: {company_id: req.params.company_id})
+    PossibleOption.findAll({where: {company_id: req.params.company_id}})
     .then((possopts) => {
       res.status(200).json(possopts);
     })
@@ -43,16 +43,16 @@ module.exports = {
       .catch((error) => {
         res.status(500).json(error);
       })
-    },
-    show(req, res) {
-      PossibleOption.findById(req.params.id)
-      .then((optcont) => {
-        res.status(200).json(optcont);
-      })
-      .catch(function(error) {
-        res.status(500).json(error);
-      })
-    }
+    })
+  },
+  show(req, res) {
+    PossibleOption.findById(req.params.id)
+    .then((optcont) => {
+      res.status(200).json(optcont);
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
   },
   update(req, res) {
     req.checkBody(schema);
@@ -71,7 +71,7 @@ module.exports = {
       .catch((error) => {
         res.status(500).json(error);
       })
-    }
+    })
   },
   delete(req, res) {
     PossibleOption.destroy({where: {id: req.params.id}})

@@ -42,8 +42,14 @@ var filterParams = function(req) {
 }
 
 module.exports = {
-  index(req, res) {
+  index(req, res) {
     AnsweredPoll.findAll({where: {user_id: req.params.user_id}}, {include: Answer, include: Question})
+    .then((answeredpolls) => {
+      res.status(200).json(answeredpolls);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    })
   },
   create(req, res) {
     req.checkBody(schema);
@@ -134,7 +140,7 @@ module.exports = {
       .catch(function(error) {
         res.status(500).json(error);
       })
-    }
+    })
   },
   show(req, res) {
     AnsweredPoll.findById(req.params.id, {include: Answer, include: Question})

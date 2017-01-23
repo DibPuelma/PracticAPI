@@ -3,7 +3,7 @@ var PossibleOption = require('../models/').PossibleOption;
 
 module.exports = {
   index(req, res){
-    Answer.findAll(where: {company_id: req.params.company_id})
+    Answer.findAll({where: {company_id: req.params.company_id}})
     .then((questions) => {
       res.status(200).json(questions);
     })
