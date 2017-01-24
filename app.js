@@ -4,8 +4,11 @@ var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
 var session          = require('express-session');
 
+app.set('port', (process.env.PORT || 3000));
+
 app.use(require('./controllers'));
 app.use(bodyParser.json());
+
 app.use(expressValidator({
  customValidators: {
     isArray: function(value) {
@@ -136,6 +139,6 @@ app.put('/company/:company_id/contest/:contest_id/prize/:id',    Prize.update);
 app.delete('/company/:company_id/contest/:contest_id/prize/:id', Prize.delete);
 
 
-app.listen(3000, function() {
-  console.log('Listening on port 3000...')
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
