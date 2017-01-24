@@ -53,7 +53,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: { model: Answer, include: Question}})
+    AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: Answer})
     .then((answeredpolls) => {
       res.status(200).json(answeredpolls);
     })
@@ -62,7 +62,7 @@ module.exports = {
     })
   },
   indexByPoll(req, res) {
-    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: { model: Answer, include: Question}})
+    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: Answer})
     .then((answeredpolls) => {
       res.status(200).json(answeredpolls);
     })
@@ -159,6 +159,15 @@ module.exports = {
       .catch(function(error) {
         res.status(500).json(error);
       })
+    })
+  },
+  showByUser(req, res) {
+    AnsweredPoll.findBOne({where: {id: req.params.id, user_id: req.params.user_id}, {include: { model: Answer, include: Question}}})
+    .then((answeredpoll) => {
+      res.status(200).json(answeredpoll);
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
     })
   },
   show(req, res) {

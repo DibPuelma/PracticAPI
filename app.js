@@ -76,6 +76,7 @@ app.put('/company/:company_id/options_container/:opt_cont_id/possible_option/:id
 
 //Encuestas Contestadas
 app.get('/user/:user_id/answered_poll',                            AnsweredPoll.index);
+app.get('/user/:user_id/answered_poll/:id',                            AnsweredPoll.showByUser);
 app.get('/company/:company_id/poll/:poll_id/answered_poll',        AnsweredPoll.indexByPoll);
 app.post('/company/:company_id/poll/:poll_id/answered_poll',       AnsweredPoll.create);
 app.get('/company/:company_id/poll/:poll_id/answered_poll/:id',    AnsweredPoll.show);
