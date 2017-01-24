@@ -162,7 +162,7 @@ module.exports = {
     })
   },
   showByUser(req, res) {
-    AnsweredPoll.findByOne({where: {id: req.params.id, user_id: req.params.user_id}, include: { model: Answer, include: Question}})
+    AnsweredPoll.findOne({where: {id: req.params.id, user_id: req.params.user_id}, include: { model: Answer, include: Question}})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })
