@@ -7,10 +7,10 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
+    "username": "kjexfzan",
+    "password": "JLB24D5EeuT-DJvfZdLZWh-6dMFb6kUa",
+    "database": "kjexfzan",
+    "host": "elmer-02.db.elephantsql.com",
     "dialect": "postgres"
   },
   "production": {
