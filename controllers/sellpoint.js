@@ -1,6 +1,8 @@
 var util = require('util');
 var Company  = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
+var Poll = require('../models/').Poll;
+var Question = require('../models/').Question;
 
 var schema = {
   'location': {
@@ -23,8 +25,8 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-    if (keys.indexOf(param) > -1) 
-      data[param] = req.body[param];
+  if (keys.indexOf(param) > -1)
+  data[param] = req.body[param];
 
   return data;
 }
@@ -47,7 +49,7 @@ module.exports = {
       });
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    });
   },
 
   create(req, res) {
@@ -83,7 +85,7 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
-      
+
       Company.findById(req.params.company_id).then(function (company) {
         SellPoint.update(data, { where: { id: req.params.id } }).then(function (updatedSellPoint) {
           res.status(200).json(updatedSellPoint);
@@ -109,6 +111,37 @@ module.exports = {
       });
     }).catch(function (error) {
       res.status(500).json(error);
-    });  
+    });
+  },
+
+  setActivePoll(req, res) {
+    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
+    .then((poll) => {
+      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+      .then((sellPoint) => {
+        sellPoint.setPoll(poll);
+        res.status(200).json(poll);
+      })
+      .catch(function(error) {
+        res.status(500).json(error);
+      })
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  },
+
+  getActivePoll(req, res) {
+    SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+    .then((sellPoint) => {
+      sellPoint.getPoll({include: Question})
+      .then((poll) => {
+        res.status(200).json(poll);
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+      res.status(500).json(error);
+    })
   }
 };

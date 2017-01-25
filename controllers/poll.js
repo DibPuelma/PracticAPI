@@ -151,7 +151,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: [Question, { model: SellPoint, as: 'activeSellPoint' }]})
+    Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: [Question]})
     .then((poll) => {
       res.status(200).json(poll);
     })
@@ -185,22 +185,6 @@ module.exports = {
     Poll.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
     .then((deletedPoll) => {
       res.status(200).json(deletedPoll);
-    })
-    .catch(function(error) {
-      res.status(500).json(error);
-    })
-  },
-  changeActiveSellPoint(req, res) {
-    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
-    .then((poll) => {
-      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
-      .then((sellPoint) => {
-        sellPoint.setPoll(poll);
-        res.status(200).json(poll);
-      })
-      .catch(function(error) {
-        res.status(500).json(error);
-      })
     })
     .catch(function(error) {
       res.status(500).json(error);

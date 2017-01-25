@@ -48,7 +48,6 @@ app.post('/company/:company_id/poll',                                  Poll.crea
 app.get('/company/:company_id/poll/:id',                               Poll.show);
 app.delete('/company/:company_id/poll/:id',                            Poll.delete);
 app.put('/company/:company_id/poll/:id',                               Poll.update);
-app.put('/company/:company_id/poll/:poll_id/sell_point/:sell_point_id', Poll.changeActiveSellPoint);
 
 //Preguntas
 app.post('/company/:company_id/question',                     Question.create);
@@ -111,11 +110,13 @@ app.put('/company/:company_id/employee/:id',    Employee.update);
 app.delete('/company/:company_id/employee/:id', Employee.delete);
 
 //Puntos de venta
-app.get('/company/:company_id/sellpoint',        SellPoint.index);
-app.get('/company/:company_id/sellpoint/:id',    SellPoint.show);
-app.post('/company/:company_id/sellpoint',       SellPoint.create);
-app.put('/company/:company_id/sellpoint/:id',    SellPoint.update);
-app.delete('/company/:company_id/sellpoint/:id', SellPoint.delete);
+app.get('/company/:company_id/sell_point',                               SellPoint.index);
+app.get('/company/:company_id/sell_point/:id',                           SellPoint.show);
+app.post('/company/:company_id/sell_point',                              SellPoint.create);
+app.put('/company/:company_id/sell_point/:id',                           SellPoint.update);
+app.delete('/company/:company_id/sell_point/:id',                        SellPoint.delete);
+app.get('/company/:company_id/sell_point/:sell_point_id/poll',          SellPoint.getActivePoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/poll/:poll_id', SellPoint.setActivePoll);
 
 //Concursos
 app.get('/company/:company_id/contest',        Contest.index);

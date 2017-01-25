@@ -1,5 +1,6 @@
 var util = require('util');
 var Company = require('../models/').Company;
+var SellPoint = require('../models/').SellPoint;
 
 var schema = {
   'email': {
@@ -32,7 +33,7 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-    if (keys.indexOf(param) > -1) 
+    if (keys.indexOf(param) > -1)
       data[param] = req.body[param];
 
   return data;
@@ -48,7 +49,7 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.id).then(function (company) {
+    Company.findById(req.params.id, {include: SellPoint}).then(function (company) {
       res.status(200).json(company);
     }).catch(function (error){
       res.status(500).json(error);
