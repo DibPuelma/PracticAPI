@@ -2,7 +2,8 @@
 module.exports = function(sequelize, DataTypes) {
   var Company = sequelize.define('Company', {
     name : { type: DataTypes.STRING },
-    email: { type: DataTypes.TEXT }
+    email: { type: DataTypes.TEXT },
+    logo: { type: DataTypes.TEXT }
   }, {
     underscored: true,
     classMethods: {
