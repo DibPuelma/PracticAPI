@@ -140,14 +140,16 @@ module.exports = {
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
-        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        res.status(500).json({code: "VALIDATION_ERROR", error: result.array() });
         return;
       }
 
       var data = filterParams(req);
-
+      data['status'] = 'active';
+      
       User.create(data).then(function (newUser) {
-        res.status(200).json(newUser);
+        response = {code: 'OK', user: filterKeys(newUser.dataValues, visible_attrs)};
+        res.status(200).json(response);
       }).catch(function (error){
         res.status(500).json(error);
       });
@@ -159,13 +161,14 @@ module.exports = {
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
-        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        res.status(500).json({code: "VALIDATION_ERROR", error: result.array() });
         return;
       }
 
       var data = filterParams(req);
 
       User.update(data, { where: {id: req.params.id}}).then(function(result) {
+        result['code'] = 'OK';
         res.status(200).json(result);
       }).catch(function(error) {
         res.status(500).json(error);
