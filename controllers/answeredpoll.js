@@ -94,8 +94,12 @@ module.exports = {
           var setUser = User.findById(req.body.userId)
           .then((user) => {
             answeredpoll.setUser(user);
-            var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:sellPoint.getContest().id}})
-            promises.push(userToContest);
+            var getContest = sellPoint.getContest()
+            then((contest) => {
+              var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:contest.id}})
+              promises.push(userToContest);
+            })
+            promises.push(getContest);
           })
           .catch(function (error) {
             console.log("error user");
