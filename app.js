@@ -119,7 +119,8 @@ app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',        
 app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/', SellPoint.setActiveAttendedPoll);
 app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',          SellPoint.getActiveUnattendedPoll);
 app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id', SellPoint.setActiveUnattendedPoll);
-
+app.get('/company/:company_id/sell_point/:sell_point_id/active_contest',          SellPoint.getActiveContest);
+app.put('/company/:company_id/sell_point/:sell_point_id/active_contest/:contest_id', SellPoint.setActiveContest);
 
 //Concursos
 app.get('/company/:company_id/contest',        Contest.index);

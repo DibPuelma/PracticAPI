@@ -95,7 +95,7 @@ module.exports = {
           .then((user) => {
             answeredpoll.setUser(user);
             var getContest = sellPoint.getContest()
-            then((contest) => {
+            .then((contest) => {
               var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:contest.id}})
               promises.push(userToContest);
             })

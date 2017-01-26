@@ -3,6 +3,7 @@ var Company  = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
+var Contest = require('../models/').Contest;
 
 var schema = {
   'location': {
@@ -145,34 +146,64 @@ module.exports = {
     })
   },
 
-    setActiveUnattendedPoll(req, res) {
-      Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
-      .then((poll) => {
-        SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
-        .then((sellPoint) => {
-          sellPoint.setUnattendedPoll(poll);
-          res.status(200).json(poll);
-        })
-        .catch(function(error) {
-          res.status(500).json(error);
-        })
-      })
-      .catch(function(error) {
-        res.status(500).json(error);
-      })
-    },
-
-    getActiveUnattendedPoll(req, res) {
+  setActiveUnattendedPoll(req, res) {
+    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
+    .then((poll) => {
       SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
       .then((sellPoint) => {
-        sellPoint.getUnattendedPoll({include: Question})
-        .then((poll) => {
-          res.status(200).json(poll);
-        });
+        sellPoint.setUnattendedPoll(poll);
+        res.status(200).json(poll);
       })
       .catch(function(error) {
-        console.log(error);
         res.status(500).json(error);
       })
-    }
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  },
+
+  getActiveUnattendedPoll(req, res) {
+    SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+    .then((sellPoint) => {
+      sellPoint.getUnattendedPoll({include: Question})
+      .then((poll) => {
+        res.status(200).json(poll);
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+      res.status(500).json(error);
+    })
+  },
+
+  setActiveContest(req, res) {
+    Contest.findOne({where: {id: req.params.contest_id, company_id: req.params.company_id}})
+    .then((contest) => {
+      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+      .then((sellPoint) => {
+        sellPoint.setContest(contest);
+        res.status(200).json(contest);
+      })
+      .catch(function(error) {
+        res.status(500).json(error);
+      })
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  },
+
+  getActiveContest(req, res) {    
+    SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+    .then((sellPoint) => {
+      sellPoint.getContest()
+      .then((contest) => {
+        res.status(200).json(contest);
+      });
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  }
 };
