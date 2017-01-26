@@ -19,12 +19,10 @@ var schema = {
   },
   'existingQuestions': {
     isArray: true,
-    notEmpty: true,
     errorMessage: 'Invalid existing questions array'
   },
   'newQuestions': {
     isArray: true,
-    notEmpty: true,
     errorMessage: 'Invalid new questions array'
   },
   'activeSellPoint': {
