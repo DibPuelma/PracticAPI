@@ -114,12 +114,12 @@ module.exports = {
     });
   },
 
-  setActivePoll(req, res) {
+  setActiveAttendedPoll(req, res) {
     Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
     .then((poll) => {
       SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
       .then((sellPoint) => {
-        sellPoint.setPoll(poll);
+        sellPoint.setAttendedPoll(poll);
         res.status(200).json(poll);
       })
       .catch(function(error) {
@@ -131,10 +131,10 @@ module.exports = {
     })
   },
 
-  getActivePoll(req, res) {
+  getActiveAttendedPoll(req, res) {
     SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
     .then((sellPoint) => {
-      sellPoint.getPoll({include: Question})
+      sellPoint.getAttendedPoll({include: Question})
       .then((poll) => {
         res.status(200).json(poll);
       });
@@ -143,5 +143,36 @@ module.exports = {
       console.log(error);
       res.status(500).json(error);
     })
-  }
+  },
+
+    setActiveUnattendedPoll(req, res) {
+      Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
+      .then((poll) => {
+        SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+        .then((sellPoint) => {
+          sellPoint.setUnattendedPoll(poll);
+          res.status(200).json(poll);
+        })
+        .catch(function(error) {
+          res.status(500).json(error);
+        })
+      })
+      .catch(function(error) {
+        res.status(500).json(error);
+      })
+    },
+
+    getActiveUnattendedPoll(req, res) {
+      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+      .then((sellPoint) => {
+        sellPoint.getUnattendedPoll({include: Question})
+        .then((poll) => {
+          res.status(200).json(poll);
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
+        res.status(500).json(error);
+      })
+    }
 };

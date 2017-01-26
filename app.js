@@ -115,8 +115,11 @@ app.get('/company/:company_id/sell_point/:id',                           SellPoi
 app.post('/company/:company_id/sell_point',                              SellPoint.create);
 app.put('/company/:company_id/sell_point/:id',                           SellPoint.update);
 app.delete('/company/:company_id/sell_point/:id',                        SellPoint.delete);
-app.get('/company/:company_id/sell_point/:sell_point_id/poll',          SellPoint.getActivePoll);
-app.put('/company/:company_id/sell_point/:sell_point_id/poll/:poll_id', SellPoint.setActivePoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',          SellPoint.getActiveAttendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/', SellPoint.setActiveAttendedPoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',          SellPoint.getActiveUnattendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id', SellPoint.setActiveUnattendedPoll);
+
 
 //Concursos
 app.get('/company/:company_id/contest',        Contest.index);

@@ -5,6 +5,9 @@ var Answer = require('../models/').Answer;
 var User = require('../models/').User;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
+var Contest = require('../models/').Contest;
+var UserContest = require('../models/').UserContest;
+
 var util = require('util');
 
 var schema = {
@@ -88,22 +91,23 @@ module.exports = {
         var setSellPoint = SellPoint.findById(req.body.sellPointId)
         .then((sellPoint) => {
           answeredpoll.setSellPoint(sellPoint);
+          var setUser = User.findById(req.body.userId)
+          .then((user) => {
+            answeredpoll.setUser(user);
+            var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:sellPoint.getContest().id}})
+            promises.push(userToContest);
+          })
+          .catch(function (error) {
+            console.log("error user");
+            console.log(error);
+          })
+          promises.push(setUser);
         })
         .catch(function (error) {
           console.log("error sellp");
           console.log(error);
         })
         promises.push(setSellPoint);
-
-        var setUser = User.findById(req.body.userId)
-        .then((user) => {
-          answeredpoll.setUser(user);
-        })
-        .catch(function (error) {
-          console.log("error user");
-          console.log(error);
-        })
-        promises.push(setUser);
 
         var setPoll = Poll.findById(req.params.poll_id)
         .then((poll) => {
@@ -114,13 +118,7 @@ module.exports = {
           console.log(error);
         })
         promises.push(setPoll);
-        console.log("###############################");
-        console.log(req.body.answers);
-        console.log("###############################");
         req.body.answers.map((answer) => {
-          console.log("###############################");
-          console.log(answer);
-          console.log("###############################");
           var addNewAnswer = Answer.create(answer)
           .then((newAnswer) => {
             Question.findById(answer.question)

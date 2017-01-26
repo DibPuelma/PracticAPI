@@ -11,8 +11,10 @@ module.exports = function(sequelize, DataTypes) {
         SellPoint.hasMany(models.Employee);
         SellPoint.belongsTo(models.Company);
         SellPoint.hasOne(models.QR);
-        SellPoint.belongsTo(models.Poll);
+        SellPoint.belongsTo(models.Poll, {as: "AttendedPoll"});
+        SellPoint.belongsTo(models.Poll, {as: "UnattendedPoll"});
         SellPoint.hasMany(models.AnsweredPoll);
+        SellPoint.belongsTo(models.Contest);
       }
     }
   });
