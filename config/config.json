@@ -1,12 +1,12 @@
 {
-  "development": {
+  "test": {
     "username": "uxpwzpmw",
     "password": "sKwOjlBhK8p_Xz0IX3ZbjAaIEb7s_ccz",
     "database": "uxpwzpmw",
     "host": "elmer-02.db.elephantsql.com",
     "dialect": "postgres"
   },
-  "test": {
+  "development": {
     "username": "kjexfzan",
     "password": "JLB24D5EeuT-DJvfZdLZWh-6dMFb6kUa",
     "database": "kjexfzan",
