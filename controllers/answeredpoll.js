@@ -5,6 +5,7 @@ var Answer = require('../models/').Answer;
 var User = require('../models/').User;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
+var Company = require('../models/').Company;
 var UserContest = require('../models/').UserContest;
 var PossibleOption = require('../models/').PossibleOption;
 
@@ -46,7 +47,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: Answer})
+    AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: [Answer, {model: SellPoint, include: Company}]})
     .then((answeredpolls) => {
       res.status(200).json(answeredpolls);
     })
@@ -55,7 +56,7 @@ module.exports = {
     })
   },
   indexByPoll(req, res) {
-    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: Answer})
+    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
     .then((answeredpolls) => {
       res.status(200).json(answeredpolls);
     })
