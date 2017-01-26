@@ -49,10 +49,12 @@ var users_data = [
 var companies_data = [
   {
     name: 'Company1',
-    email: 'company1@abc.com'
+    email: 'company1@abc.com',
+    logo: 'https://medwhat.com/wp-content/uploads/2016/02/Microsoft-Logo-3-832x1024.jpg'
   }, {
     name: 'Company2',
-    email: 'company2@abc.com'
+    email: 'company2@abc.com',
+    logo: 'https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png?201612230124'
   }
 ];
 
@@ -203,6 +205,11 @@ var prize_data = [
 ]
 
 var dropTables = function() {
+  /*Inde.sequelize.sync({ force: true }).then(function() {
+    createTables();
+  });
+  return;*/
+
   Inde.PollQuestion.drop().then(function() {
     Inde.OptionsContainerPossibleOptions.drop().then(function() {
       Inde.UserContest.drop().then(function() {
@@ -584,10 +591,10 @@ var createPolls = function() {
       poll.setCompany(company);
     })
     Inde.SellPoint.findById(1).then(function(sellPoint) {
-      sellPoint.setPoll(poll);
+      sellPoint.setAttendedPoll(poll);
     })
     Inde.SellPoint.findById(2).then(function(sellPoint) {
-      sellPoint.setPoll(poll);
+      sellPoint.setAttendedPoll(poll);
     })
     Inde.Poll.create({
       name: "Encuesta de colores",
@@ -603,10 +610,10 @@ var createPolls = function() {
         poll.setCompany(company);
       })
       Inde.SellPoint.findById(3).then(function(sellPoint) {
-        sellPoint.setPoll(poll);
+        sellPoint.setAttendedPoll(poll);
       })
       Inde.SellPoint.findById(4).then(function(sellPoint) {
-        sellPoint.setPoll(poll);
+        sellPoint.setAttendedPoll(poll);
       })
       Inde.Poll.create({
         name: "Encuesta de música",
@@ -625,10 +632,10 @@ var createPolls = function() {
           poll.setCompany(company);
         })
         Inde.SellPoint.findById(3).then(function(sellPoint) {
-          sellPoint.setPoll(poll);
+          sellPoint.setAttendedPoll(poll);
         })
         Inde.SellPoint.findById(4).then(function(sellPoint) {
-          sellPoint.setPoll(poll);
+          sellPoint.setAttendedPoll(poll);
         })
         createAnsweredPolls();
       });

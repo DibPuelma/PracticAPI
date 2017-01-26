@@ -1,5 +1,6 @@
-var util = require('util');
-var User = require('../models/').User;
+var util    = require('util');
+var User    = require('../models/').User;
+var Company = require('../models/').Company;
 
 var schema = {
   'email': {
@@ -92,6 +93,31 @@ var filterParams = function(req) {
   return data;
 }
 
+var visible_attrs = [
+  'id',
+  'email',
+  'first_name',
+  'last_name',
+  'birthdate',
+  'gender',
+  'facebook_id',
+  'facebook_token',
+  'status',
+  'created_at',
+  'updated_at'
+];
+
+var filterKeys = function(object, allowedKeys) {
+  var data = {};
+  for (var attr in object) {
+    if (allowedKeys.indexOf(attr) > -1) {
+      data[attr] = object[attr];
+    }
+  }
+  return data;
+}
+
+
 module.exports = {
   index(req, res) {
     User.findAll().then(function (users) {
@@ -103,7 +129,7 @@ module.exports = {
 
   show(req, res) {
     User.findById(req.params.id).then(function (user) {
-      res.status(200).json(user);
+      res.status(200).json(filterKeys(user.dataValues, visible_attrs));
     }).catch(function (error){
       res.status(500).json(error);
     });
@@ -115,14 +141,16 @@ module.exports = {
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
-        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        res.status(500).json({code: "VALIDATION_ERROR", error: result.array() });
         return;
       }
 
       var data = filterParams(req);
-
+      data['status'] = 'active';
+      
       User.create(data).then(function (newUser) {
-        res.status(200).json(newUser);
+        response = {code: 'OK', user: filterKeys(newUser.dataValues, visible_attrs)};
+        res.status(200).json(response);
       }).catch(function (error){
         res.status(500).json(error);
       });
@@ -134,13 +162,14 @@ module.exports = {
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
-        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        res.status(500).json({code: "VALIDATION_ERROR", error: result.array() });
         return;
       }
 
       var data = filterParams(req);
 
       User.update(data, { where: {id: req.params.id}}).then(function(result) {
+        result['code'] = 'OK';
         res.status(200).json(result);
       }).catch(function(error) {
         res.status(500).json(error);
@@ -163,7 +192,7 @@ module.exports = {
 
   contests(req, res) {
     User.findById(req.params.id).then(function (user) {
-      user.getContests().then(function(contests) {
+      user.getContests({ include: [Company]}).then(function(contests) {
         res.status(200).json(contests);
       }).catch(function (error){
       res.status(500).json(error);
@@ -175,18 +204,18 @@ module.exports = {
 
   login(req, res) {
     if (req.session.logged) {
-      res.status(200).json({ message: "already logged in" });
-      return;
+      req.session.logged = false;
     } 
     
     User.findOne( { where: {email: req.body.email} } ).then(function (user) {
       if (user.password == req.body.password) {
        req.session.logged = true;
-       res.status(200).json({ message: "logged in" });
+       res.status(200).json({ code: "OK", message: "logged in", user: filterKeys(user.dataValues, visible_attrs) });
       } else {
-        res.status(500).json({ message: "wrong password" });
+        res.status(500).json({ code: "WRONG_PASSWORD", message: "wrong password" });
       }
     }).catch(function (error){
+      error['code'] = "USER_DOES_NOT_EXIT";
       res.status(500).json(error);
     });
   
