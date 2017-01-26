@@ -5,8 +5,8 @@ var Answer = require('../models/').Answer;
 var User = require('../models/').User;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
-var Contest = require('../models/').Contest;
 var UserContest = require('../models/').UserContest;
+var PossibleOption = require('../models/').PossibleOption;
 
 var util = require('util');
 
@@ -153,7 +153,7 @@ module.exports = {
     })
   },
   showByUser(req, res) {
-    AnsweredPoll.findOne({where: {id: req.params.id, user_id: req.params.user_id}, include: { model: Answer, include: Question}})
+    AnsweredPoll.findOne({where: {id: req.params.id, user_id: req.params.user_id}, include: {model: Answer, include: [Question, PossibleOption]}})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })
@@ -162,7 +162,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    AnsweredPoll.findById(req.params.id, {include: { model: Answer, include: {model: Question, include: {model: OptionsContainer, include: PossibleOption}}}})
+    AnsweredPoll.findById(req.params.id, {include: {model: Answer, include: [Question, PossibleOption]}})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })
