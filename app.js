@@ -15,7 +15,7 @@ app.use(expressValidator({
         return Array.isArray(value);
     },
     isValidType: function(value) {
-      return value === 'text' || value === 'options' || value === 'number'
+      return value === 'text' || value === 'options' || value === 'number' || value == 'boolean'
     }
  }
 }));
