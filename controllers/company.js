@@ -13,6 +13,11 @@ var schema = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
+  'logo': {
+    optional: true,
+    isUrl: true,
+    errorMessage: 'Invalid logo'
+  }
 };
 
 var schemaUpdate = {
@@ -26,6 +31,11 @@ var schemaUpdate = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
+  'logo': {
+    optional: true,
+    isUrl: true,
+    errorMessage: 'Invalid logo'
+  }
 };
 
 var filterParams = function(req) {
