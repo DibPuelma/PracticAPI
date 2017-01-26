@@ -2,7 +2,6 @@
 module.exports = function(sequelize, DataTypes) {
   //TODO: eliminar los campos
   var AnsweredPoll = sequelize.define('AnsweredPoll', {
-    sellPoint_id: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     employee_id: DataTypes.INTEGER
   }, {
