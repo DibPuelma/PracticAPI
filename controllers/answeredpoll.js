@@ -162,7 +162,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    AnsweredPoll.findById(req.params.id, {include: { model: Answer, include: Question}})
+    AnsweredPoll.findById(req.params.id, {include: { model: Answer, include: {model: Question, include: {model: OptionsContainer, include: PossibleOption}}}})
     .then((answeredpoll) => {
       res.status(200).json(answeredpoll);
     })
