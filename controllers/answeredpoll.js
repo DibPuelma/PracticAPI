@@ -27,16 +27,6 @@ var schema = {
     notEmpty: true,
     isNumeric: true,
     errorMessage: 'Invalid user ID, must be a number'
-  },
-  'pollId': {
-    notEmpty: true,
-    isNumeric: true,
-    errorMessage: 'Invalid poll ID, must be a number'
-  },
-  'questions': {
-    notEmpty: true,
-    isArray: true,
-    errorMessage: 'Invalid questions array'
   }
 };
 
@@ -92,7 +82,6 @@ module.exports = {
         .catch(function (error) {
           console.log("error emple");
           console.log(error);
-          res.status(500).json(error);
         })
         promises.push(setEmployee);
 
@@ -103,7 +92,6 @@ module.exports = {
         .catch(function (error) {
           console.log("error sellp");
           console.log(error);
-          res.status(500).json(error);
         })
         promises.push(setSellPoint);
 
@@ -114,7 +102,6 @@ module.exports = {
         .catch(function (error) {
           console.log("error user");
           console.log(error);
-          res.status(500).json(error);
         })
         promises.push(setUser);
 
@@ -125,28 +112,30 @@ module.exports = {
         .catch(function (error) {
           console.log("error poll");
           console.log(error);
-          res.status(500).json(error);
         })
         promises.push(setPoll);
-
+        console.log("###############################");
+        console.log(req.body.answers);
+        console.log("###############################");
         req.body.answers.map((answer) => {
+          console.log("###############################");
+          console.log(answer);
+          console.log("###############################");
           var addNewAnswer = Answer.create(answer)
-          .then((answer) => {
+          .then((newAnswer) => {
             Question.findById(answer.question)
             .then((question) => {
-              question.addAnswer(answer);
+              question.addAnswer(newAnswer);
             })
             .catch(function (error) {
               console.log("error de pregunta");
               console.log(error);
-              res.status(500).json(error);
             })
-            answeredpoll.addAnswer(answer);
+            answeredpoll.addAnswer(newAnswer);
           })
           .catch(function (error) {
             console.log("error de respuesta");
             console.log(error);
-            res.status(500).json(error);
           })
           promises.push(addNewAnswer);
         })
