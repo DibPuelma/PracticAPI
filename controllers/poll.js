@@ -2,6 +2,8 @@ var Poll = require('../models/').Poll;
 var Company = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
 var Question = require('../models/').Question;
+var OptionsContainer = require('../models/').OptionsContainer;
+var PossibleOption = require('../models/').PossibleOption;
 var util = require('util');
 
 var schema = {
@@ -71,7 +73,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res){
-    Poll.findAll({where: {company_id: req.params.company_id}, include: [Question, { model: SellPoint, as: 'activeSellPoint' }]})
+    Poll.findAll({where: {company_id: req.params.company_id}, include: [Question]})
     .then((polls) => {
       res.status(200).json(polls);
     })
@@ -151,43 +153,61 @@ module.exports = {
     })
   },
   show(req, res) {
-    Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: [Question]})
+    // var promises = []
+    Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: {model:Question, include: {model: OptionsContainer, include: PossibleOption}}})
     .then((poll) => {
+      // poll.Questions.map((question) => {
+      //   if(question.options_container_id != null){
+      //     var addOptions = OptionsContainer.findById(question.options_container_id, {include: PossibleOption})
+      //     .then((possopt) => {
+      //       console.log(possopt);
+      //       question["options"] = possopt;
+      //     })
+      // promises.push(addOptions);
+      res.status(200).json(poll);
+      // }
+    // })
+    // Promise.all(promises)
+    // .then(() => {
+    //   res.status(200).json(poll);
+    // })
+    // .catch(function(error) {
+    //   res.status(500).json(error);
+    // })
+  })
+  .catch(function(error) {
+    res.status(500).json(error);
+  })
+},
+update(req, res) {
+
+  req.checkBody(schemaUpdate);
+
+  req.getValidationResult().then(function(result) {
+    if (!result.isEmpty()) {
+      res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+      return;
+    }
+
+    var data = filterParams(req);
+
+    Poll.findById(req.params.id)
+    .then((poll) => {
+      poll.update(data)
       res.status(200).json(poll);
     })
     .catch(function(error) {
       res.status(500).json(error);
     })
-  },
-  update(req, res) {
-
-    req.checkBody(schemaUpdate);
-
-    req.getValidationResult().then(function(result) {
-      if (!result.isEmpty()) {
-        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
-        return;
-      }
-
-      var data = filterParams(req);
-
-      Poll.findById(req.params.id)
-      .then((poll) => {
-        poll.update(data)
-        res.status(200).json(poll);
-      })
-      .catch(function(error) {
-        res.status(500).json(error);
-      })
-    })
-  },
-  delete(req, res) {
-    Poll.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
-    .then((deletedPoll) => {
-      res.status(200).json(deletedPoll);
-    })
-    .catch(function(error) {
-      res.status(500).json(error);
-    })
-  }
+  })
+},
+delete(req, res) {
+  Poll.destroy({where: {id: req.params.id, company_id: req.params.company_id}})
+  .then((deletedPoll) => {
+    res.status(200).json(deletedPoll);
+  })
+  .catch(function(error) {
+    res.status(500).json(error);
+  })
+}
 }
