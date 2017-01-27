@@ -56,7 +56,6 @@ module.exports = {
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = "Companies".id AND ';
-    sql += '  "Questions".type = \'number\' AND ';
     sql += '  "AnsweredPolls".user_id = \'' + req.params.user_id + '\'';
     sql += 'GROUP BY "AnsweredPolls".id, "Companies".logo, "SellPoints".location; ';
 
