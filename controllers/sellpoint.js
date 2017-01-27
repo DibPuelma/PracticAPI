@@ -4,6 +4,8 @@ var SellPoint = require('../models/').SellPoint;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
 var Contest = require('../models/').Contest;
+var OptionsContainer = require('../models/').OptionsContainer;
+var PossibleOption = require('../models/').PossibleOption;
 
 var schema = {
   'location': {
