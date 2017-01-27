@@ -8,11 +8,14 @@ var QR        = require('../models/').QR;
 var Contest   = require('../models/').Contest;
 var Prize     = require('../models/').Prize;
 
+var Answer    = require('../models/').Answer;
+var Question  = require('../models/').Question;
+
+var AnsweredPoll = require('../models/').AnsweredPoll;
+
 var express = require('express')
 var router = express.Router()
 
-router.get('/read', function(req, res) {
-
-});
-
-module.exports = router;
+module.exports = {
+  
+}

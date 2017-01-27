@@ -40,14 +40,12 @@ var PossibleOption   = require('./controllers/possibleoption.js');
 var AnsweredPoll     = require('./controllers/answeredpoll.js');
 var Answer           = require('./controllers/answer.js');
 
-
-
 //Encuestas
-app.get('/company/:company_id/poll',                                   Poll.index);
-app.post('/company/:company_id/poll',                                  Poll.create);
-app.get('/company/:company_id/poll/:id',                               Poll.show);
-app.delete('/company/:company_id/poll/:id',                            Poll.delete);
-app.put('/company/:company_id/poll/:id',                               Poll.update);
+app.get('/company/:company_id/poll',                                    Poll.index);
+app.post('/company/:company_id/poll',                                   Poll.create);
+app.get('/company/:company_id/poll/:id',                                Poll.show);
+app.delete('/company/:company_id/poll/:id',                             Poll.delete);
+app.put('/company/:company_id/poll/:id',                                Poll.update);
 app.put('/company/:company_id/poll/:poll_id/sell_point/:sell_point_id', Poll.changeActiveSellPoint);
 
 //Preguntas
@@ -85,15 +83,17 @@ app.delete('/company/:company_id/poll/:poll_id/answered_poll/:id', AnsweredPoll.
 app.get('/company/:company_id/question/:question_id/answer',                             Answer.indexByQuestion)
 app.get('/company/:company_id/poll/:poll_id/answered_poll/:answered_poll_id/answer/:id', Answer.show);
 
+
 //Usuarios
-app.get('/user',        User.index);
-app.get('/user/:id',    User.show);
-app.post('/user',       User.create);
-app.put('/user/:id',    User.update);
-app.delete('/user/:id', User.delete);
+app.get('/user',              User.index);
+app.get('/user/:id',          User.show);
+app.post('/user',             User.create);
+app.put('/user/:id',          User.update);
+app.delete('/user/:id',       User.delete);
 app.get('/user/:id/contests', User.contests);
-app.post('/user/login', User.login);
-app.post('/user/logout', User.logout);
+app.post('/user/login',       User.login);
+app.post('/user/logout',      User.logout);
+app.get('/user/:id/prizes',   User.prizes);
 
 //Compañías
 app.get('/company',        Company.index);
