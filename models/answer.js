@@ -2,7 +2,8 @@
 module.exports = function(sequelize, DataTypes) {
   var Answer = sequelize.define('Answer', {
     string_value: DataTypes.STRING,
-    number_value: DataTypes.INTEGER
+    number_value: DataTypes.INTEGER,
+    boolean_value: DataTypes.BOOLEAN
   }, {
     underscored: true,
     classMethods: {

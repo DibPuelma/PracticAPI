@@ -1,9 +1,6 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  //TODO: eliminar los campos
   var AnsweredPoll = sequelize.define('AnsweredPoll', {
-    user_id: DataTypes.INTEGER,
-    employee_id: DataTypes.INTEGER
   }, {
     underscored: true,
     classMethods: {

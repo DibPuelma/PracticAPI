@@ -66,60 +66,8 @@ module.exports = {
     }).catch(function(error) {
       res.status(500).json({ error: error});
     });
-
-    // AnsweredPoll.findAll({
-    //   where: {user_id: req.params.user_id}
-    //   })
-    // .then((answeredpolls) => {
-    //   var ids = [];
-    //   answeredpolls.map((poll) => {
-    //     ids.push(poll.id)
-    //   })
-    //   Answer.findAll({
-    //     where:{
-    //       answered_poll_id: ids
-    //     },
-    //     group: 'answered_poll_id',
-    //     attributes: ['answered_poll_id', [sequelize.fn('AVG',sequelize.col('number_value')), 'average']],
-    //   })
-    //   .then((answers) => {
-    //
-    //     res.status(200).json(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     res.status(500).json(error);
-    //   })
-  // })
-  // .catch((error) => {
-  //   console.log(error);
-  //   res.status(500).json(error);
-  // })
 },
-// index(req, res) {
-//   AnsweredPoll.findAll({where: {user_id: req.params.user_id}, include: [Answer, {model: SellPoint, include: Company}]})
-//   .then((answeredpolls) => {
-//     answeredpolls.map((answeredpoll) => {
-//       answeredpoll.getAnswers()
-//       .then((answers) => {
-//         var sum = 0;
-//         var count = 0;
-//         answers.map((data) => {
-//           if(data.number_value !== null){
-//             count++;
-//             sum += data.number_value;
-//           }
-//         })
-//         var average = sum/count;
-//         answeredpolls.averageStars = average;
-//         res.status(200).json(answeredpolls);
-//       })
-//     })
-//   })
-//   .catch((error) => {
-//     res.status(500).json(error);
-//   })
-// },
+
 indexByPoll(req, res) {
   AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
   .then((answeredpolls) => {
