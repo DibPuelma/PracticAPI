@@ -135,7 +135,7 @@ module.exports = {
   getActiveAttendedPoll(req, res) {
     SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
     .then((sellPoint) => {
-      sellPoint.getAttendedPoll({include: Question})
+      sellPoint.getAttendedPoll({include: {model:Question, include: {model: OptionsContainer, include: PossibleOption}}})
       .then((poll) => {
         res.status(200).json(poll);
       });
@@ -166,7 +166,7 @@ module.exports = {
   getActiveUnattendedPoll(req, res) {
     SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
     .then((sellPoint) => {
-      sellPoint.getUnattendedPoll({include: Question})
+      sellPoint.getUnattendedPoll({include: {model:Question, include: {model: OptionsContainer, include: PossibleOption}}})
       .then((poll) => {
         res.status(200).json(poll);
       });
@@ -194,7 +194,7 @@ module.exports = {
     })
   },
 
-  getActiveContest(req, res) {    
+  getActiveContest(req, res) {
     SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
     .then((sellPoint) => {
       sellPoint.getContest()
