@@ -592,9 +592,27 @@ var createPolls = function() {
     })
     Inde.SellPoint.findById(1).then(function(sellPoint) {
       sellPoint.setAttendedPoll(poll);
+      Inde.Contest.findById(1).then(function(contest) {
+        sellPoint.setContest(contest);
+      })
     })
     Inde.SellPoint.findById(2).then(function(sellPoint) {
       sellPoint.setAttendedPoll(poll);
+      Inde.Contest.findById(2).then(function(contest) {
+        sellPoint.setContest(contest);
+      })
+    })
+    Inde.SellPoint.findById(3).then(function(sellPoint) {
+      sellPoint.setUnattendedPoll(poll);
+      Inde.Contest.findById(3).then(function(contest) {
+        sellPoint.setContest(contest);
+      })
+    })
+    Inde.SellPoint.findById(4).then(function(sellPoint) {
+      sellPoint.setUnattendedPoll(poll);
+      Inde.Contest.findById(3).then(function(contest) {
+        sellPoint.setContest(contest);
+      })
     })
     Inde.Poll.create({
       name: "Encuesta de colores",
@@ -608,6 +626,12 @@ var createPolls = function() {
       })
       Inde.Company.findById(2).then(function(company) {
         poll.setCompany(company);
+      })
+      Inde.SellPoint.findById(1).then(function(sellPoint) {
+        sellPoint.setUnattendedPoll(poll);
+      })
+      Inde.SellPoint.findById(2).then(function(sellPoint) {
+        sellPoint.setUnattendedPoll(poll);
       })
       Inde.SellPoint.findById(3).then(function(sellPoint) {
         sellPoint.setAttendedPoll(poll);
