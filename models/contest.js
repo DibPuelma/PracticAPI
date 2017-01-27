@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Contest.belongsTo(models.Company);
         Contest.belongsToMany(models.User, { through: 'UserContest' });
-        Contest.hasMany(models.SellPoint)
+        Contest.hasMany(models.SellPoint);
+        Contest.hasMany(models.Prize);
       }
     }
   });
