@@ -1,6 +1,8 @@
 var util    = require('util');
 var User    = require('../models/').User;
 var Company = require('../models/').Company;
+var Contest = require('../models/').Contest;
+var Prize   = require('../models/').Prize;
 
 var schema = {
   'email': {
@@ -120,7 +122,9 @@ var filterKeys = function(object, allowedKeys) {
 
 module.exports = {
   index(req, res) {
+    console.log("1");
     User.findAll().then(function (users) {
+      console.log("2");
       res.status(200).json(users);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -229,6 +233,14 @@ module.exports = {
 
     req.session.logged = false;
     res.status(200).json({message: "logged out"});
+  },
+
+  prizes(req, res) {
+    Prize.findAll( {where: { winner: req.params.id }, include: { model: Contest, include: Company } } ).then(function(prizes) {
+      res.status(200).json(prizes);
+    }).catch(function (error) {
+      res.status(500).json(error);
+    });
   }
 
 };

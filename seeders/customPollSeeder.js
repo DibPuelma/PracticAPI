@@ -175,31 +175,36 @@ var prize_data = [
     contest: 'Contest 1',
     info: {
       name       : '100 Oro',
-      description: 'Oro de parte del rey'
+      description: 'Oro de parte del rey',
+      code       : '12345'
     }
   }, {
     contest: 'Contest 1',
     info: {
       name       : '200 Oro',
-      description: 'Oro de parte del rey'
+      description: 'Oro de parte del rey',
+      code       : '67890'
     }
   }, {
     contest: 'Contest 1',
     info: {
       name       : '300 Oro',
-      description: 'Oro de parte del rey'
+      description: 'Oro de parte del rey',
+      code       : 'abcde'
     }
   }, {
     contest: 'Concurso 1',
     info: {
       name       : 'Espada de Fuego',
-      description: 'Legendaria espada encontrada en el bosque'
+      description: 'Legendaria espada encontrada en el bosque',
+      code       : '192kd0'
     }
   }, {
     contest: 'Concurso 2',
     info: {
       name       : 'Mouse Gamer',
-      description: 'Legendario mouse encontrado en el bosque'
+      description: 'Legendario mouse encontrado en el bosque',
+      code       : '09sajc09a'
     }
   }
 ]
@@ -436,6 +441,15 @@ var createFranco = function() {
         });
       });
 
+      // Assign prizes to user
+      user_prizes_data.forEach(function (data) {
+        Inde.Prize.findOne( { where: { name: data.prize } } ).then(function(prize) {
+          Inde.User.findOne( {where: { email: data.user } } ).then(function(user) {
+            prize.update({winner: user.id});
+          });
+        });
+      });
+
       // Assign some contest to users
       user_contest_data.forEach(function(data) {
         Inde.User.findOne( { where: { email: data.user } }).then(function(user) {
@@ -444,6 +458,9 @@ var createFranco = function() {
           });
         });
       });
+
+      // TODO: asignar contest a sellpoint
+      // TODO: asignar attended y unattended poll a sellpoint
 
     });
     createOptions();
@@ -454,6 +471,13 @@ var user_contest_data = [
   { user: 'user1@abc.net', contest: 'Contest 1' },
   { user: 'user2@abc.net', contest: 'Contest 1' },
   { user: 'user2@abc.net', contest: 'Concurso 1' }
+];
+
+var user_prizes_data = [
+  { user: 'user2@abc.net', prize: '100 Oro' },
+  { user: 'user2@abc.net', prize: '200 Oro' },
+  { user: 'user2@abc.net', prize: '300 Oro' },
+  { user: 'user2@abc.net', prize: 'Espada de Fuego' }
 ];
 
 //Creamos usuarios
