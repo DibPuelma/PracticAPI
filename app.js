@@ -47,8 +47,7 @@ app.post('/company/:company_id/poll',                                   Poll.cre
 app.get('/company/:company_id/poll/:id',                                Poll.show);
 app.delete('/company/:company_id/poll/:id',                             Poll.delete);
 app.put('/company/:company_id/poll/:id',                                Poll.update);
-app.put('/company/:company_id/poll/:poll_id/sell_point/:sell_point_id', Poll.changeActiveSellPoint);
-º
+
 //Preguntas
 app.post('/company/:company_id/question',                     Question.create);
 app.get('/company/:company_id/question/:id',                  Question.show);
