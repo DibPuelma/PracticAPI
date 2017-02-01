@@ -196,7 +196,7 @@ module.exports = {
 
   contests(req, res) {
     User.findById(req.params.id).then(function (user) {
-      user.getContests({ include: Company, {model: Prize, include: User}}).then(function(contests) {
+      user.getContests({ include: [Company, {model: Prize, include: User}]}).then(function(contests) {
         res.status(200).json(contests);
       }).catch(function (error){
       res.status(500).json(error);

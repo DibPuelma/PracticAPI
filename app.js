@@ -31,7 +31,6 @@ var Company   = require('./controllers/company.js');
 var Employee  = require('./controllers/employee.js');
 var SellPoint = require('./controllers/sellpoint.js');
 var Contest   = require('./controllers/contest.js');
-var QR        = require('./controllers/qr.js');
 var Prize     = require('./controllers/prize.js');
 var Poll             = require('./controllers/poll.js');
 var Question         = require('./controllers/question.js');
