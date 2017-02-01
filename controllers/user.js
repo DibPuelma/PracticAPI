@@ -89,7 +89,7 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-    if (keys.indexOf(param) > -1) 
+    if (keys.indexOf(param) > -1)
       data[param] = req.body[param];
 
   return data;
@@ -151,7 +151,7 @@ module.exports = {
 
       var data = filterParams(req);
       data['status'] = 'active';
-      
+
       User.create(data).then(function (newUser) {
         response = {code: 'OK', user: filterKeys(newUser.dataValues, visible_attrs)};
         res.status(200).json(response);
@@ -196,7 +196,7 @@ module.exports = {
 
   contests(req, res) {
     User.findById(req.params.id).then(function (user) {
-      user.getContests({ include: [Company]}).then(function(contests) {
+      user.getContests({ include: Company, {model: Prize, include: User}}).then(function(contests) {
         res.status(200).json(contests);
       }).catch(function (error){
       res.status(500).json(error);
@@ -209,8 +209,8 @@ module.exports = {
   login(req, res) {
     if (req.session.logged) {
       req.session.logged = false;
-    } 
-    
+    }
+
     User.findOne( { where: {email: req.body.email} } ).then(function (user) {
       if (user.password == req.body.password) {
        req.session.logged = true;
@@ -222,14 +222,14 @@ module.exports = {
       error['code'] = "USER_DOES_NOT_EXIT";
       res.status(500).json(error);
     });
-  
+
   },
 
   logout(req, res) {
     if (!req.session.logged) {
       res.status(200).json({ message: "you are not logged" });
       return;
-    } 
+    }
 
     req.session.logged = false;
     res.status(200).json({message: "logged out"});

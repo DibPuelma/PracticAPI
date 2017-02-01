@@ -12,7 +12,6 @@ module.exports = function(sequelize, DataTypes) {
         Contest.belongsToMany(models.User, { through: 'UserContest' });
         Contest.hasMany(models.SellPoint);
         Contest.hasMany(models.Prize);
-        Contest.hasOne(models.User, { as: 'Winner' });
       }
     }
   });
