@@ -107,22 +107,26 @@ var sellpoints_data = [
   {
     company: 'Company1',
     info: {
-      location : 'Local1'
+      location : 'Local1',
+      code: 'code1'
     }
   }, {
     company: 'Company1',
     info: {
-      location : 'Local2'
+      location : 'Local2',
+      code: 'code2'
     }
   }, {
     company: 'Company2',
     info: {
-      location : 'Local Norte'
+      location : 'Local Norte',
+      code: 'code3'
     }
   }, {
     company: 'Company2',
     info: {
-      location : 'Local Sur'
+      location : 'Local Sur',
+      code: 'code4'
     }
   }
 ];
@@ -225,7 +229,6 @@ var dropTables = function() {
                 Inde.AnsweredPoll.drop().then(function() {
                   Inde.User.drop().then(function() {
                     Inde.Employee.drop().then(function() {
-                      Inde.QR.drop().then(function() {
                         Inde.SellPoint.drop().then(function() {
                           Inde.Poll.drop().then(function() {
                             Inde.Prize.drop().then(function() {
@@ -235,7 +238,6 @@ var dropTables = function() {
                                 })
                               })
                             })
-                          })
                         })
                       })
                     })
@@ -258,7 +260,6 @@ var createTables = function() {
       Inde.Prize.sync().then(function() {
         Inde.Poll.sync().then(function() {
           Inde.SellPoint.sync().then(function() {
-            Inde.QR.sync().then(function() {
               Inde.Employee.sync().then(function() {
                 Inde.User.sync().then(function() {
                   Inde.AnsweredPoll.sync().then(function() {
@@ -271,7 +272,6 @@ var createTables = function() {
                                 Inde.PollQuestion.sync().then(function() {
                                   createFranco();
                                 })
-                              })
                             })
                           })
                         })
@@ -357,18 +357,6 @@ var createFranco = function() {
       });
     });
 
-    // QRs
-    qr_data.forEach(function(data) {
-      var qr = Inde.QR.build(data.info);
-
-      var p = qr.save().then(function() {
-        console.log("QR saved: " + data.info.code);
-      }).catch(function(error) {
-        console.log("Error: " + error);
-      });
-      other_models_promises.push(p);
-    });
-
     // Contests
     contest_data.forEach(function(data) {
       var contest = Inde.Contest.build(data.info);
@@ -409,20 +397,6 @@ var createFranco = function() {
           }).then(function(sellpoint) {
             employee.setSellPoint(sellpoint);
             console.log("Employee updated");
-          });
-        });
-      });
-
-      // Assign qr to sellpoints
-      qr_data.forEach(function(data) {
-        Inde.QR.findOne({
-          where: { code: data.info.code}
-        }).then(function (qr) {
-          Inde.SellPoint.findOne({
-            where: { location: data.sellpoint }
-          }).then(function(sellpoint) {
-            qr.setSellPoint(sellpoint);
-            console.log("QR updated");
           });
         });
       });

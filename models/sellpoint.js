@@ -3,14 +3,14 @@ module.exports = function(sequelize, DataTypes) {
   var SellPoint = sequelize.define('SellPoint', {
     location         : { type: DataTypes.TEXT },
     attended_active  : { type: DataTypes.INTEGER },
-    unattended_active: { type: DataTypes.INTEGER }
+    unattended_active: { type: DataTypes.INTEGER },
+    code: { type: DataTypes.TEXT }
   }, {
     underscored: true,
     classMethods: {
       associate: function(models) {
         SellPoint.hasMany(models.Employee);
         SellPoint.belongsTo(models.Company);
-        SellPoint.hasOne(models.QR);
         SellPoint.belongsTo(models.Poll, {as: "AttendedPoll"});
         SellPoint.belongsTo(models.Poll, {as: "UnattendedPoll"});
         SellPoint.hasMany(models.AnsweredPoll);

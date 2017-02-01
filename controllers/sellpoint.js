@@ -44,13 +44,19 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.company_id).then(function (company) {
-      SellPoint.findById(req.params.id).then(function (sellpoint) {
+      SellPoint.find({where: {id: req.params.id, company_id: req.params.company_id}})
+      .then( (sellpoint) => {
         res.status(200).json(sellpoint);
       }).catch(function (error){
         res.status(500).json(error);
       });
-    }).catch(function (error) {
+  },
+
+  showByCode(req, res) {
+    SellPoint.find({where: {code: req.params.code, company_id: req.params.company_id}, include: Employee})
+    .then( (sellpoint) => {
+      res.status(200).json(sellpoint);
+    }).catch(function (error){
       res.status(500).json(error);
     });
   },

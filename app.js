@@ -113,6 +113,7 @@ app.delete('/company/:company_id/employee/:id', Employee.delete);
 //Puntos de venta
 app.get('/company/:company_id/sell_point',                               SellPoint.index);
 app.get('/company/:company_id/sell_point/:id',                           SellPoint.show);
+app.get('/company/:company_id/sell_point/:code',                               SellPoint.showByCode);
 app.post('/company/:company_id/sell_point',                              SellPoint.create);
 app.put('/company/:company_id/sell_point/:id',                           SellPoint.update);
 app.delete('/company/:company_id/sell_point/:id',                        SellPoint.delete);
@@ -131,12 +132,12 @@ app.put('/company/:company_id/contest/:id',    Contest.update);
 app.delete('/company/:company_id/contest/:id', Contest.delete);
 
 //Códigos QR
-app.get('/company/:company_id/sellpoint/:sellpoint_id/QR',        QR.index);
-app.get('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.show);
-app.post('/company/:company_id/sellpoint/:sellpoint_id/QR',       QR.create);
-app.put('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.update);
-app.delete('/company/:company_id/sellpoint/:sellpoint_id/QR/:id', QR.delete);
-app.get('/QR/:code/sellpoint', QR.sellpoint);
+// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR',        QR.index);
+// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.show);
+// app.post('/company/:company_id/sellpoint/:sellpoint_id/QR',       QR.create);
+// app.put('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.update);
+// app.delete('/company/:company_id/sellpoint/:sellpoint_id/QR/:id', QR.delete);
+// app.get('/QR/:code/sellpoint', QR.sellpoint);
 
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);
