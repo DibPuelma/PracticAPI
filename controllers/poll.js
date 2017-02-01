@@ -28,6 +28,11 @@ var schema = {
   'activeSellPoint': {
     optional: true,
     errorMessage: 'Invalid sell point to make active'
+  },
+  'order': {
+    notEmpty: true,
+    isNumeric: true,
+    errorMessage: 'Orden invalido'
   }
 };
 
