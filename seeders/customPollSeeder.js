@@ -214,42 +214,43 @@ var prize_data = [
 ]
 
 var dropTables = function() {
-  /*Inde.sequelize.sync({ force: true }).then(function() {
+  Inde.sequelize.sync({ force: true }).then(function() {
     createTables();
   });
-  return;*/
 
-  Inde.PollQuestion.drop().then(function() {
-    Inde.OptionsContainerPossibleOptions.drop().then(function() {
-      Inde.UserContest.drop().then(function() {
-        Inde.Answer.drop().then(function() {
-          Inde.PossibleOption.drop().then(function() {
-            Inde.Question.drop().then(function() {
-              Inde.OptionsContainer.drop().then(function() {
-                Inde.AnsweredPoll.drop().then(function() {
-                  Inde.User.drop().then(function() {
-                    Inde.Employee.drop().then(function() {
-                        Inde.SellPoint.drop().then(function() {
-                          Inde.Poll.drop().then(function() {
-                            Inde.Prize.drop().then(function() {
-                              Inde.Contest.drop().then(function() {
-                                Inde.Company.drop().then(function() {
-                                  createTables();
-                                })
-                              })
-                            })
-                        })
-                      })
-                    })
-                  })
-                })
-              })
-            })
-          })
-        })
-      })
-    })
-  })
+// Inde.SellPointEmployees.drop().then(function() {
+//   Inde.PollQuestion.drop().then(function() {
+//     Inde.OptionsContainerPossibleOptions.drop().then(function() {
+//       Inde.UserContest.drop().then(function() {
+//         Inde.Answer.drop().then(function() {
+//           Inde.PossibleOption.drop().then(function() {
+//             Inde.Question.drop().then(function() {
+//               Inde.OptionsContainer.drop().then(function() {
+//                 Inde.AnsweredPoll.drop().then(function() {
+//                   Inde.User.drop().then(function() {
+//                     Inde.SellPoint.drop().then(function() {
+//                       Inde.Employee.drop().then(function() {
+//                         Inde.Poll.drop().then(function() {
+//                           Inde.Prize.drop().then(function() {
+//                             Inde.Contest.drop().then(function() {
+//                               Inde.Company.drop().then(function() {
+//                                 createTables();
+//                               })
+//                             })
+//                           })
+//                         })
+//                       })
+//                     })
+//                   })
+//                 })
+//               })
+//             })
+//           })
+//         })
+//       })
+//     })
+//   })
+// })
 }
 dropTables();
 
@@ -259,19 +260,21 @@ var createTables = function() {
     Inde.Contest.sync().then(function() {
       Inde.Prize.sync().then(function() {
         Inde.Poll.sync().then(function() {
-          Inde.SellPoint.sync().then(function() {
-              Inde.Employee.sync().then(function() {
-                Inde.User.sync().then(function() {
-                  Inde.AnsweredPoll.sync().then(function() {
-                    Inde.OptionsContainer.sync().then(function() {
-                      Inde.Question.sync().then(function() {
-                        Inde.PossibleOption.sync().then(function() {
-                          Inde.Answer.sync().then(function() {
-                            Inde.UserContest.sync().then(function() {
-                              Inde.OptionsContainerPossibleOptions.sync().then(function() {
-                                Inde.PollQuestion.sync().then(function() {
+          Inde.Employee.sync().then(function() {
+            Inde.SellPoint.sync().then(function() {
+              Inde.User.sync().then(function() {
+                Inde.AnsweredPoll.sync().then(function() {
+                  Inde.OptionsContainer.sync().then(function() {
+                    Inde.Question.sync().then(function() {
+                      Inde.PossibleOption.sync().then(function() {
+                        Inde.Answer.sync().then(function() {
+                          Inde.UserContest.sync().then(function() {
+                            Inde.OptionsContainerPossibleOptions.sync().then(function() {
+                              Inde.PollQuestion.sync().then(function() {
+                                Inde.SellPointEmployees.sync().then(function() {
                                   createFranco();
                                 })
+                              })
                             })
                           })
                         })
