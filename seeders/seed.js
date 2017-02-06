@@ -404,7 +404,7 @@ var createUsers = function() {
     createCompanies();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   })
 }
 
@@ -419,36 +419,38 @@ var createCompanies = function() {
     createSellPoints();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   })
 }
 
 var createSellPoints = function() {
   var sellPointsPromises = [];
   sellPointsData.map((data) => {
-    Models.Company.find({where: {name: data.company}})
+    var companyFindPromise = Models.Company.find({where: {name: data.company}})
     .then((company) => {
       var createSellPointPromise = Models.SellPoint.create({
         company_id: company.id,
         location:data.info.location,
         code:data.info.code
-      });
+      }).then((sellpoint) => {});
       sellPointsPromises.push(createSellPointPromise);
     })
+    sellPointsPromises.push(companyFindPromise);
   })
   Promise.all(sellPointsPromises)
   .then(() => {
     createEmployees();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
 var createEmployees = function() {
   var employeesPromises = []
   for (var i = 1; i <= 6; i++) {
-    Models.SellPoint.findById(i)
+    var findSellPointPromise = Models.SellPoint.findById(i)
     .then((sellPoint) => {
       var employeesAmount = getRandomInt(1, 5);
       for (var i = 0; i < employeesAmount; i++) {
@@ -469,13 +471,15 @@ var createEmployees = function() {
         employeesPromises.push(createEmployeePromise);
       }
     })
+    employeesPromises.push(findSellPointPromise);
   }
   Promise.all(employeesPromises)
   .then(() => {
     createOptionsContainers();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
@@ -522,7 +526,8 @@ var createOptionsContainers = function() {
     createPossibleOptions();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
@@ -585,7 +590,8 @@ var createPossibleOptions = function() {
     createQuestions();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
@@ -610,6 +616,9 @@ var createQuestions = function() {
       text: "¿Qué plato comiste hoy?",
       type: "options"
     })
+    .then((question) => {
+      question.setOptionsContainer(optcont);
+    })
     questionsPromises.push(createQuestionPromise);
   })
   Models.OptionsContainer.find({where: {name: "Plato favorito"}})
@@ -618,6 +627,9 @@ var createQuestions = function() {
       company_id: optcont.company_id,
       text: "¿Cuál tipo de plato es tu favorito?",
       type: "options"
+    })
+    .then((question) => {
+      question.setOptionsContainer(optcont);
     })
     questionsPromises.push(createQuestionPromise);
   })
@@ -628,6 +640,9 @@ var createQuestions = function() {
       text: "Cual es tu deporte favorito",
       type: "options"
     })
+    .then((question) => {
+      question.setOptionsContainer(optcont);
+    })
     questionsPromises.push(createQuestionPromise);
   })
   Models.OptionsContainer.find({where: {name: "Acción vendedores"}})
@@ -637,6 +652,9 @@ var createQuestions = function() {
       text: "¿En qué estaban los vendedores?",
       type: "options"
     })
+    .then((question) => {
+      question.setOptionsContainer(optcont);
+    })
     questionsPromises.push(createQuestionPromise);
   })
   Promise.all(questionsPromises)
@@ -644,7 +662,8 @@ var createQuestions = function() {
     createPolls();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
@@ -654,27 +673,121 @@ var createPolls = function () {
   var pollTwoTypes = ["number", "number", "number", "options"];
   var pollThreeTypes = ["number", "number", "options", "text"];
   var pollFourTypes = ["boolean", "options", "text"];
-  Models.Company.find({where: {name: "Puma"}})
+  var typesArray = [pollOneTypes, pollTwoTypes, pollThreeTypes, pollFourTypes];
+  var findCompanyPromise;
+  findCompanyPromise = Models.Company.find({where: {name: "Puma"}})
   .then((company) => {
-    pollsPromises.push(createPoll(company, pollOneTypes));
-    pollsPromises.push(createPoll(company, pollTwoTypes));
-    pollsPromises.push(createPoll(company, pollThreeTypes));
-    pollsPromises.push(createPoll(company, pollFourTypes));
+    typesArray.map((types) => {
+      var pollCreation = createPoll(company, types)
+      .then((result) => {
+      })
+      .catch((error) => {
+        console.error(error);
+
+      })
+      pollsPromises.push(pollCreation);
+    })
   })
-  Models.Company.find({where: {name: "Sushi Home"}})
+  pollsPromises.push(findCompanyPromise);
+  findCompanyPromise = Models.Company.find({where: {name: "Sushi Home"}})
   .then((company) => {
-    pollsPromises.push(createPoll(company, pollOneTypes));
-    pollsPromises.push(createPoll(company, pollTwoTypes));
-    pollsPromises.push(createPoll(company, pollThreeTypes));
-    pollsPromises.push(createPoll(company, pollFourTypes));
+    typesArray.map((types) => {
+      var pollCreation = createPoll(company, types)
+      .then((result) => {
+      })
+      .catch((error) => {
+        console.error(error);
+
+      })
+      pollsPromises.push(pollCreation);
+    })
   })
-  Promise.all(pollsPromises)
-  .then(() => {
-    createContests();
+  pollsPromises.push(findCompanyPromise);
+
+  sleep(5000).then(() => {
+    Promise.all(pollsPromises)
+    .then(() => {
+      createContests();
+    })
+    .catch((error) => {
+      console.error(error);
+
+    })
   })
-  .catch((error) => {
-    console.log(error);
+}
+
+var createPoll = function(company, questionTypes) {
+  return new Promise((resolve, reject) => {
+    var pollQuestions = [];
+    var getQuestionsPromises = [];
+    var booleanQuestions, numberQuestions, textQuestions, optionsQuestions;
+    var booleanQuestionsPromise = Models.Question.findAll({where: {company_id: company.id, type: "boolean"}})
+    .then((questions) => {
+      booleanQuestions = questions;
+    })
+    getQuestionsPromises.push(booleanQuestionsPromise);
+
+    var numberQuestionsPromise = Models.Question.findAll({where: {company_id: company.id, type: "number"}})
+    .then((questions) => {
+      numberQuestions = questions;
+    })
+    getQuestionsPromises.push(numberQuestionsPromise);
+
+    var textQuestionsPromise = Models.Question.findAll({where: {company_id: company.id, type: "text"}})
+    .then((questions) => {
+      textQuestions = questions;
+    })
+    getQuestionsPromises.push(textQuestionsPromise);
+
+    var optionsQuestionsPromise = Models.Question.findAll({where: {company_id: company.id, type: "options"}})
+    .then((questions) => {
+      optionsQuestions = questions;
+    })
+    getQuestionsPromises.push(optionsQuestionsPromise);
+
+    Promise.all(getQuestionsPromises)
+    .then(() => {
+      questionTypes.map((type) => {
+        switch (type) {
+          case 'number':
+          pollQuestions.push(getRandomQuestion(numberQuestions));
+          break;
+          case 'boolean':
+          pollQuestions.push(getRandomQuestion(booleanQuestions));
+          break;
+          case 'text':
+          pollQuestions.push(getRandomQuestion(textQuestions));
+          break;
+          case 'options':
+          pollQuestions.push(getRandomQuestion(optionsQuestions));
+          break;
+        }
+      })
+      var createPollPromise = Models.Poll.create({
+        name: "Encuesta",
+        description: "Parte del seed, aquí va el objetivo de la encuesta"
+      })
+      .then((poll) => {
+        pollQuestions.map((question) => {
+          poll.addQuestion(question);
+        })
+        company.addPoll(poll)
+        .then(() => {
+          resolve("################################################################ POLL CREATED")
+        })
+      })
+      .catch((error) => {
+        reject("################################################################ ERROR")
+      })
+    })
   })
+}
+
+var getRandomQuestion = function(questions){
+  var index = getRandomInt(0, questions.length - 1);
+  var question = questions[index];
+  questions.splice(index, 1);
+  return question;
 }
 
 var createContests = function() {
@@ -694,7 +807,8 @@ var createContests = function() {
     createPrizes();
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
+
   })
 }
 
@@ -739,6 +853,7 @@ var addPollsToSellPoints = function() {
     companyTwoSellPoints = sellPoints;
   })
   getDataPromises.push(findCompanyTwoSellPoints);
+
   Promise.all(getDataPromises)
   .then(() => {
     companyOneSellPoints.map((sellPoint) => {
@@ -754,11 +869,11 @@ var addPollsToSellPoints = function() {
       createAnsweredPolls(companyOneSellPoints, companyTwoSellPoints);
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     })
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   })
 }
 
@@ -790,114 +905,90 @@ var createAnsweredPolls = function(companyOneSellPoints, companyTwoSellPoints) {
       })
     })
   })
-  Promise.all(allAnsweredPollPromises)
-  .then(() => {
-    console.log("TODO CREADO");
-  })
-  .catch((error) => {
-    console.log(error);
+  sleep(2000).then(() => {
+    Promise.all(allAnsweredPollPromises)
+    .then(() => {
+    })
+    .catch((error) => {
+      console.error(error);
+    })
   })
 }
 
 var createAnswersToPoll = function(sellPoint, poll, employees){
-  poll.getQuestions()
-  .then((questions) => {
-    var numberOfAnswers = getRandomInt(10, 20);
+  return new Promise((resolve, reject) => {
     var answeredPollsPromises = [];
-    for(var i = 0; i < numberOfAnswers; i++){
-      var createAnsweredPollPromise = Models.AnsweredPoll.create({user_id: getRandomInt(1,30)})
-      .then((answeredPoll) => {
-        answeredPoll.setSellPoint(sellPoint);
-        answeredPoll.setPoll(poll);
-        var answersPromises = [];
-        var createAnswerPromise;
-        questions.map((question) => {
-          switch (question.type) {
-            case 'number':
-            Answer.create({number_value: getRandomInt(0, 5)})
-            .then((answer) => {
-              answeredPoll.addAnswer(answer);
-              question.addAnswer(answer);
-            })
-            break;
-            case 'boolean':
-            Answer.create({boolean_value: getRandomInt(0, 1) > 1 ? true : false})
-            .then((answer) => {
-              answeredPoll.addAnswer(answer);
-              question.addAnswer(answer);
-            })
-            break;
-            case 'text':
-            Answer.create({text_value: "Muchas gracias por su pregunta, esta es una respuesta de prueba"})
-            .then((answer) => {
-              answeredPoll.addAnswer(answer);
-              question.addAnswer(answer);
-            })
-            break;
-            case 'options':
-            question.getOptionsContainer()
-            .then((optcont) => {
-              optcont.getPossibleOptions()
-              .then((possopts) => {
-                Answer.create({possible_option_id: possopts[getRandomInt(0, possopts.length - 1)].id})
-                .then((answer) => {
-                  answeredPoll.addAnswer(answer);
-                  question.addAnswer(answer);
+    var getQuestionsPromise = poll.getQuestions()
+    .then((questions) => {
+      var numberOfAnswers = getRandomInt(10, 20);
+      for(var i = 0; i < numberOfAnswers; i++){
+        var createAnsweredPollPromise = Models.AnsweredPoll.create({user_id: getRandomInt(1,30)})
+        .then((answeredPoll) => {
+          answeredPoll.setSellPoint(sellPoint);
+          answeredPoll.setPoll(poll);
+          answeredPoll.setEmployee(employees[getRandomInt(0, employees.length - 1)])
+          var answersPromises = [];
+          var createAnswerPromise;
+          questions.map((question) => {
+            switch (question.type) {
+              case 'number':
+              Models.Answer.create({number_value: getRandomInt(0, 5)})
+              .then((answer) => {
+                answeredPoll.addAnswer(answer);
+                question.addAnswer(answer);
+              })
+              break;
+              case 'boolean':
+              Models.Answer.create({boolean_value: getRandomInt(0, 1) > 1 ? true : false})
+              .then((answer) => {
+                answeredPoll.addAnswer(answer);
+                question.addAnswer(answer);
+              })
+              break;
+              case 'text':
+              Models.Answer.create({string_value: "Muchas gracias por su pregunta, esta es una respuesta de prueba"})
+              .then((answer) => {
+                answeredPoll.addAnswer(answer);
+                question.addAnswer(answer);
+              })
+              break;
+              case 'options':
+              question.getOptionsContainer()
+              .then((optcont) => {
+                optcont.getPossibleOptions()
+                .then((possopts) => {
+                  Models.Answer.create()
+                  .then((answer) => {
+                    answeredPoll.addAnswer(answer);
+                    question.addAnswer(answer);
+                    answer.setPossibleOption(possopts[getRandomInt(0, possopts.length - 1)])
+                  })
                 })
               })
-            })
-            break;
-          }
+              break;
+            }
+          })
         })
-      })
-      answeredPollsPromises.push(createAnsweredPollPromise);
-    }
-  })
-  return Promise.all(answeredPollsPromises)
-}
-
-var createPoll = function(company, questionTypes) {
-  var pollQuestions = [];
-  var getQuestionsPromises = [];
-  questionTypes.map((type) => {
-    var currentRequest = getRandomQuestionByType(company.id, type)
-    getQuestionsPromises.push(currentRequest[0])
-    pollQuestions.push(currentRequest[1])
-  })
-  Promise.all(getQuestionsPromises)
-  .then(() => {
-    var createPollPromise = Models.Poll.create({
-      name: "Encuesta 1",
-      description: "Parte del seed, aquí va el objetivo de la encuesta"
+        answeredPollsPromises.push(createAnsweredPollPromise);
+      }
     })
-    .then((poll) => {
-      pollQuestions.map((question) => {
-        poll.addQuestion(question);
+    answeredPollsPromises.push(getQuestionsPromise)
+    sleep(4000).then(() => {
+      Promise.all(answeredPollsPromises)
+      .then(() => {
+        resolve();
       })
-      company.addPoll(poll);
+      .catch((error) => {
+        reject(error);
+      })
     })
-    return createPollPromise;
   })
-}
-
-var getRandomQuestionByType = function(company_id, type) {
-  var response = [];
-  var findAll = Models.Question.findAll({where: {company_id: company_id, type: type}})
-  .then((questions) => {
-    question = getRandomQuestion(questions);
-    response.push(findAll);
-    response.push(question);
-    return response;
-  })
-}
-
-var getRandomQuestion = function(questions){
-  var index = getRandomInt(0, questions.length - 1);
-  var question = questions[index];
-  questions.splice(index, 1);
-  return question;
 }
 
 var getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
