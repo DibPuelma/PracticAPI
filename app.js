@@ -49,6 +49,7 @@ app.put('/company/:company_id/poll/:id',                                Poll.upd
 
 //Preguntas
 app.post('/company/:company_id/question',                     Question.create);
+app.get('/company/:company_id/question',                     Question.index);
 app.get('/company/:company_id/question/:id',                  Question.show);
 app.delete('/company/:company_id/question/:id',               Question.delete);
 app.put('/company/:company_id/question/:id',                  Question.update);
@@ -130,20 +131,15 @@ app.post('/company/:company_id/contest',       Contest.create);
 app.put('/company/:company_id/contest/:id',    Contest.update);
 app.delete('/company/:company_id/contest/:id', Contest.delete);
 
-//Códigos QR
-// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR',        QR.index);
-// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.show);
-// app.post('/company/:company_id/sellpoint/:sellpoint_id/QR',       QR.create);
-// app.put('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.update);
-// app.delete('/company/:company_id/sellpoint/:sellpoint_id/QR/:id', QR.delete);
-// app.get('/QR/:code/sellpoint', QR.sellpoint);
-
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);
 app.get('/company/:company_id/contest/:contest_id/prize/:id',    Prize.show);
 app.post('/company/:company_id/contest/:contest_id/prize',       Prize.create);
 app.put('/company/:company_id/contest/:contest_id/prize/:id',    Prize.update);
 app.delete('/company/:company_id/contest/:contest_id/prize/:id', Prize.delete);
+
+//Excel
+app.get('/company/:company_id/excel/question',                     Question.getExcelData);
 
 
 app.listen(app.get('port'), function() {
