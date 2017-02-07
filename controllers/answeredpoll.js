@@ -65,131 +65,131 @@ module.exports = {
     }).catch(function(error) {
       res.status(500).json({ error: error});
     });
-},
+  },
 
-indexByPoll(req, res) {
-  AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
-  .then((answeredpolls) => {
-    res.status(200).json(answeredpolls);
-  })
-  .catch((error) => {
-    res.status(500).json(error);
-  })
-},
-create(req, res) {
-  req.checkBody(schema);
+  indexByPoll(req, res) {
+    AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
+    .then((answeredpolls) => {
+      res.status(200).json(answeredpolls);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    })
+  },
+  create(req, res) {
+    req.checkBody(schema);
 
-  req.getValidationResult().then(function(result) {
-    if (!result.isEmpty()) {
-      res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
-      return;
-    }
+    req.getValidationResult().then(function(result) {
+      if (!result.isEmpty()) {
+        res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+        return;
+      }
 
-    var data = filterParams(req);
-    promises = [];
-    var newAnsweredPoll;
-    var createAnsweredPoll = AnsweredPoll.create({})
-    .then((answeredpoll) => {
-      newAnsweredPoll = answeredpoll;
-      var setEmployee = Employee.findById(req.body.employeeId)
-      .then((employee) => {
-        answeredpoll.setEmployee(employee);
-      })
-      .catch(function (error) {
-        console.log("error emple");
-        console.log(error);
-      })
-      promises.push(setEmployee);
-
-      var setSellPoint = SellPoint.findById(req.body.sellPointId)
-      .then((sellPoint) => {
-        answeredpoll.setSellPoint(sellPoint);
-        var setUser = User.findById(req.body.userId)
-        .then((user) => {
-          answeredpoll.setUser(user);
-          var getContest = sellPoint.getContest()
-          .then((contest) => {
-            var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:contest.id}})
-            promises.push(userToContest);
-          })
-          promises.push(getContest);
+      var data = filterParams(req);
+      promises = [];
+      var newAnsweredPoll;
+      var createAnsweredPoll = AnsweredPoll.create({})
+      .then((answeredpoll) => {
+        newAnsweredPoll = answeredpoll;
+        var setEmployee = Employee.findById(req.body.employeeId)
+        .then((employee) => {
+          answeredpoll.setEmployee(employee);
         })
         .catch(function (error) {
-          console.log("error user");
+          console.log("error emple");
           console.log(error);
         })
-        promises.push(setUser);
-      })
-      .catch(function (error) {
-        console.log("error sellp");
-        console.log(error);
-      })
-      promises.push(setSellPoint);
+        promises.push(setEmployee);
 
-      var setPoll = Poll.findById(req.params.poll_id)
-      .then((poll) => {
-        answeredpoll.setPoll(poll);
-      })
-      .catch(function (error) {
-        console.log("error poll");
-        console.log(error);
-      })
-      promises.push(setPoll);
-      req.body.answers.map((answer) => {
-        var addNewAnswer = Answer.create(answer)
-        .then((newAnswer) => {
-          Question.findById(answer.question)
-          .then((question) => {
-            question.addAnswer(newAnswer);
+        var setSellPoint = SellPoint.findById(req.body.sellPointId)
+        .then((sellPoint) => {
+          answeredpoll.setSellPoint(sellPoint);
+          var setUser = User.findById(req.body.userId)
+          .then((user) => {
+            answeredpoll.setUser(user);
+            var getContest = sellPoint.getContest()
+            .then((contest) => {
+              var userToContest = UserContest.findOrCreate({where: {user_id:user.id, contest_id:contest.id}})
+              promises.push(userToContest);
+            })
+            promises.push(getContest);
           })
           .catch(function (error) {
-            console.log("error de pregunta");
+            console.log("error user");
             console.log(error);
           })
-          answeredpoll.addAnswer(newAnswer);
+          promises.push(setUser);
         })
         .catch(function (error) {
-          console.log("error de respuesta");
+          console.log("error sellp");
           console.log(error);
         })
-        promises.push(addNewAnswer);
+        promises.push(setSellPoint);
+
+        var setPoll = Poll.findById(req.params.poll_id)
+        .then((poll) => {
+          answeredpoll.setPoll(poll);
+        })
+        .catch(function (error) {
+          console.log("error poll");
+          console.log(error);
+        })
+        promises.push(setPoll);
+        req.body.answers.map((answer) => {
+          var addNewAnswer = Answer.create(answer)
+          .then((newAnswer) => {
+            Question.findById(answer.question)
+            .then((question) => {
+              question.addAnswer(newAnswer);
+            })
+            .catch(function (error) {
+              console.log("error de pregunta");
+              console.log(error);
+            })
+            answeredpoll.addAnswer(newAnswer);
+          })
+          .catch(function (error) {
+            console.log("error de respuesta");
+            console.log(error);
+          })
+          promises.push(addNewAnswer);
+        })
+      });
+      promises.push(createAnsweredPoll);
+      Promise.all(promises)
+      .then(() => {
+        res.status(200).json(newAnsweredPoll);
       })
-    });
-    promises.push(createAnsweredPoll);
-    Promise.all(promises)
-    .then(() => {
-      res.status(200).json(newAnsweredPoll);
+      .catch(function(error) {
+        res.status(500).json(error);
+      })
+    })
+  },
+  showByUser(req, res) {
+    AnsweredPoll.findOne({where: {id: req.params.id, user_id: req.params.user_id}, include: {model: Answer, include: [Question, PossibleOption]}})
+    .then((answeredpoll) => {
+      res.status(200).json(answeredpoll);
     })
     .catch(function(error) {
       res.status(500).json(error);
     })
-  })
-},
-showByUser(req, res) {
-  AnsweredPoll.findOne({where: {id: req.params.id, user_id: req.params.user_id}, include: {model: Answer, include: [Question, PossibleOption]}})
-  .then((answeredpoll) => {
-    res.status(200).json(answeredpoll);
-  })
-  .catch(function(error) {
-    res.status(500).json(error);
-  })
-},
-show(req, res) {
-  AnsweredPoll.findById(req.params.id, {include: {model: Answer, include: [Question, PossibleOption]}})
-  .then((answeredpoll) => {
-    res.status(200).json(answeredpoll);
-  })
-  .catch(function(error) {
-    res.status(500).json(error);
-  })
-},
-delete(req, res) {
-  AnsweredPoll.destroy({where: {id: req.params.id}})
-  .then((deletedAnsweredPoll) => {
-    res.status(200).json(deletedAnsweredPoll);
-  })
-  .catch(function(error) {
-    res.status(500).json(error);
-  })
-}
+  },
+  show(req, res) {
+    AnsweredPoll.findById(req.params.id, {include: {model: Answer, include: [Question, PossibleOption]}})
+    .then((answeredpoll) => {
+      res.status(200).json(answeredpoll);
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  },
+  delete(req, res) {
+    AnsweredPoll.destroy({where: {id: req.params.id}})
+    .then((deletedAnsweredPoll) => {
+      res.status(200).json(deletedAnsweredPoll);
+    })
+    .catch(function(error) {
+      res.status(500).json(error);
+    })
+  }
 }

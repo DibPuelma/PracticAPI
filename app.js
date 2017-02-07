@@ -3,9 +3,11 @@ var app              = express();
 var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
 var session          = require('express-session');
+var cors             = require('./middlewares/cors/cors.js');
 
 app.set('port', (process.env.PORT || 3000));
 
+app.use(cors());
 app.use(require('./controllers'));
 app.use(bodyParser.json());
 
@@ -26,18 +28,19 @@ app.use(session({
   saveUninitialized: true
 }));
 
-var User      = require('./controllers/user.js');
-var Company   = require('./controllers/company.js');
-var Employee  = require('./controllers/employee.js');
-var SellPoint = require('./controllers/sellpoint.js');
-var Contest   = require('./controllers/contest.js');
-var Prize     = require('./controllers/prize.js');
+var User             = require('./controllers/user.js');
+var Company          = require('./controllers/company.js');
+var Employee         = require('./controllers/employee.js');
+var SellPoint        = require('./controllers/sellpoint.js');
+var Contest          = require('./controllers/contest.js');
+var Prize            = require('./controllers/prize.js');
 var Poll             = require('./controllers/poll.js');
 var Question         = require('./controllers/question.js');
 var OptionsContainer = require('./controllers/optionscontainer.js');
 var PossibleOption   = require('./controllers/possibleoption.js');
 var AnsweredPoll     = require('./controllers/answeredpoll.js');
 var Answer           = require('./controllers/answer.js');
+var Excel            = require('./controllers/excel.js');
 
 //Encuestas
 
@@ -139,8 +142,11 @@ app.put('/company/:company_id/contest/:contest_id/prize/:id',    Prize.update);
 app.delete('/company/:company_id/contest/:contest_id/prize/:id', Prize.delete);
 
 //Excel
-app.get('/company/:company_id/excel/question',                     Question.getExcelData);
-
+app.get('/company/:company_id/excel/question', Excel.getByQuestion);
+app.get('/company/:company_id/excel/employee', Excel.getByEmployee);
+app.get('/company/:company_id/excel/poll', Excel.getByPoll);
+app.get('/company/:company_id/excel/sell_point', Excel.getBySellPoint);
+app.get('/company/:company_id/excel/answered_poll', Excel.getAll);
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

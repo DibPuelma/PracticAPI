@@ -1,10 +1,8 @@
 var Question = require('../models/').Question;
 var OptionsContainer = require('../models').OptionsContainer;
+var PossibleOption = require('../models').PossibleOption;
 var Poll = require('../models').Poll;
 var Company = require('../models').Company;
-var User = require('../models').User;
-var AnsweredPoll = require('../models').AnsweredPoll;
-var Answer = require('../models').Answer;
 var util = require('util');
 
 var schema = {
@@ -196,16 +194,6 @@ module.exports = {
       })
     })
     .catch(function(error) {
-      res.status(500).json(error);
-    })
-  },
-  getExcelData(req, res) {
-    Question.findAll({where: {company_id: req.params.company_id}, include: {model: Answer, include: {model: AnsweredPoll, include: User}}})
-    .then((questions) => {
-      res.status(200).json(questions);
-    })
-    .catch((error) => {
-      console.log(error);
       res.status(500).json(error);
     })
   }
