@@ -3,9 +3,11 @@ var app              = express();
 var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
 var session          = require('express-session');
+var cors             = require('./middlewares/cors/cors.js');
 
 app.set('port', (process.env.PORT || 3000));
 
+app.use(cors());
 app.use(require('./controllers'));
 app.use(bodyParser.json());
 
@@ -26,18 +28,19 @@ app.use(session({
   saveUninitialized: true
 }));
 
-var User      = require('./controllers/user.js');
-var Company   = require('./controllers/company.js');
-var Employee  = require('./controllers/employee.js');
-var SellPoint = require('./controllers/sellpoint.js');
-var Contest   = require('./controllers/contest.js');
-var Prize     = require('./controllers/prize.js');
+var User             = require('./controllers/user.js');
+var Company          = require('./controllers/company.js');
+var Employee         = require('./controllers/employee.js');
+var SellPoint        = require('./controllers/sellpoint.js');
+var Contest          = require('./controllers/contest.js');
+var Prize            = require('./controllers/prize.js');
 var Poll             = require('./controllers/poll.js');
 var Question         = require('./controllers/question.js');
 var OptionsContainer = require('./controllers/optionscontainer.js');
 var PossibleOption   = require('./controllers/possibleoption.js');
 var AnsweredPoll     = require('./controllers/answeredpoll.js');
 var Answer           = require('./controllers/answer.js');
+var Excel            = require('./controllers/excel.js');
 
 //Encuestas
 
@@ -49,6 +52,7 @@ app.put('/company/:company_id/poll/:id',                                Poll.upd
 
 //Preguntas
 app.post('/company/:company_id/question',                     Question.create);
+app.get('/company/:company_id/question',                     Question.index);
 app.get('/company/:company_id/question/:id',                  Question.show);
 app.delete('/company/:company_id/question/:id',               Question.delete);
 app.put('/company/:company_id/question/:id',                  Question.update);
@@ -133,14 +137,6 @@ app.delete('/company/:company_id/contest/:id', Contest.delete);
 // Datos
 app.get('/company/:company_id/average_stars',   AnsweredPoll.companyAverageByDay);
 
-//Códigos QR
-// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR',        QR.index);
-// app.get('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.show);
-// app.post('/company/:company_id/sellpoint/:sellpoint_id/QR',       QR.create);
-// app.put('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.update);
-// app.delete('/company/:company_id/sellpoint/:sellpoint_id/QR/:id', QR.delete);
-// app.get('/QR/:code/sellpoint', QR.sellpoint);
-
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);
 app.get('/company/:company_id/contest/:contest_id/prize/:id',    Prize.show);
@@ -148,6 +144,12 @@ app.post('/company/:company_id/contest/:contest_id/prize',       Prize.create);
 app.put('/company/:company_id/contest/:contest_id/prize/:id',    Prize.update);
 app.delete('/company/:company_id/contest/:contest_id/prize/:id', Prize.delete);
 
+//Excel
+app.get('/company/:company_id/excel/question', Excel.getByQuestion);
+app.get('/company/:company_id/excel/employee', Excel.getByEmployee);
+app.get('/company/:company_id/excel/poll', Excel.getByPoll);
+app.get('/company/:company_id/excel/sell_point', Excel.getBySellPoint);
+app.get('/company/:company_id/excel/answered_poll', Excel.getAll);
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

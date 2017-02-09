@@ -41,8 +41,8 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-    if (keys.indexOf(param) > -1) 
-      data[param] = req.body[param];
+  if (keys.indexOf(param) > -1)
+  data[param] = req.body[param];
 
   return data;
 }
@@ -77,7 +77,7 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
-      
+
       Company.findById(req.params.company_id).then(function (company) {
         Employee.create(data).then(function (newEmployee) {
           newEmployee.setCompany(company).then(function() {
@@ -109,7 +109,7 @@ module.exports = {
           res.status(500).json(error);
         });
       }).catch(function (error) {
-          res.status(500).json(error);
+        res.status(500).json(error);
       });
     });
   },
@@ -126,8 +126,7 @@ module.exports = {
         res.status(500).json(error);
       });
     }).catch(function (error) {
-        res.status(500).json(error);
+      res.status(500).json(error);
     });
-
   }
 };

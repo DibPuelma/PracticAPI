@@ -4,6 +4,7 @@ var SellPoint = require('../models/').SellPoint;
 var Question = require('../models/').Question;
 var OptionsContainer = require('../models/').OptionsContainer;
 var PossibleOption = require('../models/').PossibleOption;
+
 var util = require('util');
 
 var schema = {
