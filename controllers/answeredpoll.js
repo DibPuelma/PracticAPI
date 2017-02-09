@@ -66,7 +66,24 @@ module.exports = {
       res.status(500).json({ error: error});
     });
 },
+companyAverageByDay(req, res) {
+  var sql = '';
+  sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
+  sql += 'FROM "Answers", "AnsweredPolls", "Companies", "SellPoints" ';
+  sql += 'WHERE ';
+  sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
+  sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+  sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
+  sql += 'GROUP BY "AnsweredPolls".created_at ';
+  sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    // Results will be an empty array and metadata will contain the number of affected rows.
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
 indexByPoll(req, res) {
   AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
   .then((answeredpolls) => {

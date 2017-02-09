@@ -130,6 +130,9 @@ app.post('/company/:company_id/contest',       Contest.create);
 app.put('/company/:company_id/contest/:id',    Contest.update);
 app.delete('/company/:company_id/contest/:id', Contest.delete);
 
+// Datos
+app.get('/company/:company_id/average_stars',   AnsweredPoll.companyAverageByDay);
+
 //Códigos QR
 // app.get('/company/:company_id/sellpoint/:sellpoint_id/QR',        QR.index);
 // app.get('/company/:company_id/sellpoint/:sellpoint_id/QR/:id',    QR.show);
