@@ -135,7 +135,19 @@ app.put('/company/:company_id/contest/:id',    Contest.update);
 app.delete('/company/:company_id/contest/:id', Contest.delete);
 
 // Datos
-app.get('/company/:company_id/average_stars',   AnsweredPoll.companyAverageByDay);
+// Promedios
+app.get('/company/:company_id/average_stars',   AnsweredPoll.companyAverage);
+app.get('/company/:company_id/sell_point/:sell_point_id/average_stars',   AnsweredPoll.sellPointAverage);
+app.get('/company/:company_id/poll/:poll_id/average_stars',   AnsweredPoll.pollAverage);
+app.get('/company/:company_id/question/:question_id/average_stars',   AnsweredPoll.questionAverage);
+// Total respuestas
+app.get('/company/:company_id/total_responses', AnsweredPoll.companyCount);
+app.get('/company/:company_id/sell_point/:sell_point_id/total_responses',   AnsweredPoll.sellPointCount);
+app.get('/company/:company_id/poll/:poll_id/total_responses',   AnsweredPoll.pollCount);
+app.get('/company/:company_id/question/:question_id/total_responses',   AnsweredPoll.questionCount);
+// Edad encuestado
+app.get('/company/:company_id/respondents_age', AnsweredPoll.companyAge);
+
 
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);
