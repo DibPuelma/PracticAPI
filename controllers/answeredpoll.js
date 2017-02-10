@@ -244,6 +244,132 @@ companyAge(req, res) {
     res.status(500).json({ error: error});
   });
 },
+sellPointAge(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
+  sql += 'GROUP BY "Users".birthdate, "Users".gender ';
+  sql += 'ORDER BY "Users".birthdate DESC; ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    results.map((result) => {
+      result['age'] = _calculateAge(result.birthdate);
+    })
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+pollAge(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
+  sql += 'GROUP BY "Users".birthdate, "Users".gender ';
+  sql += 'ORDER BY "Users".birthdate DESC; ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    results.map((result) => {
+      result['age'] = _calculateAge(result.birthdate);
+    })
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+questionAge(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
+  sql += '  "Answers".question_id = "Questions".id AND ';
+  sql += '  "Questions".id = \'' + req.params.question_id + '\'';
+  sql += 'GROUP BY "Users".birthdate, "Users".gender ';
+  sql += 'ORDER BY "Users".birthdate DESC; ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    results.map((result) => {
+      result['age'] = _calculateAge(result.birthdate);
+    })
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+companyGender(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
+  sql += 'GROUP BY "Users".gender ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+sellPointGender(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
+  sql += 'GROUP BY "Users".gender ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+pollGender(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
+  sql += 'GROUP BY "Users".gender ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
+questionGender(req, res) {
+  var sql = '';
+  sql += 'SELECT "Users".gender, COUNT("Users")' ;
+  sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
+  sql += 'WHERE ';
+  sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+  sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
+  sql += '  "Answers".question_id = "Questions".id AND ';
+  sql += '  "Questions".id = \'' + req.params.question_id + '\'';
+  sql += 'GROUP BY "Users".gender ';
+
+  models.sequelize.query(sql).spread(function(results, metadata) {
+    res.status(200).json( results );
+  }).catch(function(error) {
+    res.status(500).json({ error: error});
+  });
+},
 indexByPoll(req, res) {
   AnsweredPoll.findAll({where: {poll_id: req.params.poll_id}, include: [Answer, {model: SellPoint, include: Company}]})
   .then((answeredpolls) => {
