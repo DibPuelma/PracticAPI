@@ -102,6 +102,8 @@ sellPointAverage(req, res) {
   sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
   models.sequelize.query(sql).spread(function(results, metadata) {
+    var sum = 0;
+    var acumulatedAverage = 0;
     results.map((result, i) => {
       sum += parseFloat(result.avg);
       acumulatedAverage = sum / (i+1);
@@ -109,6 +111,7 @@ sellPointAverage(req, res) {
     })
     res.status(200).json( results );
   }).catch(function(error) {
+    console.log(error);
     res.status(500).json({ error: error});
   });
 },
@@ -124,6 +127,8 @@ pollAverage(req, res) {
   sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
   models.sequelize.query(sql).spread(function(results, metadata) {
+    var sum = 0;
+    var acumulatedAverage = 0;
     results.map((result, i) => {
       sum += parseFloat(result.avg);
       acumulatedAverage = sum / (i+1);
@@ -146,6 +151,8 @@ questionAverage(req, res) {
   sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
   models.sequelize.query(sql).spread(function(results, metadata) {
+    var sum = 0;
+    var acumulatedAverage = 0;
     results.map((result, i) => {
       sum += parseFloat(result.avg);
       acumulatedAverage = sum / (i+1);
