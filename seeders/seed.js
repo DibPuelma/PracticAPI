@@ -927,42 +927,45 @@ var createAnswersToPoll = function(sellPoint, poll, employees){
           answeredPoll.setSellPoint(sellPoint);
           answeredPoll.setPoll(poll);
           answeredPoll.setEmployee(employees[getRandomInt(0, employees.length - 1)])
-          var answersPromises = [];
           var createAnswerPromise;
           questions.map((question) => {
             switch (question.type) {
               case 'number':
-              Models.Answer.create({number_value: getRandomInt(0, 5)})
+              createAnswerPromise = Models.Answer.create({number_value: getRandomInt(0, 5)})
               .then((answer) => {
                 answeredPoll.addAnswer(answer);
                 question.addAnswer(answer);
               })
+              answeredPollsPromises.push(createAnswerPromise);
               break;
               case 'boolean':
-              Models.Answer.create({boolean_value: getRandomInt(0, 1) > 1 ? true : false})
+              createAnswerPromise = Models.Answer.create({boolean_value: getRandomInt(0, 1) > 1 ? true : false})
               .then((answer) => {
                 answeredPoll.addAnswer(answer);
                 question.addAnswer(answer);
               })
+              answeredPollsPromises.push(createAnswerPromise);
               break;
               case 'text':
-              Models.Answer.create({string_value: "Muchas gracias por su pregunta, esta es una respuesta de prueba"})
+              createAnswerPromise = Models.Answer.create({string_value: "Muchas gracias por su pregunta, esta es una respuesta de prueba"})
               .then((answer) => {
                 answeredPoll.addAnswer(answer);
                 question.addAnswer(answer);
               })
+              answeredPollsPromises.push(createAnswerPromise);
               break;
               case 'options':
               question.getOptionsContainer()
               .then((optcont) => {
                 optcont.getPossibleOptions()
                 .then((possopts) => {
-                  Models.Answer.create()
+                  createAnswerPromise = Models.Answer.create()
                   .then((answer) => {
                     answeredPoll.addAnswer(answer);
                     question.addAnswer(answer);
                     answer.setPossibleOption(possopts[getRandomInt(0, possopts.length - 1)])
                   })
+                  answeredPollsPromises.push(createAnswerPromise);
                 })
               })
               break;
