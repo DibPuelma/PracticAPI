@@ -400,14 +400,13 @@ module.exports = {
   },
   questionBooleanAnswers(req, res) {
     var sql = '';
-    sql += 'SELECT "AnsweredPolls".created_at, COUNT("Answers")';
+    sql += 'SELECT COUNT("Answers"), "Answers".boolean_value ';
     sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
     sql += 'WHERE ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
-    sql += 'GROUP BY "AnsweredPolls".created_at ';
-    sql += 'ORDER BY "AnsweredPolls".created_at; ';
+    sql += 'GROUP BY "Answers".boolean_value; ';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );

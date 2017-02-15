@@ -156,7 +156,8 @@ app.get('/company/:company_id/sell_point/:sell_point_id/respondents_gender', Ans
 app.get('/company/:company_id/poll/:poll_id/respondents_gender',             AnsweredPoll.pollGender);
 app.get('/company/:company_id/question/:question_id/respondents_gender',     AnsweredPoll.questionGender);
 // respuestas
-app.get('/company/:company_id/question/:question_id/options_answers',     AnsweredPoll.questionOptionsAnswers);
+app.get('/company/:company_id/question/:question_id/options_answers', AnsweredPoll.questionOptionsAnswers);
+app.get('/company/:company_id/question/:question_id/boolean_answers', AnsweredPoll.questionBooleanAnswers);
 
 
 //Premios

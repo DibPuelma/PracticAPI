@@ -939,7 +939,7 @@ var createAnswersToPoll = function(sellPoint, poll, employees){
               answeredPollsPromises.push(createAnswerPromise);
               break;
               case 'boolean':
-              createAnswerPromise = Models.Answer.create({boolean_value: getRandomInt(0, 1) > 1 ? true : false})
+              createAnswerPromise = Models.Answer.create({boolean_value: getRandomInt(0, 1) === 1 ? true : false})
               .then((answer) => {
                 answeredPoll.addAnswer(answer);
                 question.addAnswer(answer);
