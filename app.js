@@ -41,6 +41,7 @@ var PossibleOption   = require('./controllers/possibleoption.js');
 var AnsweredPoll     = require('./controllers/answeredpoll.js');
 var Answer           = require('./controllers/answer.js');
 var Excel            = require('./controllers/excel.js');
+var Dashboard            = require('./controllers/dashboard.js');
 
 //Encuestas
 
@@ -155,10 +156,20 @@ app.get('/company/:company_id/respondents_gender',                           Ans
 app.get('/company/:company_id/sell_point/:sell_point_id/respondents_gender', AnsweredPoll.sellPointGender);
 app.get('/company/:company_id/poll/:poll_id/respondents_gender',             AnsweredPoll.pollGender);
 app.get('/company/:company_id/question/:question_id/respondents_gender',     AnsweredPoll.questionGender);
-// respuestas
+// Respuestas
 app.get('/company/:company_id/question/:question_id/options_answers', AnsweredPoll.questionOptionsAnswers);
 app.get('/company/:company_id/question/:question_id/boolean_answers', AnsweredPoll.questionBooleanAnswers);
 
+//Dashboard
+app.get('/company/:company_id/today_total_answers', Dashboard.todayTotalAnswers);
+app.get('/company/:company_id/week_total_answers', Dashboard.weekTotalAnswers);
+app.get('/company/:company_id/today_average', Dashboard.todayAverage);
+app.get('/company/:company_id/week_average', Dashboard.weekAverage);
+app.get('/company/:company_id/best_average_question', Dashboard.bestAverageQuestion);
+app.get('/company/:company_id/best_average_poll', Dashboard.bestAveragePoll);
+app.get('/company/:company_id/best_average_sell_point', Dashboard.bestAverageSellPoint);
+app.get('/company/:company_id/most_yes_and_no', Dashboard.mostYesAndNo);
+app.get('/company/:company_id/most_chosen', Dashboard.mostChosen);
 
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);

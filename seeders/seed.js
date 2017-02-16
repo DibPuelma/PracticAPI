@@ -535,6 +535,9 @@ var createPossibleOptions = function() {
   var possibleOptionsPromises = [];
   Models.OptionsContainer.find({where: {name: "Menú restaurant"}})
   .then((optcont) => {
+    console.log("################################# OPTCONT");
+    console.log(optcont);
+    console.log("################################# OPTCONT");
     restaurantMenu.map((data) => {
       var createPossibleOptionPromise = Models.PossibleOption.create({
         value: data,
@@ -922,7 +925,7 @@ var createAnswersToPoll = function(sellPoint, poll, employees){
     .then((questions) => {
       var numberOfAnswers = getRandomInt(100, 200);
       for(var i = 0; i < numberOfAnswers; i++){
-        var createAnsweredPollPromise = Models.AnsweredPoll.create({user_id: getRandomInt(1,30), created_at: new Date(2017, getRandomInt(0,11), getRandomInt(0, 30))})
+        var createAnsweredPollPromise = Models.AnsweredPoll.create({user_id: getRandomInt(1,30), created_at: new Date(2017, getRandomInt(0,1), getRandomInt(0, 30))})
         .then((answeredPoll) => {
           answeredPoll.setSellPoint(sellPoint);
           answeredPoll.setPoll(poll);
