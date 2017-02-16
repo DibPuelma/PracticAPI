@@ -1,6 +1,8 @@
 var util = require('util');
 var Company  = require('../models/').Company;
 var Employee = require('../models/').Employee;
+var SellPoint = require('../models/').SellPoint;
+
 
 var schema = {
   'name': {
@@ -49,7 +51,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    Employee.findAll({ where: { company_id: req.params.company_id } }).then(function (employees) {
+    Employee.findAll({ where: { company_id: req.params.company_id }, include: SellPoint }).then(function (employees) {
       res.status(200).json(employees);
     }).catch(function (error) {
       res.status(500).json(error);

@@ -533,7 +533,7 @@ var createOptionsContainers = function() {
 
 var createPossibleOptions = function() {
   var possibleOptionsPromises = [];
-  Models.OptionsContainer.find({where: {name: "Menú restaurant"}})
+  Models.OptionsContainer.find({where: {name: 'Menú restaurant'}})
   .then((optcont) => {
     console.log("################################# OPTCONT");
     console.log(optcont);
@@ -548,54 +548,62 @@ var createPossibleOptions = function() {
       })
       possibleOptionsPromises.push(createPossibleOptionPromise);
     })
-  })
-  Models.OptionsContainer.find({where: {name: "Plato favorito"}})
-  .then((optcont) => {
-    favoriteTypeOfDish.map((data) => {
-      var createPossibleOptionPromise = Models.PossibleOption.create({
-        value: data,
-        company_id:optcont.company_id
-      })
-      .then((possopt) => {
-        optcont.addPossibleOption(possopt);
-      })
-      possibleOptionsPromises.push(createPossibleOptionPromise);
-    })
-  })
-  Models.OptionsContainer.find({where: {name: "Acción vendedores"}})
-  .then((optcont) => {
-    salesmanAction.map((data) => {
-      var createPossibleOptionPromise = Models.PossibleOption.create({
-        value: data,
-        company_id:optcont.company_id
-      })
-      .then((possopt) => {
-        optcont.addPossibleOption(possopt);
-      })
-      possibleOptionsPromises.push(createPossibleOptionPromise);
-    })
-  })
-  Models.OptionsContainer.find({where: {name: "Deporte favorito"}})
-  .then((optcont) => {
-    favoriteSport.map((data) => {
-      var createPossibleOptionPromise = Models.PossibleOption.create({
-        value: data,
-        company_id:optcont.company_id
-      })
-      .then((possopt) => {
-        optcont.addPossibleOption(possopt);
-      })
-      possibleOptionsPromises.push(createPossibleOptionPromise);
-    })
-  })
-  Promise.all(possibleOptionsPromises)
-  .then(() => {
-    createQuestions();
-  })
-  .catch((error) => {
-    console.error(error);
+  }).then(() => {
 
-  })
+    Models.OptionsContainer.find({where: {name: "Plato favorito"}})
+    .then((optcont) => {
+      favoriteTypeOfDish.map((data) => {
+        var createPossibleOptionPromise = Models.PossibleOption.create({
+          value: data,
+          company_id:optcont.company_id
+        })
+        .then((possopt) => {
+          optcont.addPossibleOption(possopt);
+        })
+        possibleOptionsPromises.push(createPossibleOptionPromise);
+      })
+    });
+    
+
+    Models.OptionsContainer.find({where: {name: "Acción vendedores"}})
+    .then((optcont) => {
+      salesmanAction.map((data) => {
+        var createPossibleOptionPromise = Models.PossibleOption.create({
+          value: data,
+          company_id:optcont.company_id
+        })
+        .then((possopt) => {
+          optcont.addPossibleOption(possopt);
+        })
+        possibleOptionsPromises.push(createPossibleOptionPromise);
+      })
+    });
+    
+
+    Models.OptionsContainer.find({where: {name: "Deporte favorito"}})
+    .then((optcont) => {
+      favoriteSport.map((data) => {
+        var createPossibleOptionPromise = Models.PossibleOption.create({
+          value: data,
+          company_id:optcont.company_id
+        })
+        .then((possopt) => {
+          optcont.addPossibleOption(possopt);
+        })
+        possibleOptionsPromises.push(createPossibleOptionPromise);
+      })
+    });
+    
+
+    Promise.all(possibleOptionsPromises)
+    .then(() => {
+      createQuestions();
+    })
+    .catch((error) => {
+      console.error(error);
+
+    })
+  });
 }
 
 var createQuestions = function() {

@@ -46,8 +46,8 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-  if (keys.indexOf(param) > -1)
-  data[param] = req.body[param];
+    if (keys.indexOf(param) > -1)
+      data[param] = req.body[param];
 
   return data;
 }
@@ -130,30 +130,33 @@ module.exports = {
       }
 
       var data = filterParams(req);
-
-      Question.findById(req.params.id)
-      .then((question) => {
+      Question.findOne({where: {id: req.params.id}}).then((question) => {
         question.update(data)
-        if(req.body.type === 'options'){
-          OptionsContainer.findById(req.body.optionsContainer)
-          .then((optcont) => {
-            question.setOptionsContainer(optcont);
-            res.status(200).json(question);
-          })
-          .catch(function(error) {
-            console.log("error opt");
-            console.log(error);
-            res.status(500).json(error);
-          })
-        }
-        else{
-          res.status(200).json(question);
-        }
-      })
-      .catch(function(error) {
-        console.log("error upd");
-        res.status(500).json(error);
-      })
+        .then((updatedQuestion) => {
+            if (req.body.type === 'options') {
+              OptionsContainer.findById(req.body.optionsContainer)
+              .then((optcont) => {
+                question.setOptionsContainer(optcont);
+                res.status(200).json(updatedQuestion);
+              })
+              .catch(function(error) {
+                console.log("error opt");
+                console.log(error);
+                res.status(500).json(error);
+              })
+            }
+            else {
+              res.status(200).json(updatedQuestion);
+            }
+        })
+        .catch(function(error) {
+          console.log("error upd");
+          res.status(500).json(error);
+        })
+      }).catch(function(error) {
+          console.log("error find");
+          res.status(500).json(error);
+      });
     })
   },
   delete(req, res) {
