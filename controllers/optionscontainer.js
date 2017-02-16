@@ -44,6 +44,11 @@ var schemaUpdate = {
     isArray: true,
     optional: true,
     errorMessage: 'Invalid existing options array'
+  },
+  'deletedOptions': {
+    isArray: true,
+    optional: true,
+    errorMessage: 'Invalid deleted options array'
   }
 };
 
@@ -134,7 +139,7 @@ module.exports = {
     })
   },
   show(req, res) {
-    OptCont.findOne({where: {id: req.params.id, company_id: req.params.company_id, include: PossibleOption}})
+    OptCont.findOne({ where: {id: req.params.id, company_id: req.params.company_id }, include: PossibleOption })
     .then((optcont) => {
       res.status(200).json(optcont);
     })
@@ -153,13 +158,15 @@ module.exports = {
 
       var data = filterParams(req);
 
-      var promises = []
+      var promises = [];
       var newOptCont;
       var findOptCont = OptCont.findById(req.params.id, {include: PossibleOption})
       .then((optcont) => {
-        var updateOptCont = optcont.update(data)
+        var updateOptCont = optcont.update({name: data.name})
         promises.push(updateOptCont);
-        if(req.body.newOptions.length > 0){
+
+        // Craete new ones
+        if (req.body.newOptions.length > 0){
           req.body.newOptions.map((option) => {
             var setCreateOption = PossibleOption.create(option)
             .then((option) => {
@@ -171,9 +178,11 @@ module.exports = {
             promises.push(setCreateOption);
           })
         }
-        if(req.body.existingOptions.length > 0){
-          req.body.existingOptions.map((optionId) => {
-            var getOption = PossibleOption.findById(optionId)
+
+        // Add existing ones
+        if (req.body.existingOptions.length > 0){
+          req.body.existingOptions.map((option) => {
+            var getOption = PossibleOption.findById(option.id)
             .then((option) => {
               optcont.addPossibleOption(option);
             })
@@ -183,6 +192,21 @@ module.exports = {
             promises.push(getOption);
           })
         }
+
+        // Remove deleted ones
+        if (req.body.deletedOptions.length > 0){
+          req.body.deletedOptions.map((option) => {
+            var getOption = PossibleOption.findById(option.id)
+            .then((option) => {
+              optcont.removePossibleOption(option);
+            })
+            .catch((error) => {
+              res.status(500).json(error);
+            })
+            promises.push(getOption);
+          })
+        }
+
         newOptCont = optcont;
       })
       .catch(function(error) {
@@ -191,7 +215,7 @@ module.exports = {
       promises.push(findOptCont);
       Promise.all(promises)
       .then(() => {
-        console.log(newOptCont);
+        //console.log(newOptCont);
         res.status(200).json(newOptCont);
       })
       .catch((error) => {

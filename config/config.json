@@ -1,5 +1,5 @@
 {
-  "development": {
+  "franco": {
     "username": "uxpwzpmw",
     "password": "sKwOjlBhK8p_Xz0IX3ZbjAaIEb7s_ccz",
     "database": "uxpwzpmw",
@@ -20,7 +20,7 @@
     "host": "elmer-02.db.elephantsql.com",
     "dialect": "postgres"
   },
-  "franco": {
+  "development": {
     "username": "practica",
     "password": "practica123",
     "database": "practica",
