@@ -5,7 +5,7 @@ var expressValidator = require('express-validator');
 var session          = require('express-session');
 var cors             = require('./middlewares/cors/cors.js');
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 8000));
 
 app.use(cors());
 app.use(require('./controllers'));
@@ -142,10 +142,10 @@ app.get('/company/:company_id/sell_point/:sell_point_id/average_stars',   Answer
 app.get('/company/:company_id/poll/:poll_id/average_stars',               AnsweredPoll.pollAverage);
 app.get('/company/:company_id/question/:question_id/average_stars',       AnsweredPoll.questionAverage);
 // Total respuestas
-app.get('/company/:company_id/total_responses',                             AnsweredPoll.companyCount);
-app.get('/company/:company_id/sell_point/:sell_point_id/total_responses',   AnsweredPoll.sellPointCount);
-app.get('/company/:company_id/poll/:poll_id/total_responses',               AnsweredPoll.pollCount);
-app.get('/company/:company_id/question/:question_id/total_responses',       AnsweredPoll.questionCount);
+app.get('/company/:company_id/total_answers',                             AnsweredPoll.companyCount);
+app.get('/company/:company_id/sell_point/:sell_point_id/total_answers',   AnsweredPoll.sellPointCount);
+app.get('/company/:company_id/poll/:poll_id/total_answers',               AnsweredPoll.pollCount);
+app.get('/company/:company_id/question/:question_id/total_answers',       AnsweredPoll.questionCount);
 // Edad encuestado
 app.get('/company/:company_id/respondents_age',                           AnsweredPoll.companyAge);
 app.get('/company/:company_id/sell_point/:sell_point_id/respondents_age', AnsweredPoll.sellPointAge);
@@ -161,15 +161,15 @@ app.get('/company/:company_id/question/:question_id/options_answers', AnsweredPo
 app.get('/company/:company_id/question/:question_id/boolean_answers', AnsweredPoll.questionBooleanAnswers);
 
 //Dashboard
-app.get('/company/:company_id/today_total_answers', Dashboard.todayTotalAnswers);
-app.get('/company/:company_id/week_total_answers', Dashboard.weekTotalAnswers);
-app.get('/company/:company_id/today_average', Dashboard.todayAverage);
-app.get('/company/:company_id/week_average', Dashboard.weekAverage);
-app.get('/company/:company_id/best_average_question', Dashboard.bestAverageQuestion);
-app.get('/company/:company_id/best_average_poll', Dashboard.bestAveragePoll);
-app.get('/company/:company_id/best_average_sell_point', Dashboard.bestAverageSellPoint);
-app.get('/company/:company_id/most_yes_and_no', Dashboard.mostYesAndNo);
-app.get('/company/:company_id/most_chosen', Dashboard.mostChosen);
+app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date', Dashboard.totalAnswers);
+app.get('/company/:company_id/dashboard/today_average', Dashboard.todayAverage);
+app.get('/company/:company_id/dashboard/week_average', Dashboard.weekAverage);
+app.get('/company/:company_id/dashboard/:gender/best_average_question', Dashboard.bestAverageQuestion);
+app.get('/company/:company_id/dashboard/:gender/best_average_poll', Dashboard.bestAveragePoll);
+app.get('/company/:company_id/dashboard/:gender/best_average_sell_point', Dashboard.bestAverageSellPoint);
+app.get('/company/:company_id/dashboard/most_yes_and_no', Dashboard.mostYesAndNo);
+app.get('/company/:company_id/dashboard/most_chosen', Dashboard.mostChosen);
+app.get('/company/:company_id/dashboard/average_age', Dashboard.averageAge);
 
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);

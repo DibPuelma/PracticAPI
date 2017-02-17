@@ -13,36 +13,17 @@ var models = require('../models');
 var util = require('util');
 
 module.exports = {
-  todayTotalAnswers(req, res) {
+  totalAnswers(req, res) {
     var sql = '';
     sql += 'SELECT COUNT("Users".gender), "Users".gender ';
     sql += 'FROM "AnsweredPolls", "SellPoints", "Users" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > CURRENT_DATE AND ';
-    sql += '  "AnsweredPolls".created_at < CURRENT_TIMESTAMP AND ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\''+req.params.start_date+'\', \'DD-MM-YYYY\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\''+req.params.end_date+'\', \'DD-MM-YYYY\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
-    sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
+    sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\' ';
     sql += 'GROUP BY "Users".gender ';
-
-    models.sequelize.query(sql).spread(function(results, metadata) {
-      res.status(200).json( results );
-    }).catch(function(error) {
-      res.status(500).json({ error: error});
-    });
-  },
-  weekTotalAnswers(req, res) {
-    var sql = '';
-    sql += 'SELECT COUNT("Users".gender), "Users".gender ';
-    sql += 'FROM "AnsweredPolls", "SellPoints", "Users" ';
-    sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > CURRENT_DATE - INTERVAL \'7 days\' AND ';
-    sql += '  "AnsweredPolls".created_at < CURRENT_TIMESTAMP AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
-    sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
-    sql += 'GROUP BY "Users".gender ';
-
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
     }).catch(function(error) {
@@ -92,20 +73,24 @@ module.exports = {
   mostUsedWords(req, res){
 
   },
-  //Question, poll and sell point
   bestAverageQuestion(req, res){
     var sql = '';
-    sql += 'SELECT "Questions".text, "Users".gender, AVG("Answers".number_value) AS avg ';
-    sql += 'FROM "AnsweredPolls", "SellPoints", "Users", "Answers", "Polls", "Questions" ';
+    sql += 'SELECT "Questions".text, AVG("Answers".number_value) AS avg ';
+    sql += 'FROM "AnsweredPolls", "Users", "SellPoints", "Answers", "Polls", "Questions" ';
     sql += 'WHERE ';
+
+    if(req.params.gender === 'f' || req.params.gender === 'm'){
+      sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+      sql += '  "Users".gender = \'' + req.params.gender + '\' AND ';
+    }
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "Answers".number_value IS NOT NULL AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
-    sql += 'GROUP BY "Questions".id, "Users".gender ';
-    sql += 'ORDER BY avg DESC';
+    sql += 'GROUP BY "Questions".id ';
+    sql += 'ORDER BY avg DESC ';
+    sql += 'LIMIT 3';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
@@ -115,16 +100,21 @@ module.exports = {
   },
   bestAveragePoll(req, res){
     var sql = '';
-    sql += 'SELECT "Polls".name, "Users".gender, AVG("Answers".number_value) AS avg ';
+    sql += 'SELECT "Polls".name, AVG("Answers".number_value) AS avg ';
     sql += 'FROM "AnsweredPolls", "Users", "Answers", "Polls" ';
     sql += 'WHERE ';
+
+    if(req.params.gender === 'f' || req.params.gender === 'm'){
+      sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+      sql += '  "Users".gender = \'' + req.params.gender + '\' AND ';
+    }
     sql += '  "Answers".number_value IS NOT NULL AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
     sql += '  "Polls".company_id = \'' + req.params.company_id + '\'';
-    sql += 'GROUP BY "Polls".id, "Users".gender ';
-    sql += 'ORDER BY avg DESC';
+    sql += 'GROUP BY "Polls".id ';
+    sql += 'ORDER BY avg DESC ';
+    sql += 'LIMIT 5';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
@@ -134,16 +124,20 @@ module.exports = {
   },
   bestAverageSellPoint(req, res){
     var sql = '';
-    sql += 'SELECT "SellPoints".location, "Users".gender, AVG("Answers".number_value) AS avg ';
+    sql += 'SELECT "SellPoints".location, AVG("Answers".number_value) AS avg ';
     sql += 'FROM "AnsweredPolls", "Users", "Answers", "SellPoints" ';
     sql += 'WHERE ';
+    if(req.params.gender === 'f' || req.params.gender === 'm'){
+      sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+      sql += '  "Users".gender = \'' + req.params.gender + '\' AND ';
+    }
     sql += '  "Answers".number_value IS NOT NULL AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
-    sql += 'GROUP BY "SellPoints".id, "Users".gender ';
-    sql += 'ORDER BY avg DESC';
+    sql += 'GROUP BY "SellPoints".id ';
+    sql += 'ORDER BY avg DESC ';
+    sql += 'LIMIT 5';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
@@ -184,6 +178,22 @@ module.exports = {
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
     sql += 'GROUP BY "Users".gender, "PossibleOptions".value, "Questions".id ';
     sql += 'ORDER BY count DESC';
+
+    models.sequelize.query(sql).spread(function(results, metadata) {
+      res.status(200).json( results );
+    }).catch(function(error) {
+      res.status(500).json({ error: error});
+    });
+  },
+  averageAge(req, res){
+    var sql = '';
+    sql += 'SELECT AVG(EXTRACT(YEAR FROM AGE("Users".birthdate))), COUNT("Users".gender), "Users".gender ';
+    sql += 'FROM "Users", "SellPoints", "AnsweredPolls" ';
+    sql += 'WHERE ';
+    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+    sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
+    sql += 'GROUP BY "Users".gender ';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
