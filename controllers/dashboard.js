@@ -13,13 +13,13 @@ var models = require('../models');
 var util = require('util');
 
 module.exports = {
-  totalAnswers(req, res) {
+  byDateTotalAnswers(req, res) {
     var sql = '';
     sql += 'SELECT COUNT("Users".gender), "Users".gender ';
     sql += 'FROM "AnsweredPolls", "SellPoints", "Users" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\''+req.params.start_date+'\', \'DD-MM-YYYY\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\''+req.params.end_date+'\', \'DD-MM-YYYY\') AND ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'DD-MM-YYYY\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'DD-MM-YYYY\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\' ';
@@ -30,14 +30,14 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  todayAverage(req, res){
+  byDateAverage(req, res){
       var sql = '';
       sql += 'SELECT AVG("Answers".number_value), "Users".gender, COUNT("Users".gender) ';
       sql += 'FROM "AnsweredPolls", "SellPoints", "Users", "Answers" ';
       sql += 'WHERE ';
       sql += '  "Answers".number_value IS NOT NULL AND ';
-      sql += '  "AnsweredPolls".created_at > CURRENT_DATE AND ';
-      sql += '  "AnsweredPolls".created_at < CURRENT_TIMESTAMP AND ';
+      sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'DD-MM-YYYY\')  AND ';
+      sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'DD-MM-YYYY\') AND ';
       sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
       sql += '  "AnsweredPolls".user_id = "Users".id AND ';
       sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';

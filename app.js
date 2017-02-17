@@ -161,9 +161,8 @@ app.get('/company/:company_id/question/:question_id/options_answers', AnsweredPo
 app.get('/company/:company_id/question/:question_id/boolean_answers', AnsweredPoll.questionBooleanAnswers);
 
 //Dashboard
-app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date', Dashboard.totalAnswers);
-app.get('/company/:company_id/dashboard/today_average', Dashboard.todayAverage);
-app.get('/company/:company_id/dashboard/week_average', Dashboard.weekAverage);
+app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date', Dashboard.byDateTotalAnswers);
+app.get('/company/:company_id/dashboard/average/:start_date/:end_date', Dashboard.byDateAverage);
 app.get('/company/:company_id/dashboard/:gender/best_average_question', Dashboard.bestAverageQuestion);
 app.get('/company/:company_id/dashboard/:gender/best_average_poll', Dashboard.bestAveragePoll);
 app.get('/company/:company_id/dashboard/:gender/best_average_sell_point', Dashboard.bestAverageSellPoint);
