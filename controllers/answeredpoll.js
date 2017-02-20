@@ -70,6 +70,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -96,6 +98,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
@@ -123,6 +127,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "Polls" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
     sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
@@ -151,6 +157,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "Questions" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -177,6 +185,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
     sql += 'FROM "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
@@ -193,6 +203,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
     sql += 'FROM "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
@@ -209,6 +221,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
     sql += 'FROM "AnsweredPolls", "Polls" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
     sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
@@ -225,6 +239,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("Answers")';
     sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -242,6 +258,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -262,6 +280,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
@@ -282,6 +302,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
@@ -302,6 +324,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
@@ -323,6 +347,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -339,6 +365,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
@@ -355,6 +383,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
@@ -371,6 +401,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
@@ -388,6 +420,8 @@ module.exports = {
     sql += 'SELECT "PossibleOptions".value, COUNT("PossibleOptions")';
     sql += 'FROM "Answers", "Questions", "PossibleOptions" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Answers".possible_option_id = "PossibleOptions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -403,6 +437,8 @@ module.exports = {
     sql += 'SELECT COUNT("Answers"), "Answers".boolean_value ';
     sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
     sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';

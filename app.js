@@ -137,38 +137,38 @@ app.delete('/company/:company_id/contest/:id', Contest.delete);
 
 // Datos
 // Promedios
-app.get('/company/:company_id/average_stars',                             AnsweredPoll.companyAverage);
-app.get('/company/:company_id/sell_point/:sell_point_id/average_stars',   AnsweredPoll.sellPointAverage);
-app.get('/company/:company_id/poll/:poll_id/average_stars',               AnsweredPoll.pollAverage);
-app.get('/company/:company_id/question/:question_id/average_stars',       AnsweredPoll.questionAverage);
+app.get('/company/:company_id/average_stars/:start_date/:end_date',                             AnsweredPoll.companyAverage);
+app.get('/company/:company_id/sell_point/:sell_point_id/average_stars/:start_date/:end_date',   AnsweredPoll.sellPointAverage);
+app.get('/company/:company_id/poll/:poll_id/average_stars/:start_date/:end_date',               AnsweredPoll.pollAverage);
+app.get('/company/:company_id/question/:question_id/average_stars/:start_date/:end_date',       AnsweredPoll.questionAverage);
 // Total respuestas
-app.get('/company/:company_id/total_answers',                             AnsweredPoll.companyCount);
-app.get('/company/:company_id/sell_point/:sell_point_id/total_answers',   AnsweredPoll.sellPointCount);
-app.get('/company/:company_id/poll/:poll_id/total_answers',               AnsweredPoll.pollCount);
-app.get('/company/:company_id/question/:question_id/total_answers',       AnsweredPoll.questionCount);
+app.get('/company/:company_id/total_answers/:start_date/:end_date',                             AnsweredPoll.companyCount);
+app.get('/company/:company_id/sell_point/:sell_point_id/total_answers/:start_date/:end_date',   AnsweredPoll.sellPointCount);
+app.get('/company/:company_id/poll/:poll_id/total_answers/:start_date/:end_date',               AnsweredPoll.pollCount);
+app.get('/company/:company_id/question/:question_id/total_answers/:start_date/:end_date',       AnsweredPoll.questionCount);
 // Edad encuestado
-app.get('/company/:company_id/respondents_age',                           AnsweredPoll.companyAge);
-app.get('/company/:company_id/sell_point/:sell_point_id/respondents_age', AnsweredPoll.sellPointAge);
-app.get('/company/:company_id/poll/:poll_id/respondents_age',             AnsweredPoll.pollAge);
-app.get('/company/:company_id/question/:question_id/respondents_age',     AnsweredPoll.questionAge);
+app.get('/company/:company_id/respondents_age/:start_date/:end_date',                           AnsweredPoll.companyAge);
+app.get('/company/:company_id/sell_point/:sell_point_id/respondents_age/:start_date/:end_date', AnsweredPoll.sellPointAge);
+app.get('/company/:company_id/poll/:poll_id/respondents_age/:start_date/:end_date',             AnsweredPoll.pollAge);
+app.get('/company/:company_id/question/:question_id/respondents_age/:start_date/:end_date',     AnsweredPoll.questionAge);
 // Cantidad por género
-app.get('/company/:company_id/respondents_gender',                           AnsweredPoll.companyGender);
-app.get('/company/:company_id/sell_point/:sell_point_id/respondents_gender', AnsweredPoll.sellPointGender);
-app.get('/company/:company_id/poll/:poll_id/respondents_gender',             AnsweredPoll.pollGender);
-app.get('/company/:company_id/question/:question_id/respondents_gender',     AnsweredPoll.questionGender);
+app.get('/company/:company_id/respondents_gender/:start_date/:end_date',                           AnsweredPoll.companyGender);
+app.get('/company/:company_id/sell_point/:sell_point_id/respondents_gender/:start_date/:end_date', AnsweredPoll.sellPointGender);
+app.get('/company/:company_id/poll/:poll_id/respondents_gender/:start_date/:end_date',             AnsweredPoll.pollGender);
+app.get('/company/:company_id/question/:question_id/respondents_gender/:start_date/:end_date',     AnsweredPoll.questionGender);
 // Respuestas
-app.get('/company/:company_id/question/:question_id/options_answers', AnsweredPoll.questionOptionsAnswers);
-app.get('/company/:company_id/question/:question_id/boolean_answers', AnsweredPoll.questionBooleanAnswers);
+app.get('/company/:company_id/question/:question_id/options_answers/:start_date/:end_date', AnsweredPoll.questionOptionsAnswers);
+app.get('/company/:company_id/question/:question_id/boolean_answers/:start_date/:end_date', AnsweredPoll.questionBooleanAnswers);
 
 //Dashboard
-app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date', Dashboard.byDateTotalAnswers);
-app.get('/company/:company_id/dashboard/average/:start_date/:end_date', Dashboard.byDateAverage);
-app.get('/company/:company_id/dashboard/:gender/best_average_question', Dashboard.bestAverageQuestion);
-app.get('/company/:company_id/dashboard/:gender/best_average_poll', Dashboard.bestAveragePoll);
-app.get('/company/:company_id/dashboard/:gender/best_average_sell_point', Dashboard.bestAverageSellPoint);
-app.get('/company/:company_id/dashboard/most_yes_and_no', Dashboard.mostYesAndNo);
-app.get('/company/:company_id/dashboard/most_chosen', Dashboard.mostChosen);
-app.get('/company/:company_id/dashboard/average_age', Dashboard.averageAge);
+app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date',                   Dashboard.byDateTotalAnswers);
+app.get('/company/:company_id/dashboard/average/:start_date/:end_date',                         Dashboard.byDateAverage);
+app.get('/company/:company_id/dashboard/:gender/best_average_question/:start_date/:end_date',   Dashboard.bestAverageQuestion);
+app.get('/company/:company_id/dashboard/:gender/best_average_poll/:start_date/:end_date',       Dashboard.bestAveragePoll);
+app.get('/company/:company_id/dashboard/:gender/best_average_sell_point/:start_date/:end_date', Dashboard.bestAverageSellPoint);
+app.get('/company/:company_id/dashboard/most_yes_and_no/:start_date/:end_date',                 Dashboard.mostYesAndNo);
+app.get('/company/:company_id/dashboard/most_chosen/:start_date/:end_date',                     Dashboard.mostChosen);
+app.get('/company/:company_id/dashboard/average_age/:start_date/:end_date',                     Dashboard.averageAge);
 
 //Premios
 app.get('/company/:company_id/contest/:contest_id/prize',        Prize.index);
