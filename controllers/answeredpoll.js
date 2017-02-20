@@ -12,6 +12,12 @@ var models = require('../models');
 
 var util = require('util');
 
+var modelGetter = {
+  poll: "Polls",
+  sell_point: "SellPoints",
+  employee: "Employees"
+}
+
 var schema = {
   'answers': {
     notEmpty: true,
@@ -70,8 +76,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -93,16 +99,16 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  sellPointAverage(req, res) {
+  modelAverage(req,res){
     var sql = '';
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
-    sql += 'FROM "Answers", "AnsweredPolls", "SellPoints" ';
+    sql += 'FROM "Answers", "AnsweredPolls", \"' + modelGetter[req.params.model] + '\" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
-    sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
+    sql += '  "AnsweredPolls".sell_point_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
     sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
@@ -122,43 +128,13 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  pollAverage(req, res) {
-    var sql = '';
-    sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
-    sql += 'FROM "Answers", "AnsweredPolls", "Polls" ';
-    sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
-    sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
-    sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
-    sql += 'GROUP BY "AnsweredPolls".created_at ';
-    sql += 'ORDER BY "AnsweredPolls".created_at; ';
-
-    models.sequelize.query(sql).spread(function(results, metadata) {
-      var sum = 0;
-      var acumulatedAverage = 0;
-      results.map((result, i) => {
-        console.log(result);
-        if(result.avg !== null) {
-          sum += parseFloat(result.avg);
-          acumulatedAverage = sum / (i+1);
-        }
-        result["acum_avg"] = acumulatedAverage;
-      })
-      console.log(results);
-      res.status(200).json( results );
-    }).catch(function(error) {
-      res.status(500).json({ error: error});
-    });
-  },
   questionAverage(req, res) {
     var sql = '';
     sql += 'SELECT "AnsweredPolls".created_at, AVG("Answers".number_value)';
     sql += 'FROM "Answers", "AnsweredPolls", "Questions" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -185,8 +161,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
     sql += 'FROM "AnsweredPolls", "SellPoints" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
@@ -198,33 +174,15 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  sellPointCount(req, res) {
+  modelCount(req, res) {
     var sql = '';
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
-    sql += 'FROM "AnsweredPolls", "SellPoints" ';
+    sql += 'FROM "AnsweredPolls", \"' + modelGetter[req.params.model] + '\" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
-    sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
-    sql += 'GROUP BY "AnsweredPolls".created_at ';
-    sql += 'ORDER BY "AnsweredPolls".created_at; ';
-
-    models.sequelize.query(sql).spread(function(results, metadata) {
-      res.status(200).json( results );
-    }).catch(function(error) {
-      res.status(500).json({ error: error});
-    });
-  },
-  pollCount(req, res) {
-    var sql = '';
-    sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
-    sql += 'FROM "AnsweredPolls", "Polls" ';
-    sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
-    sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
     sql += 'ORDER BY "AnsweredPolls".created_at; ';
 
@@ -239,8 +197,8 @@ module.exports = {
     sql += 'SELECT "AnsweredPolls".created_at, COUNT("Answers")';
     sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -258,8 +216,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -275,38 +233,16 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  sellPointAge(req, res) {
+  modelAge(req, res) {
     var sql = '';
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
-    sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
+    sql += 'FROM "AnsweredPolls", \"' + modelGetter[req.params.model] + '\" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
-    sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
-    sql += 'GROUP BY "Users".birthdate, "Users".gender ';
-    sql += 'ORDER BY "Users".birthdate DESC; ';
-
-    models.sequelize.query(sql).spread(function(results, metadata) {
-      results.map((result) => {
-        result['age'] = _calculateAge(result.birthdate);
-      })
-      res.status(200).json( results );
-    }).catch(function(error) {
-      res.status(500).json({ error: error});
-    });
-  },
-  pollAge(req, res) {
-    var sql = '';
-    sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
-    sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
-    sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
-    sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "Users".birthdate, "Users".gender ';
     sql += 'ORDER BY "Users".birthdate DESC; ';
 
@@ -324,8 +260,8 @@ module.exports = {
     sql += 'SELECT "Users".birthdate, "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
@@ -347,8 +283,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "SellPoints".company_id = \'' + req.params.company_id + '\'';
@@ -360,34 +296,16 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  sellPointGender(req, res) {
+  modelGender(req, res) {
     var sql = '';
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
-    sql += 'FROM "AnsweredPolls", "SellPoints" , "Users"';
+    sql += 'FROM "AnsweredPolls", \"' + modelGetter[req.params.model] + '\" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "SellPoints".id AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
-    sql += '  "SellPoints".id = \'' + req.params.sell_point_id + '\'';
-    sql += 'GROUP BY "Users".gender ';
-
-    models.sequelize.query(sql).spread(function(results, metadata) {
-      res.status(200).json( results );
-    }).catch(function(error) {
-      res.status(500).json({ error: error});
-    });
-  },
-  pollGender(req, res) {
-    var sql = '';
-    sql += 'SELECT "Users".gender, COUNT("Users")' ;
-    sql += 'FROM "AnsweredPolls", "Polls" , "Users"';
-    sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
-    sql += '  "AnsweredPolls".sell_point_id = "Polls".id AND ';
-    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
-    sql += '  "Polls".id = \'' + req.params.poll_id + '\'';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "Users".gender ';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
@@ -401,8 +319,8 @@ module.exports = {
     sql += 'SELECT "Users".gender, COUNT("Users")' ;
     sql += 'FROM "AnsweredPolls", "Questions", "Answers" , "Users"';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
@@ -420,8 +338,8 @@ module.exports = {
     sql += 'SELECT "PossibleOptions".value, COUNT("PossibleOptions")';
     sql += 'FROM "Answers", "Questions", "PossibleOptions" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Answers".possible_option_id = "PossibleOptions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
@@ -437,8 +355,8 @@ module.exports = {
     sql += 'SELECT COUNT("Answers"), "Answers".boolean_value ';
     sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
     sql += 'WHERE ';
-    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
-    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';

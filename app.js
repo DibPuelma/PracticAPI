@@ -138,24 +138,23 @@ app.delete('/company/:company_id/contest/:id', Contest.delete);
 // Datos
 // Promedios
 app.get('/company/:company_id/average_stars/:start_date/:end_date',                             AnsweredPoll.companyAverage);
-app.get('/company/:company_id/sell_point/:sell_point_id/average_stars/:start_date/:end_date',   AnsweredPoll.sellPointAverage);
-app.get('/company/:company_id/poll/:poll_id/average_stars/:start_date/:end_date',               AnsweredPoll.pollAverage);
 app.get('/company/:company_id/question/:question_id/average_stars/:start_date/:end_date',       AnsweredPoll.questionAverage);
+app.get('/company/:company_id/:model/:id/average_stars/:start_date/:end_date',                  AnsweredPoll.modelAverage);
 // Total respuestas
 app.get('/company/:company_id/total_answers/:start_date/:end_date',                             AnsweredPoll.companyCount);
-app.get('/company/:company_id/sell_point/:sell_point_id/total_answers/:start_date/:end_date',   AnsweredPoll.sellPointCount);
-app.get('/company/:company_id/poll/:poll_id/total_answers/:start_date/:end_date',               AnsweredPoll.pollCount);
 app.get('/company/:company_id/question/:question_id/total_answers/:start_date/:end_date',       AnsweredPoll.questionCount);
+app.get('/company/:company_id/:model/:id/total_answers/:start_date/:end_date',                  AnsweredPoll.modelCount);
+
 // Edad encuestado
 app.get('/company/:company_id/respondents_age/:start_date/:end_date',                           AnsweredPoll.companyAge);
-app.get('/company/:company_id/sell_point/:sell_point_id/respondents_age/:start_date/:end_date', AnsweredPoll.sellPointAge);
-app.get('/company/:company_id/poll/:poll_id/respondents_age/:start_date/:end_date',             AnsweredPoll.pollAge);
 app.get('/company/:company_id/question/:question_id/respondents_age/:start_date/:end_date',     AnsweredPoll.questionAge);
+app.get('/company/:company_id/:model/:id/respondents_age/:start_date/:end_date',                AnsweredPoll.modelAge);
+
 // Cantidad por género
 app.get('/company/:company_id/respondents_gender/:start_date/:end_date',                           AnsweredPoll.companyGender);
-app.get('/company/:company_id/sell_point/:sell_point_id/respondents_gender/:start_date/:end_date', AnsweredPoll.sellPointGender);
-app.get('/company/:company_id/poll/:poll_id/respondents_gender/:start_date/:end_date',             AnsweredPoll.pollGender);
 app.get('/company/:company_id/question/:question_id/respondents_gender/:start_date/:end_date',     AnsweredPoll.questionGender);
+app.get('/company/:company_id/:model/:id/respondents_gender/:start_date/:end_date',                AnsweredPoll.modelGender);
+
 // Respuestas
 app.get('/company/:company_id/question/:question_id/options_answers/:start_date/:end_date', AnsweredPoll.questionOptionsAnswers);
 app.get('/company/:company_id/question/:question_id/boolean_answers/:start_date/:end_date', AnsweredPoll.questionBooleanAnswers);
