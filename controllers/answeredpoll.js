@@ -453,12 +453,13 @@ module.exports = {
   },
   questionOptionsAnswers(req, res) {
     var sql = '';
-    sql += 'SELECT "PossibleOptions".value, COUNT("PossibleOptions")';
-    sql += 'FROM "Answers", "Questions", "PossibleOptions" ';
+    sql += 'SELECT "PossibleOptions".value, COUNT("PossibleOptions".value)';
+    sql += 'FROM "Answers", "Questions", "PossibleOptions", "AnsweredPolls" ';
     sql += 'WHERE ';
     sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
     sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
+    sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
     sql += '  "Answers".possible_option_id = "PossibleOptions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
     sql += 'GROUP BY "PossibleOptions".value ';
@@ -470,15 +471,17 @@ module.exports = {
   },
   questionBooleanAnswers(req, res) {
     var sql = '';
-    sql += 'SELECT COUNT("Answers"), "Answers".boolean_value ';
-    sql += 'FROM "Answers", "Questions", "AnsweredPolls" ';
+    sql += 'SELECT COUNT("Answers"), "Answers".boolean_value, "Users".gender ';
+    sql += 'FROM "Answers", "Questions", "AnsweredPolls", "Users" ';
     sql += 'WHERE ';
+    sql += '  "Answers".boolean_value IS NOT NULL AND ';
     sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
     sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
+    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
     sql += '  "Answers".question_id = "Questions".id AND ';
     sql += '  "Questions".id = \'' + req.params.question_id + '\'';
-    sql += 'GROUP BY "Answers".boolean_value; ';
+    sql += 'GROUP BY "Answers".boolean_value, "Users".gender ';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
