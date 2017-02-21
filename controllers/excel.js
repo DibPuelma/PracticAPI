@@ -33,7 +33,8 @@ module.exports = {
               value: answerValue,
               user_id: answeredpoll.User.id,
               user_age: ageCalculator.calculateAge(answeredpoll.User.birthdate),
-              user_gender: answeredpoll.User.gender
+              user_gender: answeredpoll.User.gender,
+              created_at: answeredpoll.created_at
             }
             dataset.push(data);
           })
@@ -67,7 +68,8 @@ module.exports = {
             value: answerValue,
             user_id: answer.AnsweredPoll.User.id,
             user_age: ageCalculator.calculateAge(answer.AnsweredPoll.User.birthdate),
-            user_gender: answer.AnsweredPoll.User.gender
+            user_gender: answer.AnsweredPoll.User.gender,
+            created_at: answer.created_at
           }
           dataset.push(data);
         })
@@ -104,7 +106,8 @@ module.exports = {
               value: answerValue,
               user_id: answeredpoll.User.id,
               user_age: ageCalculator.calculateAge(answeredpoll.User.birthdate),
-              user_gender: answeredpoll.User.gender
+              user_gender: answeredpoll.User.gender,
+              created_at: answeredpoll.created_at
             }
             dataset.push(data);
           })
@@ -142,7 +145,8 @@ module.exports = {
               value: answerValue,
               user_id: answeredpoll.User.id,
               user_age: ageCalculator.calculateAge(answeredpoll.User.birthdate),
-              user_gender: answeredpoll.User.gender
+              user_gender: answeredpoll.User.gender,
+              created_at: answeredpoll.created_at
             }
             dataset.push(data);
           })
@@ -185,7 +189,8 @@ module.exports = {
               value: answerValue,
               user_id: answeredpoll.User.id,
               user_age: ageCalculator.calculateAge(answeredpoll.User.birthdate),
-              user_gender: answeredpoll.User.gender
+              user_gender: answeredpoll.User.gender,
+              created_at: answeredpoll.created_at
             }
             dataset.push(data);
           })

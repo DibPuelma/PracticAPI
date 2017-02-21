@@ -1,11 +1,5 @@
 var excel = require('node-excel-export');
 
-var employeeSpecification = require('./employee.js');
-var pollSpecification = require('./employee.js');
-var questionSpecification = require('./employee.js');
-var sellPointSpecification = require('./employee.js');
-var allSpecification = require('./employee.js');
-
 var specifications = {
   employee: require('./employee.js').specification,
   poll: require('./poll.js').specification,

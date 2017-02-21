@@ -111,5 +111,10 @@ module.exports.specification = {
     displayName: 'Género',
     headerStyle: styles.headerDark,
     width: '7'
+  },
+  created_at: {
+    displayName: 'Fecha',
+    headerStyle: styles.headerDark,
+    width: '20'
   }
 }
