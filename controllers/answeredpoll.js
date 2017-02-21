@@ -107,7 +107,7 @@ module.exports = {
     sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
     sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
     sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
-    sql += '  "AnsweredPolls".sell_point_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
     sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
     sql += 'ORDER BY "AnsweredPolls".created_at; ';
@@ -125,6 +125,27 @@ module.exports = {
       res.status(200).json( results );
     }).catch(function(error) {
       console.log(error);
+      res.status(500).json({ error: error});
+    });
+  },
+  modelAverageByGender(req, res) {
+    var sql = '';
+    sql += 'SELECT AVG("Answers".number_value), "Users".gender, COUNT("Users".gender) ';
+    sql += 'FROM "Answers", "AnsweredPolls", \"' + modelGetter[req.params.model] + '\", "Users" ';
+    sql += 'WHERE ';
+    sql += '  "Answers".number_value IS NOT NULL AND ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "Answers".answered_poll_id = "AnsweredPolls".id AND ';
+    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
+    sql += 'GROUP BY "Users".gender ';
+    sql += 'ORDER BY "Users".gender ';
+
+    models.sequelize.query(sql).spread(function(results, metadata) {
+      res.status(200).json( results );
+    }).catch(function(error) {
       res.status(500).json({ error: error});
     });
   },
@@ -176,7 +197,7 @@ module.exports = {
   },
   modelCount(req, res) {
     var sql = '';
-    sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls")';
+    sql += 'SELECT "AnsweredPolls".created_at, COUNT("AnsweredPolls") ';
     sql += 'FROM "AnsweredPolls", \"' + modelGetter[req.params.model] + '\" ';
     sql += 'WHERE ';
     sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
@@ -185,6 +206,25 @@ module.exports = {
     sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
     sql += 'GROUP BY "AnsweredPolls".created_at ';
     sql += 'ORDER BY "AnsweredPolls".created_at; ';
+
+    models.sequelize.query(sql).spread(function(results, metadata) {
+      res.status(200).json( results );
+    }).catch(function(error) {
+      res.status(500).json({ error: error});
+    });
+  },
+  modelCountByGender(req, res) {
+    var sql = '';
+    sql += 'SELECT COUNT("AnsweredPolls"), "Users".gender ';
+    sql += 'FROM "AnsweredPolls", \"' + modelGetter[req.params.model] + '\", "Users" ';
+    sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at >= TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at <= TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".id = \'' + req.params.id + '\'';
+    sql += 'GROUP BY "Users".gender ';
+    sql += 'ORDER BY "Users".gender ';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
@@ -250,6 +290,24 @@ module.exports = {
       results.map((result) => {
         result['age'] = _calculateAge(result.birthdate);
       })
+      res.status(200).json( results );
+    }).catch(function(error) {
+      res.status(500).json({ error: error});
+    });
+  },
+  modelAverageAgeByGender(req, res){
+    var sql = '';
+    sql += 'SELECT AVG(EXTRACT(YEAR FROM AGE("Users".birthdate))), COUNT("Users".gender), "Users".gender ';
+    sql += 'FROM "Users", \"' + modelGetter[req.params.model] + '\", "AnsweredPolls" ';
+    sql += 'WHERE ';
+    sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
+    sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
+    sql += '  "AnsweredPolls".user_id = "Users".id AND ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".company_id = \'' + req.params.company_id + '\'';
+    sql += 'GROUP BY "Users".gender ';
+
+    models.sequelize.query(sql).spread(function(results, metadata) {
       res.status(200).json( results );
     }).catch(function(error) {
       res.status(500).json({ error: error});
