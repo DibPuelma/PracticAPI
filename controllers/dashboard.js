@@ -12,6 +12,18 @@ var models = require('../models');
 
 var util = require('util');
 
+var modelGetter = {
+  poll: "Polls",
+  sell_point: "SellPoints",
+  employee: "Employees"
+}
+
+var attributeGetter = {
+  poll: '"Polls".name',
+  sell_point: '"SellPoints".location',
+  employee: '"Employees".name, "Employees".last_name'
+}
+
 module.exports = {
   byDateTotalAnswers(req, res) {
     var sql = '';
@@ -76,7 +88,7 @@ module.exports = {
   bestAverageQuestion(req, res){
     var sql = '';
     sql += 'SELECT "Questions".text, AVG("Answers".number_value) AS avg ';
-    sql += 'FROM "AnsweredPolls", "Users", "SellPoints", "Answers", "Polls", "Questions" ';
+    sql += 'FROM "AnsweredPolls", "Users", "SellPoints", "Answers", "Questions" ';
     sql += 'WHERE ';
     sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
     sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
@@ -100,10 +112,10 @@ module.exports = {
       res.status(500).json({ error: error});
     });
   },
-  bestAveragePoll(req, res){
+  bestAverageModel(req, res){
     var sql = '';
-    sql += 'SELECT "Polls".name, AVG("Answers".number_value) AS avg ';
-    sql += 'FROM "AnsweredPolls", "Users", "Answers", "Polls" ';
+    sql += 'SELECT ' + attributeGetter[req.params.model] + ', AVG("Answers".number_value) AS avg ';
+    sql += 'FROM "AnsweredPolls", "Users", "Answers", \"' + modelGetter[req.params.model] + '\" ';
     sql += 'WHERE ';
     sql += '  "AnsweredPolls".created_at > TO_TIMESTAMP(\'' + req.params.start_date + '\', \'YYYY-MM-DD\')  AND ';
     sql += '  "AnsweredPolls".created_at < TO_TIMESTAMP(\'' + req.params.end_date + '\', \'YYYY-MM-DD\') AND ';
@@ -114,13 +126,16 @@ module.exports = {
     }
     sql += '  "Answers".number_value IS NOT NULL AND ';
     sql += '  "AnsweredPolls".id = "Answers".answered_poll_id AND ';
-    sql += '  "AnsweredPolls".poll_id = "Polls".id AND ';
-    sql += '  "Polls".company_id = \'' + req.params.company_id + '\'';
-    sql += 'GROUP BY "Polls".id ';
+    sql += '  "AnsweredPolls".' + req.params.model + '_id = \"' + modelGetter[req.params.model] + '\".id AND ';
+    sql += '  \"' + modelGetter[req.params.model] + '\".company_id = \'' + req.params.company_id + '\'';
+    sql += 'GROUP BY \"' + modelGetter[req.params.model] + '\".id ';
     sql += 'ORDER BY avg DESC ';
     sql += 'LIMIT 5';
 
     models.sequelize.query(sql).spread(function(results, metadata) {
+      results.map((result) => {
+        result['full_name'] = result.name + ' ' + result.last_name;
+      })
       res.status(200).json( results );
     }).catch(function(error) {
       res.status(500).json({ error: error});

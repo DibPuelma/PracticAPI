@@ -137,21 +137,24 @@ app.delete('/company/:company_id/contest/:id', Contest.delete);
 
 // Datos
 // Promedios
-app.get('/company/:company_id/average_stars/:start_date/:end_date',                             AnsweredPoll.companyAverage);
-app.get('/company/:company_id/question/:question_id/average_stars/:start_date/:end_date',       AnsweredPoll.questionAverage);
-app.get('/company/:company_id/:model/:id/average_stars/:start_date/:end_date',                  AnsweredPoll.modelAverage);
-app.get('/company/:company_id/:model/:id/average_stars_by_gender/:start_date/:end_date',        AnsweredPoll.modelAverageByGender);
+app.get('/company/:company_id/average_stars/:start_date/:end_date',                                       AnsweredPoll.companyAverage);
+app.get('/company/:company_id/question/:question_id/average_stars/:start_date/:end_date',                 AnsweredPoll.questionAverage);
+app.get('/company/:company_id/:model/:id/average_stars/:start_date/:end_date',                            AnsweredPoll.modelAverage);
+app.get('/company/:company_id/question/:question_id/average_stars_by_gender/:start_date/:end_date',       AnsweredPoll.questionAverageByGender);
+app.get('/company/:company_id/:model/:id/average_stars_by_gender/:start_date/:end_date',                  AnsweredPoll.modelAverageByGender);
 
 // Total respuestas
-app.get('/company/:company_id/total_answers/:start_date/:end_date',                             AnsweredPoll.companyCount);
-app.get('/company/:company_id/question/:question_id/total_answers/:start_date/:end_date',       AnsweredPoll.questionCount);
-app.get('/company/:company_id/:model/:id/total_answers/:start_date/:end_date',                  AnsweredPoll.modelCount);
-app.get('/company/:company_id/:model/:id/total_answers_by_gender/:start_date/:end_date',        AnsweredPoll.modelCountByGender);
+app.get('/company/:company_id/total_answers/:start_date/:end_date',                                       AnsweredPoll.companyCount);
+app.get('/company/:company_id/question/:question_id/total_answers/:start_date/:end_date',                 AnsweredPoll.questionCount);
+app.get('/company/:company_id/:model/:id/total_answers/:start_date/:end_date',                            AnsweredPoll.modelCount);
+app.get('/company/:company_id/question/:question_id/total_answers_by_gender/:start_date/:end_date',       AnsweredPoll.questionCountByGender);
+app.get('/company/:company_id/:model/:id/total_answers_by_gender/:start_date/:end_date',                  AnsweredPoll.modelCountByGender);
 
 // Edad encuestados
 app.get('/company/:company_id/respondents_age/:start_date/:end_date',                           AnsweredPoll.companyAge);
 app.get('/company/:company_id/question/:question_id/respondents_age/:start_date/:end_date',     AnsweredPoll.questionAge);
 app.get('/company/:company_id/:model/:id/respondents_age/:start_date/:end_date',                AnsweredPoll.modelAge);
+app.get('/company/:company_id/question/:question_id/average_age/:start_date/:end_date',     AnsweredPoll.questionAverageByGender);
 app.get('/company/:company_id/:model/:id/average_age/:start_date/:end_date',                    AnsweredPoll.modelAverageAgeByGender);
 
 // Cantidad por género
@@ -167,9 +170,8 @@ app.get('/company/:company_id/question/:question_id/boolean_answers/:start_date/
 //Dashboard
 app.get('/company/:company_id/dashboard/total_answers/:start_date/:end_date',                   Dashboard.byDateTotalAnswers);
 app.get('/company/:company_id/dashboard/average/:start_date/:end_date',                         Dashboard.byDateAverage);
-app.get('/company/:company_id/dashboard/:gender/best_average_question/:start_date/:end_date',   Dashboard.bestAverageQuestion);
-app.get('/company/:company_id/dashboard/:gender/best_average_poll/:start_date/:end_date',       Dashboard.bestAveragePoll);
-app.get('/company/:company_id/dashboard/:gender/best_average_sell_point/:start_date/:end_date', Dashboard.bestAverageSellPoint);
+app.get('/company/:company_id/dashboard/:gender/question/best_average/:start_date/:end_date',   Dashboard.bestAverageQuestion);
+app.get('/company/:company_id/dashboard/:gender/:model/best_average/:start_date/:end_date',     Dashboard.bestAverageModel);
 app.get('/company/:company_id/dashboard/most_yes_and_no/:start_date/:end_date',                 Dashboard.mostYesAndNo);
 app.get('/company/:company_id/dashboard/most_chosen/:start_date/:end_date',                     Dashboard.mostChosen);
 app.get('/company/:company_id/dashboard/average_age/:start_date/:end_date',                     Dashboard.averageAge);
