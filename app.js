@@ -9,7 +9,13 @@ app.set('port', (process.env.PORT || 8000));
 
 app.use(cors());
 app.use(require('./controllers'));
+//app.use(bodyParser.json());
+// configure the app to use bodyParser()
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
+
 
 app.use(expressValidator({
  customValidators: {
