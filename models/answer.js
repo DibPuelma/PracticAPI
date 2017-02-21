@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     boolean_value: DataTypes.BOOLEAN
   }, {
     underscored: true,
+    paranoid: true,
     classMethods: {
       associate: function(models) {
         Answer.belongsTo(models.PossibleOption);

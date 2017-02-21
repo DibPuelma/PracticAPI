@@ -4,6 +4,7 @@ module.exports = function(sequelize, DataTypes) {
     value: DataTypes.STRING
   }, {
     underscored: true,
+    paranoid: true,
     classMethods: {
       associate: function(models) {
         PossibleOption.belongsToMany(models.OptionsContainer, {through: 'OptionsContainerPossibleOptions'});
