@@ -338,6 +338,28 @@ var prizesData = [
   },
 ]
 
+var managers = [
+  {
+    info: {
+      first_name: 'Lucho',
+      last_name : 'Mateo',
+      email     : 'manager1@correo.cl',
+      password  : 'abc123'
+    },
+    company   : 'Puma'
+  },
+  {
+    info: {
+      first_name: 'Eloy',
+      last_name : 'Sancho',
+      email     : 'manager2@correo.cl',
+      password  : 'abc123'
+    },
+    company   : 'Sushi Home'
+  }
+]
+
+
 var dropTables = function() {
   Models.sequelize.sync({ force: true }).then(function() {
     createTables();
@@ -424,27 +446,29 @@ var createCompanies = function() {
 }
 
 var createSellPoints = function() {
-  var sellPointsPromises = [];
+  var find_promises = [];
+  var create_promises = [];
+
+  // Create
   sellPointsData.map((data) => {
     var companyFindPromise = Models.Company.find({where: {name: data.company}})
     .then((company) => {
       var createSellPointPromise = Models.SellPoint.create({
         company_id: company.id,
-        location:data.info.location,
-        code:data.info.code
+        location  : data.info.location,
+        code      : data.info.code
       }).then((sellpoint) => {});
-      sellPointsPromises.push(createSellPointPromise);
+      create_promises.push(createSellPointPromise);
     })
-    sellPointsPromises.push(companyFindPromise);
+    find_promises.push(companyFindPromise);
   })
-  Promise.all(sellPointsPromises)
-  .then(() => {
-    createEmployees();
-  })
-  .catch((error) => {
-    console.error(error);
 
-  })
+  // Resolve
+  Promise.all(find_promises).then(() => {
+    Promise.all(create_promises).then(() => {
+      createEmployees();
+    }).catch((error) => { console.error(error); });
+  }).catch((error) => { console.error(error); });
 }
 
 var createEmployees = function() {
@@ -484,51 +508,55 @@ var createEmployees = function() {
 }
 
 var createOptionsContainers = function() {
-  optionsContainersPromises = [];
+  var find_promises = [];
+  var create_promises = [];
+
   var createOptionsContainerPromise
   var findCompanyPromise;
-  findCompanyPromise = Models.Company.find({where: {name: "Sushi Home"}})
+
+  // Create
+  findCompanyPromise = Models.Company.find({ where: {name: 'Sushi Home' } })
   .then((company) => {
     createOptionsContainerPromise = Models.OptionsContainer.create({
-      name: "Menú restaurant",
+      name       : "Menú restaurant",
       allow_other: false,
-      company_id: company.id
+      company_id : company.id
     })
-    optionsContainersPromises.push(createOptionsContainerPromise);
+    create_promises.push(createOptionsContainerPromise);
 
     createOptionsContainerPromise = Models.OptionsContainer.create({
-      name: "Plato favorito",
+      name       : "Plato favorito",
       allow_other: true,
-      company_id: company.id
+      company_id : company.id
     })
-    optionsContainersPromises.push(createOptionsContainerPromise);
-  })
-  optionsContainersPromises.push(findCompanyPromise);
-  findCompanyPromise = Models.Company.find({where: {name: "Puma"}})
+    create_promises.push(createOptionsContainerPromise);
+  });
+  find_promises.push(findCompanyPromise);
+
+  findCompanyPromise = Models.Company.find({ where: { name: 'Puma' } })
   .then((company) => {
     createOptionsContainerPromise = Models.OptionsContainer.create({
-      name: "Acción vendedores",
+      name       : "Acción vendedores",
       allow_other: true,
-      company_id: company.id
+      company_id : company.id
     })
-    optionsContainersPromises.push(createOptionsContainerPromise);
+    create_promises.push(createOptionsContainerPromise);
 
     createOptionsContainerPromise = Models.OptionsContainer.create({
-      name: "Deporte favorito",
+      name       : "Deporte favorito",
       allow_other: true,
-      company_id: company.id
+      company_id : company.id
     })
-    optionsContainersPromises.push(createOptionsContainerPromise);
+    create_promises.push(createOptionsContainerPromise);
   })
-  optionsContainersPromises.push(findCompanyPromise);
-  Promise.all(optionsContainersPromises)
-  .then(() => {
-    createPossibleOptions();
-  })
-  .catch((error) => {
-    console.error(error);
+  find_promises.push(findCompanyPromise);
 
-  })
+  // Resolve
+  Promise.all(find_promises).then(() => {
+    Promise.all(create_promises).then(() => {
+      createPossibleOptions();
+    }).catch((error) => { console.error(error); });
+  }).catch((error) => { console.error(error); });
 }
 
 var createPossibleOptions = function() {
@@ -919,6 +947,7 @@ var createAnsweredPolls = function(companyOneSellPoints, companyTwoSellPoints) {
   sleep(2000).then(() => {
     Promise.all(allAnsweredPollPromises)
     .then(() => {
+      createManagers();
     })
     .catch((error) => {
       console.error(error);
@@ -997,6 +1026,37 @@ var createAnswersToPoll = function(sellPoint, poll, employees){
       })
     })
   })
+}
+
+var createManagers = function() {
+  var create_promises = [];
+  var find_promises = [];
+  var add_promises = [];
+
+  managers.map((data) => {
+    // Create
+    var createManager = Models.Manager.create(data.info)
+    .then((manager) => {
+      // Find
+      var findCompany = Models.Company.find({ where: { name: data.company }})
+      .then((company) => {
+        // Add
+        var addCompany = company.addManager(manager);
+        add_promises.push(addCompany);
+      }).catch((error) => { reject(error); });
+      find_promises.push(findCompany);
+    }).catch((error) => { reject(error); });
+    create_promises.push(createManager);
+  });
+
+  // Wait until all is resolved
+  Promise.all(create_promises).then(() => {
+    Promise.all(find_promises).then(() => {
+      Promise.all(add_promises).then(() => {
+        console.log('Done!')
+      }).catch((error) => { reject(error); });
+    }).catch((error) => { reject(error); });
+  }).catch((error) => { reject(error); });
 }
 
 var getRandomInt = function(min, max) {

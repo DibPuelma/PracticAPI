@@ -47,7 +47,8 @@ var PossibleOption   = require('./controllers/possibleoption.js');
 var AnsweredPoll     = require('./controllers/answeredpoll.js');
 var Answer           = require('./controllers/answer.js');
 var Excel            = require('./controllers/excel.js');
-var Dashboard            = require('./controllers/dashboard.js');
+var Dashboard        = require('./controllers/dashboard.js');
+var Manager          = require('./controllers/manager.js');
 
 //Encuestas
 
@@ -190,6 +191,16 @@ app.get('/company/:company_id/excel/employee', Excel.getByEmployee);
 app.get('/company/:company_id/excel/poll', Excel.getByPoll);
 app.get('/company/:company_id/excel/sell_point', Excel.getBySellPoint);
 app.get('/company/:company_id/excel/answered_poll', Excel.getAll);
+
+// Managers
+app.get   ('/manager',        Manager.index);
+app.get   ('/manager/:id',    Manager.show);
+app.post  ('/manager',        Manager.create);
+app.put   ('/manager/:id',    Manager.update);
+app.delete('/manager/:id',    Manager.delete);
+app.post  ('/manager/login',  Manager.login);
+app.post  ('/manager/logout', Manager.logout);
+
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

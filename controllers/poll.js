@@ -97,15 +97,17 @@ module.exports = {
 
       var data = filterParams(req);
 
-      promises = [];
-      var newPoll;
-      createPoll = Poll.create(data)
+      // Create poll
+      Poll.create(data)
       .then((poll) => {
-        newPoll = poll;
+        var promises = [];
+        var newPoll = poll;
+
+        // Set company and create questions
         var setCompany = Company.findById(req.params.company_id)
         .then((company) => {
           poll.setCompany(company);
-          if(req.body.newQuestions.length > 0){
+          if (req.body.newQuestions.length > 0) {
             req.body.newQuestions.map((newQuestion) => {
               var addNewQuestion = Question.create(newQuestion)
               .then((question) => {
@@ -121,9 +123,11 @@ module.exports = {
         })
         .catch(function (error) {
           res.status(500).json(error);
-        })
+        });
         promises.push(setCompany);
-        if(req.body.existingQuestions.length > 0){
+
+        // Add existing questions
+        if (req.body.existingQuestions.length > 0) {
           req.body.existingQuestions.map((id) => {
             var addExistingQuestion = Question.findById(id)
             .then((question) => {
@@ -135,7 +139,9 @@ module.exports = {
             promises.push(addExistingQuestion);
           })
         }
-        if(req.body.activeSellPoint !== null){
+
+        // Set active sellpoint
+        if (req.body.activeSellPoint !== null) {
           var setActiveSellPoint = SellPoint.findById(req.body.activeSellPoint)
           .then((sellPoint) => {
             sellPoint.setPoll(poll);
@@ -145,16 +151,18 @@ module.exports = {
           })
           promises.push(setActiveSellPoint);
         }
+
+        // If all promises are resolved
+        Promise.all(promises)
+        .then(() => {
+          res.status(200).json(newPoll);
+        })
+        .catch(function(error) {
+          res.status(500).json(error);
+        });
+
       });
-      promises.push(createPoll);
-      Promise.all(promises)
-      .then(() => {
-        res.status(200).json(newPoll);
-      })
-      .catch(function(error) {
-        res.status(500).json(error);
-      })
-    })
+    });
   },
   show(req, res) {
     Poll.findOne({where: {id: req.params.id, company_id: req.params.company_id}, include: {model:Question, include: {model: OptionsContainer, include: PossibleOption}}})

@@ -10,7 +10,7 @@ var schema = {
     errorMessage: 'Invalid name, must have between 1 and 30 characters'
   },
   'allow_other': {
-    notEmpty: true,
+    optional: true,
     isBoolean: true,
     errorMessage: 'Invalid allow other, must be boolean'
   },
@@ -77,24 +77,27 @@ module.exports = {
     req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
+      console.log("-------------------------------")
       if (!result.isEmpty()) {
         res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
         return;
       }
 
       var data = filterParams(req);
+      
+      OptCont.create(data).then((optcont) => {
+        Company.findById(req.params.company_id).then((company) => {
+          var promises = [];
+          var newOptCont = optcont;
 
-      promises = [];
-      var newOptCont;
-      var createOptCont = OptCont.create(data)
-      .then((optcont) => {
-        newOptCont = optcont;
-        var setCompany = Company.findById(req.params.company_id)
-        .then((company) => {
-          company.addOptionsContainer(optcont);
-          if(req.body.newOptions.length > 0){
+          // Set options container's company
+          var setCompany = company.addOptionsContainer(optcont);
+          promises.push(setCompany);
+
+          // Create and add possible options
+          if (req.body.newOptions.length > 0) {
             req.body.newOptions.map((option) => {
-              var setCreateOption = PossibleOption.create(option)
+              PossibleOption.create(option)
               .then((option) => {
                 optcont.addPossibleOption(option);
                 company.addPossibleOption(option);
@@ -102,38 +105,37 @@ module.exports = {
               .catch((error) => {
                 res.status(500).json(error);
               })
-              promises.push(setCreateOption);
             })
           }
+
+          if (req.body.existingOptions.length > 0) {
+            req.body.existingOptions.map((optionId) => {
+              PossibleOption.findById(optionId)
+              .then((option) => {
+                optcont.addPossibleOption(option);
+              })
+              .catch((error) => {
+                res.status(500).json(error);
+              })
+            })
+          }
+
+          Promise.all(promises)
+          .then(() => {
+            res.status(200).json(newOptCont);
+          })
+          .catch((error) => {
+            res.status(500).json(error);
+          });
+
         })
         .catch((error) => {
+          console.log(error);
           res.status(500).json(error);
-        })
-        promises.push(setCompany);
-
-        if(req.body.existingOptions.length > 0){
-          req.body.existingOptions.map((optionId) => {
-            var getOption = PossibleOption.findById(optionId)
-            .then((option) => {
-              optcont.addPossibleOption(option);
-            })
-            .catch((error) => {
-              res.status(500).json(error);
-            })
-            promises.push(getOption);
-          })
-        }
+        });
       })
       .catch((error) => {
         console.log(error);
-        res.status(500).json(error);
-      })
-      promises.push(createOptCont);
-      Promise.all(promises)
-      .then(() => {
-        res.status(200).json(newOptCont);
-      })
-      .catch((error) => {
         res.status(500).json(error);
       })
     })
