@@ -3,6 +3,7 @@ module.exports = function(sequelize, DataTypes) {
   var AnsweredPoll = sequelize.define('AnsweredPoll', {
   }, {
     underscored: true,
+    paranoid: true,
     classMethods: {
       associate: function(models) {
         AnsweredPoll.belongsTo(models.User);

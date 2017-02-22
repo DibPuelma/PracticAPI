@@ -5,6 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     type: DataTypes.STRING
   }, {
     underscored: true,
+    paranoid: true,
     classMethods: {
       associate: function(models) {
         Question.belongsTo(models.OptionsContainer);

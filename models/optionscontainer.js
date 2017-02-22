@@ -5,6 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     allow_other: DataTypes.BOOLEAN
   }, {
     underscored: true,
+    paranoid: true,
     classMethods: {
       associate: function(models) {
         OptionsContainer.belongsToMany(models.PossibleOption, {through: 'OptionsContainerPossibleOptions'});
