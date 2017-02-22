@@ -43,7 +43,7 @@ var companiesData = [
   }, {
     name: 'Sushi Home',
     email: 'contacto@sushi.home',
-    logo: 'https://pbs.twimg.com/profile_images/1272217407/logo_sushihome.jpg'
+    logo: 'http://clubmercuriovalpo.cl/club/wp-content/uploads/2015/05/sushi-home.jpg'
   }
 ];
 
@@ -412,7 +412,7 @@ var createUsers = function() {
     var lastName = lastNames[getRandomInt(0, lastNames.length - 1)];
     var userData = {
       email: name + lastName + "@example.com",
-      name: name,
+      first_name: name,
       last_name: lastName,
       birthdate: new Date(yearOfBirth, monthOfBirth, dayOfBirth),
       gender: getRandomInt(0,1) === 0 ? 'm' : 'f',
@@ -591,7 +591,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Models.OptionsContainer.find({where: {name: "Acción vendedores"}})
     .then((optcont) => {
@@ -606,7 +606,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Models.OptionsContainer.find({where: {name: "Deporte favorito"}})
     .then((optcont) => {
@@ -621,7 +621,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Promise.all(possibleOptionsPromises)
     .then(() => {
