@@ -15,6 +15,7 @@ module.exports = function(sequelize, DataTypes) {
         Company.hasMany(models.OptionsContainer);
         Company.hasMany(models.Question);
         Company.hasMany(models.PossibleOption)
+        Company.hasMany(models.Manager);
       }
     }
   });

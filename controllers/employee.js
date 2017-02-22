@@ -18,6 +18,16 @@ var schema = {
   'picture': { // add: is a url
     optional: true,
     errorMessage: 'Invalid picture'
+  },
+  'newSellpoints': {
+    isArray: true,
+    optional: true,
+    errorMessage: 'Invalid existing options array'
+  },
+  'deletedSellpoints': {
+    isArray: true,
+    optional: true,
+    errorMessage: 'Invalid deleted options array'
   }
 };
 
@@ -35,6 +45,16 @@ var schemaUpdate = {
   'picture': { // add: is a url
     optional: true,
     errorMessage: 'Invalid picture'
+  },
+  'newSellpoints': {
+    isArray: true,
+    optional: true,
+    errorMessage: 'Invalid existing options array'
+  },
+  'deletedSellpoints': {
+    isArray: true,
+    optional: true,
+    errorMessage: 'Invalid deleted options array'
   }
 };
 
@@ -79,18 +99,60 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
+      data.company_id = req.params.company_id;
 
-      Company.findById(req.params.company_id).then(function (company) {
-        Employee.create(data).then(function (newEmployee) {
-          newEmployee.setCompany(company).then(function() {
-            res.status(200).json(newEmployee);
+      Employee.create(data).then(function (newEmployee) {
+        /*newEmployee.setCompany(company).then(function() {
+          res.status(200).json(newEmployee);
+        });*/
+        // Update employee info
+        
+        var promises = [];
+
+        // Add sellpoints
+        if (req.body.newSellpoints.length > 0) {
+          req.body.newSellpoints.map((sellpoint_id) => {
+            var getSellpoint = SellPoint.findById(sellpoint_id)
+            .then((sellpoint) => {
+              console.log("antes");
+              sellpoint.addEmployee(newEmployee);
+            })
+            .catch((error) => {
+              console.log("?")
+              res.status(500).json(error);
+            })
+            promises.push(getSellpoint);
           });
-        }).catch(function (error){
+        }
+
+        // Remove sellpoints
+        if (req.body.deletedSellpoints.length > 0) {
+          req.body.deletedSellpoints.map((sellpoint_id) => {
+            var getSellpoint = SellPoint.findById(sellpoint_id)
+            .then((sellpoint) => {
+              sellpoint.removeEmployee(newEmployee);
+            })
+            .catch((error) => {
+              res.status(500).json(error);
+            })
+            promises.push(getSellpoint);
+          });
+        }
+
+        // Answer resquest
+        Promise.all(promises)
+        .then(() => {
+          res.status(200).json(newEmployee);
+        })
+        .catch((error) => {
           res.status(500).json(error);
-        });
-      }).catch(function (error) {
+        })
+
+
+      }).catch(function (error){
         res.status(500).json(error);
       });
+      
     });
   },
 
@@ -103,16 +165,57 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
+      
+      Employee.findById(req.params.id).then(function (updatedEmployee) {
+        var promises = [];
 
-      Company.findById(req.params.company_id).then(function (company) {
-        Employee.update(data, { where: { id: req.params.id } }).then(function (updatedEmployee) {
+        // Update employee info
+        var updateEmployee = updatedEmployee.update(data);
+        promises.push(updateEmployee);
+
+        // Add sellpoints
+        if (req.body.newSellpoints.length > 0) {
+          req.body.newSellpoints.map((sellpoint_id) => {
+            var getSellpoint = SellPoint.findById(sellpoint_id)
+            .then((sellpoint) => {
+              console.log("antes");
+              sellpoint.addEmployee(updatedEmployee);
+            })
+            .catch((error) => {
+              console.log("?")
+              res.status(500).json(error);
+            })
+            promises.push(getSellpoint);
+          });
+        }
+
+        // Remove sellpoints
+        if (req.body.deletedSellpoints.length > 0) {
+          req.body.deletedSellpoints.map((sellpoint_id) => {
+            var getSellpoint = SellPoint.findById(sellpoint_id)
+            .then((sellpoint) => {
+              sellpoint.removeEmployee(updatedEmployee);
+            })
+            .catch((error) => {
+              res.status(500).json(error);
+            })
+            promises.push(getSellpoint);
+          });
+        }
+
+        // Answer resquest
+        Promise.all(promises)
+        .then(() => {
           res.status(200).json(updatedEmployee);
-        }).catch(function (error) {
+        })
+        .catch((error) => {
           res.status(500).json(error);
-        });
+        })
+
       }).catch(function (error) {
         res.status(500).json(error);
       });
+      
     });
   },
 
