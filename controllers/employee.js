@@ -106,7 +106,7 @@ module.exports = {
           res.status(200).json(newEmployee);
         });*/
         // Update employee info
-        
+
         var promises = [];
 
         // Add sellpoints
@@ -152,7 +152,7 @@ module.exports = {
       }).catch(function (error){
         res.status(500).json(error);
       });
-      
+
     });
   },
 
@@ -165,7 +165,7 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
-      
+
       Employee.findById(req.params.id).then(function (updatedEmployee) {
         var promises = [];
 
@@ -178,11 +178,9 @@ module.exports = {
           req.body.newSellpoints.map((sellpoint_id) => {
             var getSellpoint = SellPoint.findById(sellpoint_id)
             .then((sellpoint) => {
-              console.log("antes");
               sellpoint.addEmployee(updatedEmployee);
             })
             .catch((error) => {
-              console.log("?")
               res.status(500).json(error);
             })
             promises.push(getSellpoint);
@@ -215,7 +213,7 @@ module.exports = {
       }).catch(function (error) {
         res.status(500).json(error);
       });
-      
+
     });
   },
 
