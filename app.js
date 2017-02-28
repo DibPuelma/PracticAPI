@@ -198,13 +198,14 @@ app.get('/company/:company_id/excel/sell_point', Excel.getBySellPoint);
 app.get('/company/:company_id/excel/answered_poll', Excel.getAll);
 
 // Managers
-app.get   ('/manager',        Manager.index);
-app.get   ('/manager/:id',    Manager.show);
-app.post  ('/manager',        Manager.create);
-app.put   ('/manager/:id',    Manager.update);
-app.delete('/manager/:id',    Manager.delete);
-app.post  ('/manager/login',  Manager.login);
-app.post  ('/manager/logout', Manager.logout);
+app.get   ('/manager',                            Manager.index);
+app.get   ('/company/:company_id/manager',        Manager.byCompany);
+app.get   ('/manager/:id',                        Manager.show);
+app.post  ('/manager',                            Manager.create);
+app.put   ('/manager/:id',                        Manager.update);
+app.delete('/manager/:id',                        Manager.delete);
+app.post  ('/manager/login',                      Manager.login);
+app.post  ('/manager/logout',                     Manager.logout);
 
 
 app.listen(app.get('port'), function() {

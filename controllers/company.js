@@ -1,6 +1,7 @@
 var util = require('util');
 var Company = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
+var Manager = require('../models/').Manager;
 
 var schema = {
   'email': {
@@ -51,7 +52,7 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    Company.findAll().then(function (companies) {
+    Company.findAll({include: [Manager]}).then(function (companies) {
       res.status(200).json(companies);
     }).catch(function (error) {
       res.status(500).json(error);
@@ -59,7 +60,7 @@ module.exports = {
   },
 
   show(req, res) {
-    Company.findById(req.params.id, {include: SellPoint}).then(function (company) {
+    Company.findById(req.params.id, {include: [SellPoint, Manager]}).then(function (company) {
       res.status(200).json(company);
     }).catch(function (error){
       res.status(500).json(error);
