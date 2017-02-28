@@ -12,6 +12,9 @@ var schema = {
     notEmpty: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid location'
+  },
+  'code': {
+    notEmpty: true
   }
 };
 
@@ -20,6 +23,9 @@ var schemaUpdate = {
     optional: true,
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid location'
+  },
+  'code': {
+    optional: true
   }
 };
 
@@ -71,7 +77,7 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
-
+      console.log(data);
       Company.findById(req.params.company_id).then(function (company) {
         SellPoint.create(data).then(function (newSellPoint) {
           newSellPoint.setCompany(company).then(function() {
