@@ -13,9 +13,9 @@ var schema = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
+  //TODO: VALIDATE URL OR IMAGE
   'logo': {
     optional: true,
-    isUrl: true,
     errorMessage: 'Invalid logo'
   }
 };
@@ -31,9 +31,9 @@ var schemaUpdate = {
     isLength: { options: [{ min: 1, max: 30 }] },
     errorMessage: 'Invalid name'
   },
+  //TODO: VALIDATE URL OR IMAGE
   'logo': {
     optional: true,
-    isUrl: true,
     errorMessage: 'Invalid logo'
   }
 };
@@ -79,6 +79,7 @@ module.exports = {
       Company.create(data).then(function (newCompany) {
         res.status(200).json(newCompany);
       }).catch(function (error){
+        console.log(error);
         res.status(500).json(error);
       });
     });

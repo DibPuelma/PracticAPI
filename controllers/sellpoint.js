@@ -36,9 +36,10 @@ var filterParams = function(req) {
 
 module.exports = {
   index(req, res) {
-    SellPoint.findAll({ where: { company_id: req.params.company_id } }).then(function (sellpoints) {
+    SellPoint.findAll({ where: { company_id: req.params.company_id }, include: [{model: Poll, as: 'AttendedPoll'}, {model: Poll, as: 'UnattendedPoll'}, Contest] }).then(function (sellpoints) {
       res.status(200).json(sellpoints);
     }).catch(function (error) {
+      console.log(error);
       res.status(500).json(error);
     });
   },
