@@ -1,4 +1,6 @@
 var util = require('util');
+var fs = require('fs');
+
 var Company = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
 var Manager = require('../models/').Manager;
@@ -44,8 +46,8 @@ var filterParams = function(req) {
 
   var data = {};
   for (var param in req.body)
-    if (keys.indexOf(param) > -1)
-      data[param] = req.body[param];
+  if (keys.indexOf(param) > -1)
+  data[param] = req.body[param];
 
   return data;
 }
@@ -75,17 +77,39 @@ module.exports = {
         res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
         return;
       }
+
       var data = filterParams(req);
 
       Company.create(data).then(function (newCompany) {
+        // var dir = 'images/companies/' + newCompany.name;
+        //
+        // if (!fs.existsSync(dir)){
+        //   fs.mkdirSync(dir);
+        // }
+
         res.status(200).json(newCompany);
+
       }).catch(function (error){
         console.log(error);
         res.status(500).json(error);
       });
     });
   },
-
+  addLogo(req, res) {
+    console.log(req.file);
+    Company.findById(req.params.company_id)
+    .then((company) => {
+      console.log('replaced', req.file.path.replace('images/', ''));
+      company.update({logo: 'http://localhost:8000/' + req.file.path.replace('images/', '')})
+      .then((updatedCompany) => {
+        res.status(200).json(updatedCompany);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      })
+    })
+  },
   update(req, res) {
     req.checkBody(schemaUpdate);
 

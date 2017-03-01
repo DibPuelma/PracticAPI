@@ -4,17 +4,33 @@ var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
 var session          = require('express-session');
 var cors             = require('./middlewares/cors/cors.js');
+var multer           = require('multer');
+var logoStorage = multer.diskStorage({
+    destination: 'images/logos',
+    filename: function (req, file, cb) {
+      console.log('replace', file.mimetype.replace('image/', '.'));
+        cb(null, file.fieldname + '-' + Date.now() + file.mimetype.replace('image/', '.'))
+  }
+})
+
+var logoUpload = multer({ storage: logoStorage })
+
+app.use(express.static('images'))
 
 app.set('port', (process.env.PORT || 8000));
 
 app.use(cors());
 app.use(require('./controllers'));
-//app.use(bodyParser.json());
 // configure the app to use bodyParser()
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(bodyParser.raw({
+  limit: '150kb',
+  type: 'image/*'
+}));
+
 
 
 app.use(expressValidator({
@@ -108,11 +124,12 @@ app.post('/user/logout',      User.logout);
 app.get('/user/:id/prizes',   User.prizes);
 
 //Compañías
-app.get('/company',        Company.index);
-app.get('/company/:id',    Company.show);
-app.post('/company',       Company.create);
-app.put('/company/:id',    Company.update);
-app.delete('/company/:id', Company.delete);
+app.get('/company',                       Company.index);
+app.get('/company/:id',                   Company.show);
+app.post('/company',                      Company.create);
+app.put('/company/:id',                   Company.update);
+app.delete('/company/:id',                Company.delete);
+app.put('/company/:company_id/add_logo',  logoUpload.single('logo'), Company.addLogo)
 
 //Empleados
 app.get('/company/:company_id/employee',        Employee.index);
