@@ -4,7 +4,8 @@ module.exports = function(sequelize, DataTypes) {
     email         : { type: DataTypes.TEXT },
     first_name    : { type: DataTypes.STRING },
     last_name     : { type: DataTypes.STRING },
-    password      : { type: DataTypes.TEXT }
+    password      : { type: DataTypes.TEXT },
+    is_super_user : { type: DataTypes.BOOLEAN }
   }, {
     underscored: true,
     classMethods: {

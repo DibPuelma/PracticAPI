@@ -45,6 +45,7 @@ var visible_attrs = [
   'email',
   'first_name',
   'last_name',
+  'is_super_user',
   'company_id',
   'created_at',
   'updated_at'
@@ -108,7 +109,7 @@ module.exports = {
       if(data.password !== data.password_confirm) {
         res.status(500).json({error: 'Las contraseñas no coinciden'});
       }
-
+      data['is_super_user'] = false;
       Manager.create(data).then(function (newManager) {
         Company.findById(req.body.company_id)
         .then((company) => {
