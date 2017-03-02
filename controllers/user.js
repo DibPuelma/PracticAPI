@@ -212,7 +212,7 @@ module.exports = {
       req.session.logged = false;
     }
 
-    User.findOne( { where: {email: req.body.email.toLowerCase()} } ).then(function (user) {
+    User.findOne( { where: {email: req.body.email} } ).then(function (user) {
       if (user.password == req.body.password) {
        req.session.logged = true;
        res.status(200).json({ code: "OK", message: "logged in", user: filterKeys(user.dataValues, visible_attrs) });
