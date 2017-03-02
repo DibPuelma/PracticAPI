@@ -106,7 +106,7 @@ module.exports = {
           res.status(200).json(newEmployee);
         });*/
         // Update employee info
-        
+
         var promises = [];
 
         // Add sellpoints
@@ -152,7 +152,7 @@ module.exports = {
       }).catch(function (error){
         res.status(500).json(error);
       });
-      
+
     });
   },
 
@@ -165,7 +165,7 @@ module.exports = {
         return;
       }
       var data = filterParams(req);
-      
+
       Employee.findById(req.params.id).then(function (updatedEmployee) {
         var promises = [];
 
@@ -215,10 +215,22 @@ module.exports = {
       }).catch(function (error) {
         res.status(500).json(error);
       });
-      
+
     });
   },
-
+  addPicture(req, res) {
+    Employee.findById(req.params.id)
+    .then((employee) => {
+      employee.update({picture: 'http://localhost:8000/' + req.file.path.replace('images/', '')})
+      .then((updatedEmployee) => {
+        res.status(200).json(updatedEmployee);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      })
+    })
+  },
   delete(req, res) {
     Company.findById(req.params.company_id).then(function (company) {
       Employee.destroy({

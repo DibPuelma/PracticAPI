@@ -8,12 +8,20 @@ var multer           = require('multer');
 var logoStorage = multer.diskStorage({
     destination: 'images/logos',
     filename: function (req, file, cb) {
-      console.log('replace', file.mimetype.replace('image/', '.'));
         cb(null, file.fieldname + '-' + Date.now() + file.mimetype.replace('image/', '.'))
   }
 })
 
 var logoUpload = multer({ storage: logoStorage })
+
+var pictureStorage = multer.diskStorage({
+    destination: 'images/pictures',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + file.mimetype.replace('image/', '.'))
+  }
+})
+
+var pictureUpload = multer({ storage: pictureStorage })
 
 app.use(express.static('images'))
 
@@ -27,7 +35,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.raw({
-  limit: '150kb',
+  limit: '1000kb',
   type: 'image/*'
 }));
 
@@ -132,24 +140,25 @@ app.delete('/company/:id',                Company.delete);
 app.put('/company/:company_id/add_logo',  logoUpload.single('logo'), Company.addLogo)
 
 //Empleados
-app.get('/company/:company_id/employee',        Employee.index);
-app.get('/company/:company_id/employee/:id',    Employee.show);
-app.post('/company/:company_id/employee',       Employee.create);
-app.put('/company/:company_id/employee/:id',    Employee.update);
-app.delete('/company/:company_id/employee/:id', Employee.delete);
+app.get('/company/:company_id/employee',                                                  Employee.index);
+app.get('/company/:company_id/employee/:id',                                              Employee.show);
+app.post('/company/:company_id/employee',                                                 Employee.create);
+app.put('/company/:company_id/employee/:id',                                              Employee.update);
+app.delete('/company/:company_id/employee/:id',                                           Employee.delete);
+app.put('/company/:company_id/employee/:id/add_picture', pictureUpload.single('picture'), Employee.addPicture);
 
 //Puntos de venta
-app.get('/company/:company_id/sell_point',                               SellPoint.index);
-app.get('/company/:company_id/sell_point/:id',                           SellPoint.show);
-app.get('/company/:company_id/sell_point/:code',                               SellPoint.showByCode);
-app.post('/company/:company_id/sell_point',                              SellPoint.create);
-app.put('/company/:company_id/sell_point/:id',                           SellPoint.update);
-app.delete('/company/:company_id/sell_point/:id',                        SellPoint.delete);
-app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',          SellPoint.getActiveAttendedPoll);
-app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/', SellPoint.setActiveAttendedPoll);
-app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',          SellPoint.getActiveUnattendedPoll);
-app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id', SellPoint.setActiveUnattendedPoll);
-app.get('/company/:company_id/sell_point/:sell_point_id/active_contest',          SellPoint.getActiveContest);
+app.get('/company/:company_id/sell_point',                                           SellPoint.index);
+app.get('/company/:company_id/sell_point/:id',                                       SellPoint.show);
+app.get('/company/:company_id/sell_point/:code',                                     SellPoint.showByCode);
+app.post('/company/:company_id/sell_point',                                          SellPoint.create);
+app.put('/company/:company_id/sell_point/:id',                                       SellPoint.update);
+app.delete('/company/:company_id/sell_point/:id',                                    SellPoint.delete);
+app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',             SellPoint.getActiveAttendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/',    SellPoint.setActiveAttendedPoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',            SellPoint.getActiveUnattendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id',   SellPoint.setActiveUnattendedPoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/active_contest',             SellPoint.getActiveContest);
 app.put('/company/:company_id/sell_point/:sell_point_id/active_contest/:contest_id', SellPoint.setActiveContest);
 
 //Concursos
