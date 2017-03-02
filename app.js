@@ -150,7 +150,7 @@ app.put('/company/:company_id/employee/:id/add_picture', pictureUpload.single('p
 //Puntos de venta
 app.get('/company/:company_id/sell_point',                                           SellPoint.index);
 app.get('/company/:company_id/sell_point/:id',                                       SellPoint.show);
-app.get('/company/:company_id/sell_point/:code',                                     SellPoint.showByCode);
+app.get('/sell_point/:code',                                                         SellPoint.showByCode);
 app.post('/company/:company_id/sell_point',                                          SellPoint.create);
 app.put('/company/:company_id/sell_point/:id',                                       SellPoint.update);
 app.delete('/company/:company_id/sell_point/:id',                                    SellPoint.delete);

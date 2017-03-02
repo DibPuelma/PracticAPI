@@ -60,7 +60,7 @@ module.exports = {
   },
 
   showByCode(req, res) {
-    SellPoint.find({where: {code: req.params.code, company_id: req.params.company_id}, include: Employee})
+    SellPoint.find({where: {code: req.params.code}, include: Employee})
     .then( (sellpoint) => {
       res.status(200).json(sellpoint);
     }).catch(function (error){
