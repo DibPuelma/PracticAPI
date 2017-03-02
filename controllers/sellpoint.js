@@ -1,6 +1,7 @@
 var util = require('util');
 var Company  = require('../models/').Company;
 var SellPoint = require('../models/').SellPoint;
+var Employee = require('../models/').Employee;
 var Poll = require('../models/').Poll;
 var Question = require('../models/').Question;
 var Contest = require('../models/').Contest;
