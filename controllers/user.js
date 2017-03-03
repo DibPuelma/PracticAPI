@@ -148,6 +148,7 @@ module.exports = {
       }
 
       var data = filterParams(req);
+      data.email = data.email.toLowerCase();
       data['status'] = 'active';
 
       User.create(data).then(function (newUser) {
@@ -209,7 +210,7 @@ module.exports = {
       req.session.logged = false;
     }
 
-    User.findOne( { where: {email: req.body.email} } ).then(function (user) {
+    User.findOne( { where: {email: req.body.email.toLowerCase()} } ).then(function (user) {
       if (user.password == req.body.password) {
        req.session.logged = true;
        res.status(200).json({ code: "OK", message: "logged in", user: filterKeys(user.dataValues, visible_attrs) });
@@ -234,7 +235,7 @@ module.exports = {
   },
 
   prizes(req, res) {
-    Prize.findAll( {where: { winner: req.params.id }, include: { model: Contest, include: Company } } ).then(function(prizes) {
+    Prize.findAll( {where: { user_id: req.params.id }, include: { model: Contest, include: Company } } ).then(function(prizes) {
       res.status(200).json(prizes);
     }).catch(function (error) {
       res.status(500).json(error);

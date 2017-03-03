@@ -4,17 +4,41 @@ var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
 var session          = require('express-session');
 var cors             = require('./middlewares/cors/cors.js');
+var multer           = require('multer');
+var logoStorage = multer.diskStorage({
+    destination: 'images/logos',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + file.mimetype.replace('image/', '.'))
+  }
+})
+
+var logoUpload = multer({ storage: logoStorage })
+
+var pictureStorage = multer.diskStorage({
+    destination: 'images/pictures',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + file.mimetype.replace('image/', '.'))
+  }
+})
+
+var pictureUpload = multer({ storage: pictureStorage })
+
+app.use(express.static('images'))
 
 app.set('port', (process.env.PORT || 8000));
 
 app.use(cors());
 app.use(require('./controllers'));
-//app.use(bodyParser.json());
 // configure the app to use bodyParser()
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(bodyParser.raw({
+  limit: '1000kb',
+  type: 'image/*'
+}));
+
 
 
 app.use(expressValidator({
@@ -107,31 +131,33 @@ app.post('/user/logout',      User.logout);
 app.get('/user/:id/prizes',   User.prizes);
 
 //Compañías
-app.get('/company',        Company.index);
-app.get('/company/:id',    Company.show);
-app.post('/company',       Company.create);
-app.put('/company/:id',    Company.update);
-app.delete('/company/:id', Company.delete);
+app.get('/company',                       Company.index);
+app.get('/company/:id',                   Company.show);
+app.post('/company',                      Company.create);
+app.put('/company/:id',                   Company.update);
+app.delete('/company/:id',                Company.delete);
+app.put('/company/:company_id/add_logo',  logoUpload.single('logo'), Company.addLogo)
 
 //Empleados
-app.get('/company/:company_id/employee',        Employee.index);
-app.get('/company/:company_id/employee/:id',    Employee.show);
-app.post('/company/:company_id/employee',       Employee.create);
-app.put('/company/:company_id/employee/:id',    Employee.update);
-app.delete('/company/:company_id/employee/:id', Employee.delete);
+app.get('/company/:company_id/employee',                                                  Employee.index);
+app.get('/company/:company_id/employee/:id',                                              Employee.show);
+app.post('/company/:company_id/employee',                                                 Employee.create);
+app.put('/company/:company_id/employee/:id',                                              Employee.update);
+app.delete('/company/:company_id/employee/:id',                                           Employee.delete);
+app.put('/company/:company_id/employee/:id/add_picture', pictureUpload.single('picture'), Employee.addPicture);
 
 //Puntos de venta
-app.get('/company/:company_id/sell_point',                               SellPoint.index);
-app.get('/company/:company_id/sell_point/:id',                           SellPoint.show);
-app.get('/company/:company_id/sell_point/:code',                               SellPoint.showByCode);
-app.post('/company/:company_id/sell_point',                              SellPoint.create);
-app.put('/company/:company_id/sell_point/:id',                           SellPoint.update);
-app.delete('/company/:company_id/sell_point/:id',                        SellPoint.delete);
-app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',          SellPoint.getActiveAttendedPoll);
-app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/', SellPoint.setActiveAttendedPoll);
-app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',          SellPoint.getActiveUnattendedPoll);
-app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id', SellPoint.setActiveUnattendedPoll);
-app.get('/company/:company_id/sell_point/:sell_point_id/active_contest',          SellPoint.getActiveContest);
+app.get('/company/:company_id/sell_point',                                           SellPoint.index);
+app.get('/company/:company_id/sell_point/:id',                                       SellPoint.show);
+app.get('/company/:company_id/sell_point/:code',                                     SellPoint.showByCode);
+app.post('/company/:company_id/sell_point',                                          SellPoint.create);
+app.put('/company/:company_id/sell_point/:id',                                       SellPoint.update);
+app.delete('/company/:company_id/sell_point/:id',                                    SellPoint.delete);
+app.get('/company/:company_id/sell_point/:sell_point_id/attended_poll/',             SellPoint.getActiveAttendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/attended_poll/:poll_id/',    SellPoint.setActiveAttendedPoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/unattended_poll',            SellPoint.getActiveUnattendedPoll);
+app.put('/company/:company_id/sell_point/:sell_point_id/unattended_poll/:poll_id',   SellPoint.setActiveUnattendedPoll);
+app.get('/company/:company_id/sell_point/:sell_point_id/active_contest',             SellPoint.getActiveContest);
 app.put('/company/:company_id/sell_point/:sell_point_id/active_contest/:contest_id', SellPoint.setActiveContest);
 
 //Concursos
@@ -197,13 +223,14 @@ app.get('/company/:company_id/excel/sell_point', Excel.getBySellPoint);
 app.get('/company/:company_id/excel/answered_poll', Excel.getAll);
 
 // Managers
-app.get   ('/manager',        Manager.index);
-app.get   ('/manager/:id',    Manager.show);
-app.post  ('/manager',        Manager.create);
-app.put   ('/manager/:id',    Manager.update);
-app.delete('/manager/:id',    Manager.delete);
-app.post  ('/manager/login',  Manager.login);
-app.post  ('/manager/logout', Manager.logout);
+app.get   ('/manager',                            Manager.index);
+app.get   ('/company/:company_id/manager',        Manager.byCompany);
+app.get   ('/manager/:id',                        Manager.show);
+app.post  ('/manager',                            Manager.create);
+app.put   ('/manager/:id',                        Manager.update);
+app.delete('/manager/:id',                        Manager.delete);
+app.post  ('/manager/login',                      Manager.login);
+app.post  ('/manager/logout',                     Manager.logout);
 
 
 app.listen(app.get('port'), function() {

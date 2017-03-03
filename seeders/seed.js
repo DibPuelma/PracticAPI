@@ -43,7 +43,7 @@ var companiesData = [
   }, {
     name: 'Sushi Home',
     email: 'contacto@sushi.home',
-    logo: 'https://pbs.twimg.com/profile_images/1272217407/logo_sushihome.jpg'
+    logo: 'http://clubmercuriovalpo.cl/club/wp-content/uploads/2015/05/sushi-home.jpg'
   }
 ];
 
@@ -344,7 +344,8 @@ var managers = [
       first_name: 'Lucho',
       last_name : 'Mateo',
       email     : 'manager1@correo.cl',
-      password  : 'abc123'
+      password  : 'abc123',
+      is_super_user: false
     },
     company   : 'Puma'
   },
@@ -353,11 +354,29 @@ var managers = [
       first_name: 'Eloy',
       last_name : 'Sancho',
       email     : 'manager2@correo.cl',
-      password  : 'abc123'
+      password  : 'abc123',
+      is_super_user: false
     },
     company   : 'Sushi Home'
   }
 ]
+
+var superUsers = [
+  {
+    first_name: 'Esteban',
+    last_name: 'Dib',
+    email: 'edib@gmail.com',
+    password: '12345',
+    is_super_user: true
+  },
+  {
+    first_name: 'Franco',
+    last_name: 'Muñoz',
+    email: 'famunoz13@gmail.com',
+    password: '12345',
+    is_super_user: true
+  },
+] 
 
 
 var dropTables = function() {
@@ -412,7 +431,7 @@ var createUsers = function() {
     var lastName = lastNames[getRandomInt(0, lastNames.length - 1)];
     var userData = {
       email: name + lastName + "@example.com",
-      name: name,
+      first_name: name,
       last_name: lastName,
       birthdate: new Date(yearOfBirth, monthOfBirth, dayOfBirth),
       gender: getRandomInt(0,1) === 0 ? 'm' : 'f',
@@ -591,7 +610,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Models.OptionsContainer.find({where: {name: "Acción vendedores"}})
     .then((optcont) => {
@@ -606,7 +625,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Models.OptionsContainer.find({where: {name: "Deporte favorito"}})
     .then((optcont) => {
@@ -621,7 +640,7 @@ var createPossibleOptions = function() {
         possibleOptionsPromises.push(createPossibleOptionPromise);
       })
     });
-    
+
 
     Promise.all(possibleOptionsPromises)
     .then(() => {
@@ -1053,10 +1072,25 @@ var createManagers = function() {
   Promise.all(create_promises).then(() => {
     Promise.all(find_promises).then(() => {
       Promise.all(add_promises).then(() => {
-        console.log('Done!')
+        createSuperUsers();
       }).catch((error) => { reject(error); });
     }).catch((error) => { reject(error); });
   }).catch((error) => { reject(error); });
+}
+
+var createSuperUsers = function() {
+  var promises = []
+  superUsers.map((superUser) => {
+    var createSuperUser = Models.Manager.create(superUser)
+    promises.push(createSuperUser);
+  })
+  Promise.all(promises)
+  .then(() => {
+    console.log('Done!')
+  })
+  .catch((error) => {
+    console.log(error);
+  })
 }
 
 var getRandomInt = function(min, max) {

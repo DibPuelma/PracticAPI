@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.hasMany(models.AnsweredPoll);
         User.belongsToMany(models.Contest, { through: 'UserContest' });
-        User.belongsTo(models.Prize);
+        User.hasOne(models.Prize);
       }
     }
   });

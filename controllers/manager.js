@@ -1,4 +1,5 @@
 var Manager = require('../models/').Manager;
+var Company = require('../models/').Company;
 
 var schema = {
   'email': {
@@ -17,6 +18,11 @@ var schema = {
     errorMessage: 'Invalid last name'
   },
   'password': {
+    notEmpty: true,
+    isLength: { options: [{ min: 4, max: 30 }] },
+    errorMessage: 'Invalid password'
+  },
+  'password_confirm': {
     notEmpty: true,
     isLength: { options: [{ min: 4, max: 30 }] },
     errorMessage: 'Invalid password'
@@ -39,6 +45,7 @@ var visible_attrs = [
   'email',
   'first_name',
   'last_name',
+  'is_super_user',
   'company_id',
   'created_at',
   'updated_at'
@@ -57,6 +64,18 @@ var filterKeys = function(object, allowedKeys) {
 module.exports = {
   index(req, res) {
     Manager.findAll().then(function (managers) {
+      managers.forEach(function(part, index) {
+        managers[index].dataValues = filterKeys(managers[index].dataValues, visible_attrs);
+      });
+
+      res.status(200).json(managers);
+    }).catch(function (error) {
+      res.status(500).json(error);
+    });
+  },
+
+  byCompany(req, res) {
+    Manager.findAll({where: {company_id: req.params.company_id}}).then(function (managers) {
       managers.forEach(function(part, index) {
         managers[index].dataValues = filterKeys(managers[index].dataValues, visible_attrs);
       });
@@ -87,17 +106,32 @@ module.exports = {
       var data = filterParams(req);
       data['status'] = 'active';
 
+      if(data.password !== data.password_confirm) {
+        res.status(500).json({error: 'Las contraseñas no coinciden'});
+      }
+      data['is_super_user'] = false;
       Manager.create(data).then(function (newManager) {
-        response = { code: 'OK', manager: filterKeys(newManager.dataValues, visible_attrs) };
-        res.status(200).json(response);
+        Company.findById(req.body.company_id)
+        .then((company) => {
+          company.addManager(newManager)
+          .then(() => {
+            response = { code: 'OK', manager: filterKeys(newManager.dataValues, visible_attrs) };
+            res.status(200).json(response);
+          })
+          .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+          })
+        })
       }).catch(function (error){
+        console.log(error);
         res.status(500).json(error);
       });
     });
   },
 
   update(req, res) {
-    req.checkBody(schemaUpdate);
+    req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
       if (!result.isEmpty()) {
@@ -106,6 +140,10 @@ module.exports = {
       }
 
       var data = filterParams(req);
+
+      if(data.password !== data.password_confirm) {
+        res.status(500).json({error: 'Las contraseñas no coinciden'});
+      }
 
       Manager.update(data, { where: {id: req.params.id } }).then(function(result) {
         result['code'] = 'OK';
@@ -157,5 +195,3 @@ module.exports = {
     res.status(200).json({message: "logged out"});
   },
 }
-
-
