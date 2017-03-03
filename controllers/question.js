@@ -140,7 +140,6 @@ module.exports = {
                 res.status(200).json(updatedQuestion);
               })
               .catch(function(error) {
-                console.log("error opt");
                 console.log(error);
                 res.status(500).json(error);
               })

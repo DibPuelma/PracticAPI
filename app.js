@@ -51,12 +51,11 @@ var Dashboard        = require('./controllers/dashboard.js');
 var Manager          = require('./controllers/manager.js');
 
 //Encuestas
-
-app.get('/company/:company_id/poll',                                    Poll.index);
-app.post('/company/:company_id/poll',                                   Poll.create);
-app.get('/company/:company_id/poll/:id',                                Poll.show);
-app.delete('/company/:company_id/poll/:id',                             Poll.delete);
-app.put('/company/:company_id/poll/:id',                                Poll.update);
+app.get('/company/:company_id/poll',        Poll.index);
+app.post('/company/:company_id/poll',       Poll.create);
+app.get('/company/:company_id/poll/:id',    Poll.show);
+app.delete('/company/:company_id/poll/:id', Poll.delete);
+app.put('/company/:company_id/poll/:id',    Poll.update);
 
 //Preguntas
 app.post('/company/:company_id/question',                     Question.create);
@@ -85,7 +84,7 @@ app.put('/company/:company_id/options_container/:opt_cont_id/possible_option/:id
 
 //Encuestas Contestadas
 app.get('/user/:user_id/answered_poll',                            AnsweredPoll.index);
-app.get('/user/:user_id/answered_poll/:id',                            AnsweredPoll.showByUser);
+app.get('/user/:user_id/answered_poll/:id',                        AnsweredPoll.showByUser);
 app.get('/company/:company_id/poll/:poll_id/answered_poll',        AnsweredPoll.indexByPoll);
 app.post('/company/:company_id/poll/:poll_id/answered_poll',       AnsweredPoll.create);
 app.get('/company/:company_id/poll/:poll_id/answered_poll/:id',    AnsweredPoll.show);

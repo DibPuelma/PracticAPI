@@ -122,9 +122,7 @@ var filterKeys = function(object, allowedKeys) {
 
 module.exports = {
   index(req, res) {
-    console.log("1");
     User.findAll().then(function (users) {
-      console.log("2");
       res.status(200).json(users);
     }).catch(function (error) {
       res.status(500).json(error);
