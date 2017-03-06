@@ -178,11 +178,9 @@ module.exports = {
           req.body.newSellpoints.map((sellpoint_id) => {
             var getSellpoint = SellPoint.findById(sellpoint_id)
             .then((sellpoint) => {
-              console.log("antes");
               sellpoint.addEmployee(updatedEmployee);
             })
             .catch((error) => {
-              console.log("?")
               res.status(500).json(error);
             })
             promises.push(getSellpoint);

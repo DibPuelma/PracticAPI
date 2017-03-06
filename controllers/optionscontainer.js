@@ -77,7 +77,6 @@ module.exports = {
     req.checkBody(schema);
 
     req.getValidationResult().then(function(result) {
-      console.log("-------------------------------")
       if (!result.isEmpty()) {
         res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
         return;
@@ -87,6 +86,7 @@ module.exports = {
       
       OptCont.create(data).then((optcont) => {
         Company.findById(req.params.company_id).then((company) => {
+          
           var promises = [];
           var newOptCont = optcont;
 
@@ -109,8 +109,8 @@ module.exports = {
           }
 
           if (req.body.existingOptions.length > 0) {
-            req.body.existingOptions.map((optionId) => {
-              PossibleOption.findById(optionId)
+            req.body.existingOptions.map((option) => {
+              PossibleOption.findById(option.id)
               .then((option) => {
                 optcont.addPossibleOption(option);
               })
@@ -119,7 +119,7 @@ module.exports = {
               })
             })
           }
-
+          
           Promise.all(promises)
           .then(() => {
             res.status(200).json(newOptCont);
@@ -164,7 +164,7 @@ module.exports = {
       var newOptCont;
       var findOptCont = OptCont.findById(req.params.id, {include: PossibleOption})
       .then((optcont) => {
-        var updateOptCont = optcont.update({name: data.name})
+        var updateOptCont = optcont.update({ name: data.name, allow_other: data.allow_other })
         promises.push(updateOptCont);
 
         // Craete new ones

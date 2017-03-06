@@ -518,7 +518,6 @@ module.exports = {
           answeredpoll.setEmployee(employee);
         })
         .catch(function (error) {
-          console.log("error emple");
           console.log(error);
         })
         promises.push(setEmployee);
@@ -537,13 +536,11 @@ module.exports = {
             promises.push(getContest);
           })
           .catch(function (error) {
-            console.log("error user");
             console.log(error);
           })
           promises.push(setUser);
         })
         .catch(function (error) {
-          console.log("error sellp");
           console.log(error);
         })
         promises.push(setSellPoint);
@@ -553,7 +550,6 @@ module.exports = {
           answeredpoll.setPoll(poll);
         })
         .catch(function (error) {
-          console.log("error poll");
           console.log(error);
         })
         promises.push(setPoll);

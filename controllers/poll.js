@@ -1,9 +1,10 @@
-var Poll = require('../models/').Poll;
-var Company = require('../models/').Company;
-var SellPoint = require('../models/').SellPoint;
-var Question = require('../models/').Question;
+var Poll             = require('../models/').Poll;
+var Company          = require('../models/').Company;
+var SellPoint        = require('../models/').SellPoint;
+var Question         = require('../models/').Question;
 var OptionsContainer = require('../models/').OptionsContainer;
-var PossibleOption = require('../models/').PossibleOption;
+var PossibleOption   = require('../models/').PossibleOption;
+var PollQuestions    = require('../models/').PollQuestions
 
 var util = require('util');
 
@@ -14,8 +15,8 @@ var schema = {
     errorMessage: 'Invalid name'
   },
   'description': {
-    notEmpty: true,
-    isLength: { options: [{ min: 1, max: 500 }] },
+    optional: true,
+    isLength: { options: [{ min: 0, max: 500 }] },
     errorMessage: 'Invalid description'
   },
   'existingQuestions': {
@@ -29,11 +30,6 @@ var schema = {
   'activeSellPoint': {
     optional: true,
     errorMessage: 'Invalid sell point to make active'
-  },
-  'order': {
-    notEmpty: true,
-    isNumeric: true,
-    errorMessage: 'Orden invalido'
   }
 };
 
@@ -45,7 +41,7 @@ var schemaUpdate = {
   },
   'description': {
     optional: true,
-    isLength: { options: [{ min: 1, max: 500 }] },
+    isLength: { options: [{ min: 0, max: 500 }] },
     errorMessage: 'Invalid description'
   },
   'existingQuestions': {
@@ -111,10 +107,26 @@ module.exports = {
             req.body.newQuestions.map((newQuestion) => {
               var addNewQuestion = Question.create(newQuestion)
               .then((question) => {
-                poll.addQuestion(question);
+                poll.addQuestion(question).then((r) =>  {
+                  var question_id = r[0][0].dataValues.question_id;
+                  var poll_id = r[0][0].dataValues.poll_id;
+                  PollQuestions.update(
+                    { order: newQuestion.order},
+                    { where: { question_id: question_id, poll_id: poll_id } }
+                  );
+                  if (newQuestion.type === 'options') {
+                    OptionsContainer.find(newQuestion.options_container_id).then((opt) => {
+                      question.setOptionsContainer(opt);
+                    }).catch(function(error) {
+                      console.log(error);
+                      res.status(500).json(error);      
+                    });
+                  }
+                });
                 company.addQuestion(question);
               })
               .catch(function (error) {
+                console.log(error);
                 res.status(500).json(error);
               })
               promises.push(addNewQuestion);
@@ -122,18 +134,36 @@ module.exports = {
           }
         })
         .catch(function (error) {
+          console.log(error);
           res.status(500).json(error);
         });
         promises.push(setCompany);
 
         // Add existing questions
         if (req.body.existingQuestions.length > 0) {
-          req.body.existingQuestions.map((id) => {
-            var addExistingQuestion = Question.findById(id)
+          req.body.existingQuestions.map((q) => {
+            var addExistingQuestion = Question.findById(q.id)
             .then((question) => {
-              poll.addQuestion(question);
+              question.update(q);
+              poll.addQuestion(question).then((r) =>  {
+                  var question_id = r[0][0].dataValues.question_id;
+                  var poll_id = r[0][0].dataValues.poll_id;
+                  PollQuestions.update(
+                    { order: q.order},
+                    { where: { question_id: question_id, poll_id: poll_id } }
+                  );
+                });
+              if (q.type === 'options') {
+                OptionsContainer.find(q.options_container_id).then((opt) => {
+                  question.setOptionsContainer(opt);
+                }).catch(function(error) {
+                  console.log(error);
+                  res.status(500).json(error);      
+                });
+              }
             })
             .catch(function (error) {
+              console.log(error);
               res.status(500).json(error);
             })
             promises.push(addExistingQuestion);
@@ -141,16 +171,17 @@ module.exports = {
         }
 
         // Set active sellpoint
-        if (req.body.activeSellPoint !== null) {
+        /*if (typeof req.body.activeSellPoint !== 'undefined') {
           var setActiveSellPoint = SellPoint.findById(req.body.activeSellPoint)
           .then((sellPoint) => {
             sellPoint.setPoll(poll);
           })
           .catch(function (error) {
+            console.log(error);
             res.status(500).json(error);
           })
           promises.push(setActiveSellPoint);
-        }
+        }*/
 
         // If all promises are resolved
         Promise.all(promises)
@@ -158,6 +189,7 @@ module.exports = {
           res.status(200).json(newPoll);
         })
         .catch(function(error) {
+          console.log(error);
           res.status(500).json(error);
         });
 
@@ -185,10 +217,44 @@ module.exports = {
 
       var data = filterParams(req);
 
-      Poll.findById(req.params.id)
-      .then((poll) => {
-        poll.update(data)
-        res.status(200).json(poll);
+      Poll.findById(req.params.id).then((poll) => {
+        var promises = [];
+        var poll_id = poll.id;
+        
+        // Update poll info
+        poll.update({ name: data.name, description: data.description});
+        
+        // Update questios
+        if (req.body.existingQuestions.length > 0) {
+          req.body.existingQuestions.map((q) => {
+            var addExistingQuestion = Question.findById(q.id)
+            .then((question) => {
+              var p_u = question.update({ text: q.text });
+
+              var pq_u = PollQuestions.update(
+                { order: q.order},
+                { where: { question_id: q.id, poll_id: poll_id } }
+              );
+
+              promises.push(p_u);
+              promises.push(pq_u);
+            })
+            .catch(function (error) {
+              console.log(error);
+              res.status(500).json(error);
+            })
+            promises.push(addExistingQuestion);
+          })
+        }
+
+        Promise.all(promises)
+        .then(() => {
+          res.status(200).json(poll);
+        })
+        .catch(function(error) {
+          console.log(error);
+          res.status(500).json(error);
+        });
       })
       .catch(function(error) {
         res.status(500).json(error);

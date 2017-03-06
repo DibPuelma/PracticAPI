@@ -402,7 +402,7 @@ var createTables = function() {
                         Models.Answer.sync().then(function() {
                           Models.UserContest.sync().then(function() {
                             Models.OptionsContainerPossibleOptions.sync().then(function() {
-                              Models.PollQuestion.sync().then(function() {
+                              Models.PollQuestions.sync().then(function() {
                                 createUsers();
                               })
                             })

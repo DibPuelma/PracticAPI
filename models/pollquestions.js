@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var PollQuestion = sequelize.define('PollQuestion', {
+  var PollQuestions = sequelize.define('PollQuestions', {
     question_id: DataTypes.INTEGER,
     poll_id: DataTypes.INTEGER,
     order: DataTypes.INTEGER
@@ -12,5 +12,5 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
-  return PollQuestion;
+  return PollQuestions;
 };

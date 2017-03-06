@@ -132,12 +132,17 @@ module.exports = {
   },
 
   setActiveAttendedPoll(req, res) {
-    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
-    .then((poll) => {
-      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
-      .then((sellPoint) => {
+    SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+    .then((sellPoint) => {
+      if (req.params.poll_id === '0') {
+        sellPoint.setAttendedPoll(null);
+        return res.status(200).json(sellpoint);
+      }
+
+      Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
+      .then((poll) => {
         sellPoint.setAttendedPoll(poll);
-        res.status(200).json(poll);
+        res.status(200).json(sellpoint);
       })
       .catch(function(error) {
         res.status(500).json(error);
@@ -163,12 +168,17 @@ module.exports = {
   },
 
   setActiveUnattendedPoll(req, res) {
-    Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
-    .then((poll) => {
-      SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
-      .then((sellPoint) => {
+    SellPoint.findOne({where: {id: req.params.sell_point_id, company_id: req.params.company_id}})
+    .then((sellPoint) => {
+      if (req.params.poll_id === '0') {
+        sellPoint.setUnattendedPoll(null);
+        return res.status(200).json(sellpoint);
+      }
+
+      Poll.findOne({where: {id: req.params.poll_id, company_id: req.params.company_id}})
+      .then((poll) => {
         sellPoint.setUnattendedPoll(poll);
-        res.status(200).json(poll);
+        res.status(200).json(sellpoint);
       })
       .catch(function(error) {
         res.status(500).json(error);
