@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         fields: ['code']
       }
-    ]
+    ],
     underscored: true,
     classMethods: {
       associate: function(models) {
