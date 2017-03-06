@@ -6,6 +6,12 @@ module.exports = function(sequelize, DataTypes) {
     unattended_active: { type: DataTypes.INTEGER },
     code: { type: DataTypes.TEXT }
   }, {
+    indexes: [
+      {
+        unique: true,
+        fields: ['code']
+      }
+    ]
     underscored: true,
     classMethods: {
       associate: function(models) {
